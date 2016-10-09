@@ -1,0 +1,11 @@
+* go by example
+  + https://gobyexample.com // link
+* go info
+  + source code
+    + % git clone https://go.googlesource.com/go (mirror of repo @ https://github.com/golang/go)
+    + https://go.googlesource.com/go/# // http link
+  + https://projecteuler.net // challenging math/computer programming problems
+* go cmd
+  + go run hello_world.go // run the program
+  + go build hello_world.go; ./hello_world // build binary and execute
+

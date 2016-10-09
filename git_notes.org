@@ -1,0 +1,154 @@
+* readme
+** git
+*** links
+   + https://www.github.com // git page
+   + https://guides.github.com // git guides
+*** help
+   + %git help; // git help command
+   + %git help config; // git help subcommand config
+*** config
+   + %git config --global user.name "Aneel Raju"
+   + %git config --global branch.autosetuprebase always
+   + %git config --global core.editor emacs
+   + %git config --global core.autocrlf true
+   + %git config --global core.autocrlf input
+   + %git config --global color.ui auto
+   + %git config --list // list git config values
+*** init
+   + %git init proj.py; // repository
+     - %open .git; // git files where historical event saves
+   + %git remote add origin https://github.com/aneelraju/python.prj_0 // remote repository
+     - %cat .git/config // see config details
+   + %git init // turn current directory into repository
+   + %git status // status of git
+*** commit
+   + %git add <file> // put into staging area
+     - %git status // to check status
+   + %git commit -m "comment" // commit files in staging area
+   + %git commit // open editor for multi line comment
+*** diff
+   + %git diff // diff on working tree
+   + %git diff --staged // diff of staged area
+   + %git diff HEAD // diff from working area with last commit
+   + %git diff --color-words
+   + %git diff --word-diff
+   + %git diff --stat // lists files, no patches
+*** log
+   + %git log // list of commit's
+   + %git log --online // quick summary
+   + %git log --stat // also files
+   + %git log --patch // with diff
+   + %git log --patch --online
+   + %git log --graph --all --decorate --online // in graph form
+*** remove
+   + %git rm <file> // removes file and mentions in the staging area
+   + %git commit -m "remove <file>" // commit deleted file
+   + %rm file2.txt // removed from work space
+   + %git status // mentions not in staging area
+   + %git rm file2.txt // add to staging area
+   + %git commit -m "remove file2.txt" // commit deleted files
+   + %git add -u . // recurrsivively finds deleted files) and adds to staging area
+                   // files can be deleted from finder
+   + %git rm --cached <file3.txt> // not to track the file and keep file in working area
+*** move
+   + %git mv header.jpg source/header.jpg // renaming and moving are same
+     - %git status // to check status
+   + %mv header.jpg source/header.jpg 
+     - %git status // to check status
+     - %git rm header.jpg
+     - %git add source/header.jpg
+     - %git status
+   + after moving files in finder
+     - %git status -u
+     - %git add -A . // removes old file and add's new files
+     - %git commit -m "comment"
+     - %git log --stat -- tutorials/header.jpg // shows logs upto after move
+     - %git log --stat -M --follow -- tutorials/header.jpg // shows logs beyond move
+*** ignore
+   + %touch .gitignore
+     - %git add .gitignore // can be in subdirectories
+     - %git commit -m"comments"
+       - // .gitignore file
+	 .sass-cache
+	 # ignore .log files
+	 *.log
+	 tmp/
+     - %git add .gitignore
+     - %git commit -m"comments"
+   + %git ls-files --others --ignored --exclude-standard // list ignored files
+*** branch
+   + %git branch branch1 // start new branch
+   + %git branch // lists branches
+     + %git branch -d branch1 // delete branch1
+     + %git branch -D branch1 // force delete branch1
+   + %git checkout branch1 // switch to branch1
+   + %git checkout master // switch to master, files appear/disappear on different branches
+*** checkout
+   + %git checkout <branch1> // switch to branch1
+     - %git branch // check working branch
+     - %git status // check status
+   + %git checkout <commit code> // detach from HEAD
+     - not for commit purpose
+   + %git checkout master // back to HEAD
+   + %git checkout -- newname.txt // discard edit files, revert
+   + %git checkout -b branch1 // checkout and move to branch1
+*** merge
+   + workflow
+     + %git checkout master 
+     + %git branch
+     + %git merge <branch1>
+     + %git log -2
+     + %git status // if conflicts
+     + edit file1 and resolve changes
+     + %git add file1
+     + %git commit -m "comments"
+   + abort
+     + %git merge --abort // cleanup working dir from last commit
+     + %git status 
+   + squash // dont want to bring histories but all commits from a branch
+     + %git merge --squash branch1
+     + %git status
+     + %git commit -m "comment1"
+   + %git branch -d branch1 // delete after branch1 merge
+*** network
+   + %git remote add origin https://github.com/githubteacher/example-basic
+   + %git remote set-url origin https://github.com/githubteacher/example
+   + %git remote rm origin // delete remote origin
+   + %git remote -v // printout of remote repository
+   + %git branch -r // remote branches
+   + %git fetch origin // fetch from github.com and put it in our branch
+   + %git pull origin // fetch + merge
+     - %git checkout feature1
+     - %git pull origin
+   + %git push origin // push local commits to github.com (ask's username & password)
+*** pull requests
+   + %git reset HEAD // reset to HEAD
+   + %git reset --soft HEAD~5 // the most recent 5 commits
+     + %git commit -m "Five new changes" // combine 5 commits to 1, reshaping history
+     + %git log --oneline
+   + %git reset --hard HEAD~3 // throw away last 3 commits
+     + git log --oneline
+   + %git checkout e638ee7 old_file.md // granuality of reset, checkout 1 file of a commit
+*** reflog
+   + %git reflog // commits and discarded, historical log
+     + %git config gc.reflogexpireunreachable 30 // rolling days of 30
+     + %git reset --hard e4215cd
+   + % cd .git/logs
+     + tree
+   + % gitk --all `git reflog | cut -c1-7`& // into graph
+*** rebase
+   + % git branch branch1
+     + % git checkout branch1
+     + % git rebase master
+     + % git log --oneline --graph
+*** misc
+   + git clone
+     - % cd <working directory>
+     - % git clone git@github.com:aneelraju/hello-world.git
+   + %git --bare init; // create a bare repository
+   + %git commit -m "comments" // commit all open files
+     - %git commit <file> -m "comments" // commit 1 file
+   + %git show // view commit details
+   + %git amend // amend changes the last commit
+   + %git push origin master // changes pushed to repository
+

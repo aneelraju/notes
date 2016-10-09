@@ -1,0 +1,504 @@
+* Coursera: Ruby On Rails Web Development, John Hopkins University
+** course1: ruby on rails - An Introduction
+*** Week 1 - Welcome and Setting Up the Development Environment
+**** installing software
+***** software installation
+     + installation of ruby
+     + installation of ruby on rails
+***** coding editors
+     + sublime text
+***** recommended books
+     + mastering sublime text - dan peleg
+     + pro git - scott chacon, ben staub
+     + git in practice - mike mcquaid
+     + learn git in a month of lunches - rick umali
+     + pragmatic guide to git - travis swicegood
+***** software installation
+     + software
+       + ruby (latest) - language interpreter
+       + rails 4.2.3 - web application platform and dependencies
+       + git (latest)
+       + phantomjs (latest) - headless web testing support
+       + sublime text 3 - optional text editor
+***** install
+     + homebrew - missing package manager for OS X
+       + brew.sh - weblink
+       + % /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+     + rbenv
+       + % brew install rbenv ruby-build
+       + % echo 'if which rbenv > /dev/null; then eval "$(rbenv init -)"; fi' >> ~/.bash_profile
+     + ruby
+       + % rbenv install 2.2.3
+       + % rbenv global 2.2.3
+       + % ruby -v
+     + rails
+       + % gem install rails -v 4.2.3 -- --use-system-libraries
+       + % rbenv rehash
+     + git
+       + % git --version
+       + % brew install git
+     + phantomjs - headless browser
+       + brew install phantomjs
+     + submlime text 3 - editor
+       + link: https://www.sublimetext.com/3
+       + download and install	 
+     + rspec - unit testing
+       + % git install rspec
+***** rails application
+     + % rails new test_app
+     + % cd test_app; % rails server
+     + copy http://localhost:3000 into browser
+     + % ctrl-c; // quit server
+***** ide's & editors
+     + rubymine, aptana, vim, sublime text
+     + sublime
+       + package manager: link: https://packagecontrol.io
+**** git and github
+     + one .git directory at the top level
+     + workflow
+       + create repo - empty; clone repo - existing
+       + add changes to staging area
+       + commit changes (from staging area to local repo)
+       + push changes from local to remote
+     + link: http://git-scm.com
+     + free book http://git-scm.com/book
+     + good git reference: http://gitref.org
+     + global setup
+       + % git config --global user.name "xyz"
+       + % git config --global user.email "xyz@gmail.com"
+       + % git config user.name
+     + % git help <command> // git help subcommand
+     + create new repo 
+       + % cd working_dir
+       + % git init
+       + possibly create a .gitignore file
+       + % git add // adds entire current dir with subdir
+       + % git commit -m "Initial comment"
+     + clone an existing repo (ex. from github)
+       + % git clone https://repourl.git
+	 + many transfer protocols
+	   + https, git
+     + % git status // current status
+     + % git add // add untracked files to be tracked or 
+                 // modified tracked file to staging area
+       + mods made to the file after "git add" need to be 
+	 "git-added" again even if you did not commit yet
+     + % git diff // shows the diff between staging and working area
+       + % git diff --staged // shows the changes b/w HEAD (latest commit
+	 on current branch) and staging directory
+       + % git diff HEAD // shows the deltas b/w HEAD and working dir
+     + % git commit // commits your changes to the repo, prompts for commit message
+       + % git commit -m "your message "
+       + % git commit -am "your message " // skipping the staging area
+	 // first time you need to do % git add
+     + checkout
+       + before committing
+         + % git checkout . // re-checkout all tracked files overwriting local changes
+         + % git checkout -- <file> // re-checkout just one specific file
+       + after committing
+	 + % git revert HEAD // reverts the most recent commit
+     + remote repos
+       + % git remote add alias remote_url // link remote repo with your local repo
+	 // origin - default alias for a cloned repo
+       + % git push alias branch-name // push changes to your branch (master)
+     + github // web-based hosting service for software projects that use git
+*** Week 2 - Ruby on Rails: An Introduction 
+**** getting to know ruby
+***** recommended books
+      + eloquent ruby - russ olsen
+      + programming ruby - dave thomas, andy hunt and chad fowler
+      + beginning ruby - peter cooper
+      + head first ruby - jay mcgavren
+      + learn to program - chris pine
+      + ruby cookbook - lucas carlson, leonard richardson
+      + the well-grounded rubyist - david a black
+      + metaprogramming ruby - paolo perrotta
+***** checkout out module 2
+      + % git clone https://github.com/jhu-ep-coursera/fullstack-course1-module2.git
+***** rspec
+      + % gem install rspec // install rspec
+      + % rspec --init // create spec directory
+*** Week 3
+**** core concepts
+***** checkout out module 3
+      + % git clone https://github.com/jhu-ep-coursera/fullstack-course1-module3.git
+***** recommended books
+      + agile web development with rails 4 - dave thomas, sam ruby and david heinemeier hansson
+      + ruby on rails tutorial - michale hartl
+      + rails 4 in action - ryan bigg, yehuda katz, steve klabnik, rebecca skinner
+***** creating your first application
+      + % rails new my_first_app // create rails app
+	+ % rails new -h // more options
+      + % cd my_first_app
+      + % git init; git add .; git commit -m "Initial commit" // add git repo
+      + another terminal // optional terminal
+	+ % cd my_first_app
+	+ % rails server (or rails s) // % rails server -h for more startup options
+***** directory
+      + app // controllers, views and models (and helpers). most of our development is here
+      + config // configuration files (which DB?)
+      + db // files related to your db and migration "scripts"
+      + public // static files
+      + vendor/Gemfile; vendor/Gemfile.lock // Dependencies managed by Bundler
+      + we want to add a completely static web page, we can add it to public page
+	+ public/hello_static.html
+***** generating a controller
+      + % rails generate controller controller_name [action1 action2] // can use g for generate
+	// app/controllers/greeter_controller.rb - controller
+	// app/views/greeter/hello.html.erb - view
+	// erb is templating library (like jsp) that lets you embed Ruby into your HTML
+***** router file
+      + config/routes.rb
+***** rake
+      + Ruby mAKE // ruby's build language (no XML, written entirely in Ruby)
+	          // to automate app-related tasks: database, running tests etc
+      + % rake --tasks // list of rake tasks
+	+ % rake --describe task_name 
+***** helpers
+      + app/helpers/greeter_helper.rb // add helper method
+	// rails provides many built-in helpers like "link_to name, path"
+***** ruby gems // 3rd party plugins and additions for ruby
+      + https://rubygems.org // web link
+      + % gem // package manager
+	+ % gem -h/--help // gem help
+      + % gem install httparty // install httparty
+	+ % gem list httparty // check whether httparty is installed or not
+	+ % gem list httparty -d // most details on httparty
+	  // httparty - restfull web services client
+      + https://www.programmableweb.com/apis // lots of restful apis
+      + "require pp" // pp - pretty print
+***** bundler // provides a consistent environment for ruby projects by tracking and
+              // installing the exact gems
+      + bundler.io // weblink
+      + preferred way to manage gem dependencies 
+        // specify dependencies in Gemfile in root of Rails app
+      + % bundle install // after specifying a new gem in the gemfile
+      + % bundle update // when modifying a version of gem
+***** heroku // cloud app platform
+      + https://www.heroku.com // link
+      + toolbelt.heroku.com // mac installer of heroku cli to manage apps
+      + heroku uses Postgres db and recommends rails_12factor gem
+        + download and install postgres.app from postgresapp.com
+        + % gem install pg -- --with-pg-config=/Applications/Postgres.app/Contents/Versions/latest/bin/pg_config
+      + put sqlite gem into development group and "heroku" gems in production
+	+ tells bundler and heroku which gems to use
+      + % heroku login
+      + % heroku create search-coursera-yaraju-jhu
+	      // created: https://search-coursera-yaraju-jhu.herokuapp.com/ 
+        // git: https://git.heroku.com/search-coursera-yaraju-jhu.git
+      + % git remote -v // push app
+      + % git push heroku master // pushes master branch to heroku
+        + % heroku config:set FOOD2FORK_KEY=0ee47c46b37a2167e7940c3f1dbfb275
+      + % heroku open // to open app in browser
+***** blackbox testing
+      + with RSpec + Capybars ruby gems, you can write very intuitive and expressive tests
+      + % gem install capybara; gem install selenium-webdriver
+      + % gem install poltergeist
+      + % rspec --init
+      + % rspec --format documentation // if :selenium uses firefox
+	                               // if :poltergeist uses phantomjs (headless browser)
+      + % rspec -e rq01 // test only rq 01
+      + phantomjs.org // headless web browser
+***** debug
+      + % heroku logs // gives logs of app
+        + fix and git commit
+      + % git push heroku master
+
+** course2: ruby on rails - rails with active record and action pack
+*** Week 1 - introduction
+**** beginning databases in rails
+***** some terms
+      + scaffolding // quickly generate code to view, delete and update resources
+        + Rails uses SQLite db by default
+      + migrations // database schema
+      + active record // interation with the database data
+        + CRUD // create, retrieve, update and delete
+      + metaprogramming
+        + dynamic methods, ghost methods and dynamic dispatch
+***** module git
+      + % git clone https://github.com/jhu-ep-coursera/fullstack-course2-module1-fancy_cars.git
+***** recommened books
+      + ruby on rails framework
+        + agile web development with rails 4* - dave thomas, sam ruby and david heinemeier hansson
+        + ruby on rails tutorial - michael hartl
+        + rails 4 in action* - ryan bigg, yehuda katz, steve klabnik and rebecca skinner
+      + ruby language
+        + eloquent ruby - russ olen
+        + programming ruby* - dave thomas, andy hunt and chad fowler
+        + beginning ruby - peter cooper
+        + head first ruby* - jay mcgavren
+        + learn to program - chris pine
+        + ruby cookbook - lucas carlson and leonard richardson
+        + the well grounded rubyist - david a black
+        + metaprogramming ruby - paolo perrotta
+***** scaffolding
+      + a code-generator for entities
+      + % rails new fancy_cars // creates new app fancy_cars
+        % cd fancy_cars/
+        % rails g scaffold car make color year:integer // rails generating scaffold code
+        % rake db:migrate // rake db migrate
+          % rails s // start rails server "http://localhost:3000/cars"
+                    // json view "http://localhost:3000/cars.json"
+***** sqlite
+      + rails default uses SQLite for database
+      + database setup
+        fancy_cars->app->config->database.yaml // database config
+        db/development.sqlite3 // db file
+      + % rails db // pops into sqlite console for db viewer
+        + sqlite> % .help // usage help
+        + sqlite> % .tables // shows created tables
+        + sqlite> % .headers on // headers on
+        + sqlite> % .mode columns // displays columns
+        + sqlite> % select * from cars;
+        + sqlite> % .exit // exit from sqlite
+      + DB Browser for SQLite // to view db, not really needed
+        + https://github.com/sqlitebroswer/sqlitebrowser
+***** migrations
+      + agility incentive, cross database incentive
+      + ruby classes that extend ActiveRecord::Migration
+        + file name start with timestamp followed by name // db/migrate/<timestamp_filename>.rb
+      + % rake db:migrate // to apply all migrations in db/migrate
+      + % rake db:rollback // undoes the last migration (applies down method)
+      + % rails g migration add_price_to_cars 'price:decimal{10,2}' // add column price
+      + % rails g migration rename_make_to_company // rename column
+      + http://guides.rubyonrails.org/migrations.html // help on migrations
+**** introduction to active record
+***** active record
+      + % rails c // rails console: irb with rails app loaded
+        + % irb> % reload! // reloads model after rake db:migrate
+      + % rails g model person first_name last_name // model has its own generator which can also generate migration
+      + config/initializers/inflections.rb // specify inflections
+        + config/initializers // initializers
+      + active record
+        + class name singular
+        + DB table plural
+        + need to have id primary key
+***** active record CRUD
+      + CRUD - Create, Retrieve, Update and Delete
+      + create
+        + p1 = Person.new; p1.first_name="Joe"; p1.last_name="Smith"; p1.save
+        + p2 = Person.new(first_name: "John", last_name: "Doe"); p1.save
+        + p3 = Person.create(first_name: "Jane", last_name: "Doe")
+      + retrieve
+        + find(id) or find(id1, id2)
+        + first, last, take, all
+        + order(:column) or order(column: :desc)
+        + pluck
+        + where (hash)
+        + find_by (conditions_hash)/ find_by! (conditions_hash)
+        + limit (n)
+        + offset (n)
+      + update
+        + update
+        + update_all
+      + delete
+        + destroy(id) // destroy
+        + delete(id)
+        + delete(all) // careful
+** course3: ruby on rails - ruby on rails web services and integration with mongodb
+*** Week 1 - introduction to mongodb, mongodb-api and crud
+**** introduction to nosql and mongodb
+***** module git
+      + git clone https://github.com/jhu-ep-coursera/fullstack-course3-module1.git // lecture slides
+      + git clone https://github.com/jhu-ep-coursera/fullstack-course3-module1-zips.git // git hub repo for module 1
+***** popular NoSQL db's
+      + mongodb, redis, amazondynamodb, apache hbase, couchbase, memcache, couchdb, cassandra
+      + NoSQL db used at twitter, facebook, linkedin and digg
+      + categories of nosql
+        + key/value based - dynamo, redis, memcached
+        + document based of tagged elements - mongodb, couchdb
+        + column based - cassandra, hbase
+        + graph based - neo4j
+        + joins are not supported - embedded doc or link to doc
+        + ACID transaction only supported at document level
+      + mongdodb
+        + created by 10gen (termed from humongous)
+        + open source, document oriented
+        + storage: JSON like
+        + well suited for object oriented programming
+      + ruby on rails & mongo
+        + http://docs.mongodb.org/ecosystem/tutorial/ruby-driver-tutorial/ - ruby driver
+        + http://docs.mongodb.org/ecosystem/tutorial/ruby-mongoid-tutorial/ - mongoid
+      + mongodb users
+        + metlife, sap, expedia, disney, sourceforge, forbes, firebase, foursquare, doodle
+          adp, craigslist, collegehumor, bit.ly, theguardian
+      + mongodb installation
+        + % brew install mongodb // install mongodb using brew
+        + http://www.mongodb.org/downloads - installation downloads
+        + journaling in mongodb - allocates 3GB upfront
+          + for casual development, turn off // not recommended
+            + setting "nojournal=true" in mongod.conf
+              + % mongod --config /Users/yaraju/homebrew/etc/mongod.conf
+          + do not turn off journaling in production system
+      + starting mongodb
+        + % mongod -dbpath /Users/yaraju/Aneel/mongodb/data/db // start mongodb
+        + % mongo // mongo shell
+      + mongo basics
+        + download sample zips.json // media.mongodb.org/zips.json
+        + % mongoimport --db test --collection zips --drop --file zips.json
+        + % mongo // mongo shell
+        + % use test // switch to test database
+        + % db.zips.findOne() // returns single document
+        + gem updates
+          % gem update
+          % gem install mongo
+          % gem install bson_ext
+        + require mongo // to use mongo gem in ruby
+        + ruby irb
+          + % require 'mongo'
+            % Mongo::Logger.logger.level = ::Logger::INFO
+              % Mongo::Logger.logger.level = ::Logger::DEBUG // logger level debug
+            % db = Mongo::Client.new('mongodb://localhost:27017')
+            % db = db.use('test')
+            % db.database.name
+            % db.database.collection_names
+            % db[:zips].find.first
+              % system('ls') // ruby system command
+***** CRUD
+      + "C" - create
+        + insert_one - insert one document to collection
+          + % db[:zips].insert_one(:_id => "100", :city => "city01", :loc => [-76, 39], :pop => 4678, :state => "MD")
+          + % db[:zips].find(:city => "city01").count // to test above query
+          + % db[:zips].find(:city => "city01").to_a // dispaly in array
+        + insert_many - insert multiple document to collection
+          + % db[:zips].insert_many([{ :_id => "200", :city => "city02", :loc => [-74.06, 37.56], :pop => 2002, :state => "CA"},
+                                     { :_id => "201", :city => "city03", :loc => [-75.06, 35.56], :pop => 3003, :state => "CA"}])
+        + _id field
+          + primary field
+          + default fault for BSON object
+      + "R" - Read
+        + "find" command
+          + % db[:zips].find(:city => "BALTIMORE")
+          + % db[:zips].find(:city => "BALTIMORE").first
+          + % db[:zips].find.distinct(:state)
+          + % db[:zips].find(:city => "GERMANTOWN").count
+          + % pp db[:zips].find(:city => "GERMANTOWN", :state => "NY").first
+          + % db[:zips].find().each { |r| puts r } // print all
+          + % db[:zips].find().each { |r| pp r } // print pp
+          + % db[:zips].find({:state => "MD"}).projection(state:true).first // prints _id (default) and state
+          + % db[:zips].find({:state => "MD"}).projection(state:true, _id:false).first // prints only state
+       + paging
+         + db[:zips].find.limit(3).each { |r| pp r } // first 3 documents
+         + db[:zips].find.skip(3).limit(3).each { |r| pp r } // skip 3 and next 3 documents
+       + sort
+         + db[:zips].find.limit(3).sort({:city => 1}).each { |r| pp r } // sort in assending order
+         + db[:zips].find.limit(3).sort({:city => -1}).each { |r| pp r } // sort in descending order
+       + find by criteria
+         + db[:zips].find(:city => {:$lt => 'D'}).limit(2).to_a.each { |r| pp r } // city < 'D'
+         + db[:zips].find(:city => {:$lt => 'P', :$gt => 'B'}).limit(3).to_a.each { |r| pp r };nill 
+           // cith < 'P' and > 'B' and to stop trailing print
+         + db[:zips].find(:city => {:$regex => 'x'}).limit(5).each { |r| pp r } // city with regex 'x'
+         + db[:zips].find(:city => {:$regex => 'x$'}).limit(5).each { |r| pp r } // city that end with 'x'
+         + db[:zips].find(:city => {:$regex => '^[A-E]'}).limit(5).each { |r| pp r } // city that with A to E
+         + db[:zips].find(:city => {:$exists => true}).projection({:_id => false}).limit(3).to_a.each {|r| pp r} // if city field exists
+         + db[:zips].find(:pop => {'$not' => {'$gt' => 9500}}).projection({_id:false}).limit(20).to_a.each {|r| pp r} // logical not
+         + db[:zips].find({:state=> {'$type' => 2}}).first // value of the field is a instance of specified numeric BSON type
+           // '2' is BSON type of string
+           // double:1; string:2; object:3; array:4; binary data:5; undefined:6; object id:7; boolean:8
+       + replace, update and delete
+         + 
+
+
+
+
+        
+*** Week 2 - aggregation framework, performance and advanced mongodb
+*** Week 3 - mongoid
+*** Week 4 - web services
+** course4: ruby on rails - html, css and javascript for web developers
+*** Week 1 - Introduction to HTML5
+**** Welcome to HTML, CSS and Javascript for Web Developers
+***** recommended books
+      + web design with HTML, CSS, JavaScript and jQuery Set - Jon Duckett *
+      + html and css: design and build websites - Jon Duckett
+      + learning web design: a beginner's guide to html, 
+        css, javascript and web graphics - jennifer niederst robbins
+      + learning web app development - semmy purewal
+      + mastering sublime text - dan peleg
+      + pragmetic guide to git - travis swicegood *
+      + pro git - scott chacon and ben straub
+      + javascript: the definitive guide: acive your web pages - david flanagan
+      + javascript: the good parts - douglas crockford
+      + javascript and jquery: interactive front-end web development - jon duckett
+**** Development Environment Setup
+***** install
+      + sublime 3 - https://www.sublimetext.com/3
+      + git - https://git-scm.com/downloads
+      + node.js - https://nodejs.org/en/download
+      + browser sync - https://www.browsersync.io
+        % sudo npm install -g browser-sync
+        + read document on browser sync
+***** test site
+      + test site
+        % create <html_dir>/html_file 
+        % cd <html_dir>
+        % browser-sync start --server --directory --files "*"
+      + git
+        + read first 3 chapters chapter in git book - https://git-scm.com/book/en/v2
+      + github.com
+        + create new repository coursera-test
+        + goto settings->GitHub Pages->Launch automatic page generator
+          + https://aneelraju.github.io/coursera-test/
+        % git clone https://github.com/aneelraju/coursera-test.git - checkout locally
+        % git checkout gh-pages
+        % mkdir site; % cd site; create sample index.html
+        % cd ..; % git commit -m "My First Page."
+        % git push
+***** ask for help
+      + stackoverflow.com
+      + https://jsfiddle.net - write and test html/css/js code online
+        + on save, you will get url, that you can use to post 
+      + codepen.io - can see code solutions
+      + css-tricks.com 
+**** HTML Basics
+***** basics
+      + HTML - Hypertext Markup Language
+        + HTML - Structure
+        + CSS - Style
+        + Javascript - Behavior (add functionality)
+***** standards
+      + www.w3.org/TR/html5/ - from w3c group html5 standard
+      + caniuse.com - keeps tracks of standards
+      + https://validator.w3.org/#validate_by_uri - validate website
+      + www.w3schools.com/browsers_stats.asp
+      + www.google.com - look up for any updates and features
+*** Week 2 - Introduction to CSS3
+***** commonly used font
+      + www.w3schools.com/cssref/css_websafe_fonts.asp
+***** twitter bootstrap
+      + html, css and js framework for developing responsive, mobile first 
+        projects on the web - developed in twitter
+      + most popular on github
+      + download bootstrap-3.3.7-dist from getbootstrap.com/getting-started/ to dev folder
+      + download jquery-3.1.0.min.js from jquery.com
+*** Week 3 - Coding the Static Restaurant Site
+*** Week 4 - Introduction to Javascript
+*** Week 5 - Using Javascript to Build Web Applications
+** course5: ruby on rails - single page web applications with angularjs
+*** Week 1 - Introduction to AngularJS
+**** Welcome and Importance resources
+***** recommended books
+      + web design with html, css, javascript and jquery set - jon duckett *
+      + html and css: design and build website - jon duckett *
+      + code complete: a practial handbook of software construction - steve mcconnell *
+      + clean code: a handbook of agile software craftsmanship - robert c martin *
+      + soft skills: the software developer's life manual - john sonmez *
+      + learning web design: a beginner's guide to html, css, javascript and web graphics - jennifer 
+        niederst robbins
+      + learning web app development - semy purewal
+      + mastering sublime text - dan peleg
+      + pragmatic guid to git - travis swicegood *
+      + pro git - scott chacon and ben straub
+      + javascript: the definitive guide: activate your web pages - david flanagan
+      + javascript: the good parts - douglas cockford
+      + javascript and jquery: interactive front-end web development - jon duckett *
+*** Week 2 - Filters, Digest Cycle, Controller Inheritance, and Custom Services
+*** Week 3 - TBD
+*** Week 4 - TBD
+*** Week 5 - TBD
+
+
+
+
+
+
