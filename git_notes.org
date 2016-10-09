@@ -167,10 +167,12 @@
        + add ssh key // if prompted entry github password
    + push to github.com
      + create repository (eg:notes) on github.com // don't create README.md
-     + % eacho "# notes" >> README.md
+     + % echo "# notes" >> README.md
+     + % git init
      + % git add README.md
      + % git commit -m "README.md added"
      + % git remote add origin git@github.com:aneelraju/notes.git
+       + % git remote set-url origin git@github.com:aneelraju/RoR-Course2-WithArAndAp // if remote origin is wrong
      + % git push -u origin master
 
 
