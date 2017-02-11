@@ -46,6 +46,34 @@
        + % git install rspec
 ***** rails application
      + % rails new test_app
+       + directory
+         + app // core app code, including models, views, controllers and helpers
+         + app/assets // application assets such as cascading style sheets (css),
+                      // javascript files and images
+         + bin // binary executable files
+         + config // application configuration
+         + db // database files
+         + doc // documentation for the application
+         + lib // library modules
+         + lib/assets // library assets such as cascading style sheets(css), javascript files
+                      // and images
+         + log // application log files
+         + public // data accessible to the public (e.g., via web browsers), such as error
+                  // pages
+         + bin/rails // a program for generating code, opening console sessions or starting a
+                     // local server
+         + test // application tests
+         + tmp // temporary files
+         + vendor // third-party code such as plugins and gems
+         + vendor/assets // third-party assets such as cascading style sheets (css), javascript
+                         // files, and images
+         + README.md // a brief description of the application
+         + Rakefile // utility tasks avaiable via the rake command
+         + Gemfile // gem requirements for this app
+         + Gemfile.lock // a list of gems used to ensure that all copies of the app use the same
+                        // gem versions
+         + config.ru // a configuration file for rake middleware
+         + .gitignore // patters for files that should be ignore by git      
      + % cd test_app; % rails server
      + copy http://localhost:3000 into browser
      + % ctrl-c; // quit server
@@ -173,6 +201,9 @@
       + preferred way to manage gem dependencies 
         // specify dependencies in Gemfile in root of Rails app
       + % bundle install // after specifying a new gem in the gemfile
+        + % gem list <gem-name> // exact version of gem
+        + % bundle install --without production // to prevent the local installation of any
+                                                // production
       + % bundle update // when modifying a version of gem
 ***** heroku // cloud app platform
       + https://www.heroku.com // link
@@ -236,13 +267,14 @@
       + % rails new fancy_cars // creates new app fancy_cars
         % cd fancy_cars/
         % rails g scaffold car make color year:integer // rails generating scaffold code
+          + --no-migration // scaffold flag for no migration 
         % rake db:migrate // rake db migrate
           % rails s // start rails server "http://localhost:3000/cars"
                     // json view "http://localhost:3000/cars.json"
 ***** sqlite
       + rails default uses SQLite for database
       + database setup
-        fancy_cars->app->config->database.yaml // database config
+        fancy_cars->config->database.yaml // database config
         db/development.sqlite3 // db file
       + % rails db // pops into sqlite console for db viewer
         + sqlite> % .help // usage help
@@ -258,14 +290,24 @@
       + ruby classes that extend ActiveRecord::Migration
         + file name start with timestamp followed by name // db/migrate/<timestamp_filename>.rb
       + % rake db:migrate // to apply all migrations in db/migrate
+        + def up // generate db schema changes
+        + def down // undo the changes introduced by the up method
+        + change // method when rails can guess how to undo changes
       + % rake db:rollback // undoes the last migration (applies down method)
       + % rails g migration add_price_to_cars 'price:decimal{10,2}' // add column price
       + % rails g migration rename_make_to_company // rename column
+        + generates change method, but manually add rename_column
       + http://guides.rubyonrails.org/migrations.html // help on migrations
+***** ruby dynamic methods
+      + dynamic dispath: classInst.send(method, *args);
+      + dynamic method
+      + ghost method: missing_method
 **** introduction to active record
 ***** active record
       + % rails c // rails console: irb with rails app loaded
         + % irb> % reload! // reloads model after rake db:migrate
+        + class methods deal with the table as a whole, while instance
+          methods deal with a particular row of the table
       + % rails g model person first_name last_name // model has its own generator which can also generate migration
       + config/initializers/inflections.rb // specify inflections
         + config/initializers // initializers
@@ -277,23 +319,39 @@
       + CRUD - Create, Retrieve, Update and Delete
       + create
         + p1 = Person.new; p1.first_name="Joe"; p1.last_name="Smith"; p1.save
-        + p2 = Person.new(first_name: "John", last_name: "Doe"); p1.save
+        + p2 = Person.new(first_name: "John", last_name: "Doe"); p2.save
         + p3 = Person.create(first_name: "Jane", last_name: "Doe")
       + retrieve
         + find(id) or find(id1, id2)
         + first, last, take, all
+          + % Person.take; % Person.take 2;
+          + % Person.first; % Person.all.first;
+          + % Person.all.map { |person| person.first_name }; % Person.pluck(:first_name)
         + order(:column) or order(column: :desc)
+          + Person.all.order(first_name: :desc)
         + pluck
-        + where (hash)
-        + find_by (conditions_hash)/ find_by! (conditions_hash)
-        + limit (n)
-        + offset (n)
-      + update
+        + where (hash) // returns ActiveRecord::Relation
+          + % Person.where(last_name: "Doe"); % Person.where(last_name: "Doe")[0]; 
+          + % Person.where(last_name: "Doe").pluck(:first_name);
+        + find_by (conditions_hash)/ find_by! (conditions_hash) // single return or nill
+          + % Person.find_by(last_name: "Doe"); % Person.find_by(last_name: "Nosuchdude");
+          + % Person.find_by!(last_name: "Incognito");
+        + limit (n) // how many records come back
+          + % Person.count; % Person.all.map { |person| "#{person.first_name} #{person.last_name}" };
+          + % Person.offset(1).limit(1).map { |person| "#{person.first_name} #{person.last_name}" };
+          + % Person.offset(1).limit(1).all.map { |person| "#{person.first_name} #{person.last_name} " }
+        + offset (n) // don't start from beginning
+      + update // modify and save
         + update
-        + update_all
+          + % jane = Person.find_by first_name: "Jane"; jane.last_name = "Smithie"; jane.save;
+          + % Person.find_by(last_name: "Smith").update(last_name: "Smithson")
+        + update_all // batch updates
       + delete
-        + destroy(id) // destroy
-        + delete(id)
+        + destroy(id) or destroy // removes a particular instance from DB
+          + http://guides.rubyonrails.org/active_record_callbacks.html // callbacks
+          + jane = Person.find_by(first_name: "Jane"); % jane.destroy
+        + delete(id) // removes the row from DB
+          + joe = Person.find_by first_name: "Joe"; % Person.delete(joe.id);
         + delete(all) // careful
 ** course3: ruby on rails - ruby on rails web services and integration with mongodb
 *** Week 1 - introduction to mongodb, mongodb-api and crud

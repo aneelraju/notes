@@ -17,8 +17,10 @@
 *** init
    + %git init proj.py; // repository
      - %open .git; // git files where historical event saves
-   + %git remote add origin https://github.com/aneelraju/python.prj_0 // remote repository
+   + %git remote add origin https://github.com/aneelraju/python.prj_0 // remote repository to github
      - %cat .git/config // see config details
+   + % git remote add origin git@bitbucket.org:aneelraju/hello_app.git // add bitbucket as origin
+     - % git push -u origin --all // push your repository up to the remote origin
    + %git init // turn current directory into repository
    + %git status // status of git
 *** commit
@@ -92,6 +94,7 @@
    + %git checkout master // back to HEAD
    + %git checkout -- newname.txt // discard edit files, revert
    + %git checkout -b branch1 // checkout and move to branch1
+   + %git checkout -f // to force overwriting the current changes; checkout from branch master
 *** merge
    + workflow
      + %git checkout master 
