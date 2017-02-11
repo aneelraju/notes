@@ -1,0 +1,10 @@
+* Coursera: Machine Learning, Stanford University
+** Week1
+*** Introduction
+    + Machine Learning 
+      - Is a science of getting computers to learn, without being
+        explicitly programmed
+    + octave - open source high level interpreted language
+      + used for rapid prototyping and then migrate to c++ and java
+      + https://www.gnu.org/software/octave/
+      + 

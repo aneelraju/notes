@@ -1,0 +1,297 @@
+* Udacity: Deep Learning Nanodegree Foundations - Siraj, Matt
+** Lesson 1: Welcome
+   + Instructors
+     + siraj raval // http://www.sirajraval.com
+       + mat leonard // sampyl link: http://matatat.org/sampyl/index.html
+   + projects
+     + 1. your first neural network : 27Jan17
+     + 2. object recognition : 22Feb17
+     + 3. generate tv scripts : 22Mar17
+     + 4. make a translation chatbot : 5Apr17
+     + 5. generate faces : 10May17
+   + prequisite
+     + required
+       + intermediate python experience 
+         // https://www.udacity.com/course/programming-foundations-with-python--ud03
+     + optional
+       + multivariable calculus 
+         // https://www.khanacademy.org/math/multivariable-calculus
+       + linear algebra 
+         // https://www.khanacademy.org/math/linear-algebra
+   + Terminology
+     + scikit-learn // an extremely popular machine learning library for python
+       + link : http://scikit-learn.org/stable/
+     + perceptrons // the simplest form of a neural network
+     + gradient descent // process by which machine learning algo learn to improve
+                        // themselves based on the acuracy of their predictions
+     + backpropagation // process by which neural networks learn how to improve
+                       // individual parameters
+       + link : http://neuralnetworksanddeeplearning.com/chap2.html
+     + numpy // popular library for scientific computing in python
+       + link : http://www.numpy.org
+     + tensorflow // popular python libraries for creating neural networks
+                  // maintained by google
+       + link : https://www.tensorflow.org
+   + Numpy, Pandas or Matplotlib // main tools for working with and visualizing data in python
+     + link: https://www.udacity.com/course/intro-to-data-analysis--ud170 // Take Intro to Data Analysis course
+
+** Lesson 2: Applying Deep Learning
+   + anaconda // python packages
+     + tutorial link :  https://classroom.udacity.com/nanodegrees/nd101/parts/2a9dba0b-28eb-4b0e-acfa-bdcf35680d90/modules/329a736b-1700-43d4-9bf0-753cc461bebc/lessons/9e9ed61d-20c3-4431-95aa-a1099f28d601/concepts/b08dcd92-c3a0-43a0-b133-0deaf3d6f5cd
+     + link : https://www.continuum.io/downloads
+     + miniconda // smaller version of Anaconda comes with package conda
+                 // link : https://conda.io/miniconda.html
+   + style transfer
+     + install tensorflow 0,11.0, python 2.7.9, pillow 3.4.2, scipy 0.18.1 and numpy 1.11.2
+     + % conda create -n style-transfer python=2.7.9 // new env that will hold package
+       % source activate style-transfer // enters the environment
+       + % source deactivate style-transfer // exit the environment
+       % conda install -c conda-forge tensorflow=0.11.0 // install tensorflow
+       % conda install scipy pillow // install scipy and pillo
+     + copy "Rain Princess checkpoint" to fast-style-transfer repository
+       // link : https://drive.google.com/drive/folders/0B9jhaT37ydSyRk9UX0wwX3BpMzQ
+       // checkpoint is a model that already has tuned parameters
+       % copy the image you want to style into the fast-style-tranfer folder
+       % cd fast-style-transfer 
+       % python evaluate.py --checkpoint ./rain-princess.ckpt \
+       --in-path <input_path> --out-path ./output_image.jpg
+   + deep traffic
+     + link : http://selfdrivingcars.mit.edu/deeptrafficjs/
+   + flappy bird
+     + link : https://github.com/yenchenlin/DeepLearningFlappyBird
+       % conda create --name=flappybird python=2.7
+       % source activate flappybird
+       % conda install opencv
+       % pip install pygame
+       % pip install tensorflow
+       % git clone git@github.com:yenchenlib/DeepLearningFlappyBird.git
+       % cd DeepLearningFlappyBird
+       % python deep_q_network.py
+   + books
+     + grokking deep learning - andrew trask
+       link : https://www.manning.com/books/grokking-deep-learning
+       coupon code : traskud17
+     + neural networks and deep learning - michael nelson
+     + the deep learning textbook - ian goodfellow, yoshua bengio and aaron courville
+       link : http://www.deeplearningbook.org
+
+** Lesson 3: regression
+   + env setup
+     + panda // extremely popular library for handling data in python
+       + link: http://pandas.pydata.org/pandas-docs/stable/10min.html#min
+     + scikit-learn // a comprehensive library for machine learning in python
+       + link: http://scikit-learn.org/stable/tutorial/basic/tutorial.html
+     + matplotlib // a library for plotting and visualizing graphs in python
+       + link: http://matplotlib.org/users/pyplot_tutorial.html
+     + machine learning
+       + supervised
+       + unsupervised
+       + reinforcement
+     + linear_regression_demo
+       + link: https://github.com/llSourcell/linear_regression_demo.git
+       + % conda create -n siraj-regression python=2
+       + % conda install python=2 pandas matplotlib scikit-learn
+         or % pip install -r requirements.txt
+   + regression live session
+     + edit used "sublime"
+     + code link: https://github.com/llSourcell/linear_regression_live.git
+     + youtube link: https://youtu.be/uwwWVAgJBcM
+     + linear regression: https://onlinecourses.science.psu.edu/stat501/node/250
+     + gradient descent visualization:
+ https://raw.githubusercontent.com/mattnedrich/GradientDescentExample/master/gradient_descent_example.gif
+     + sum of squared distances formula (to calculate our error)
+       https://spin.atomicobject.com/wp-content/uploads/linear_regression_error1.png
+     + partial derivative with respect to b and m (to perform gradient descent)
+       https://spin.atomicobject.com/wp-content/uploads/linear_regression_gradient1.png
+     + credit to mattnedrich
+       https://github.com/mattnedrich
+     + dependencies: numpy (use pip to install any dependencies)
+       + pip link: https://pip.pypa.io/en/stable/
+     + open data.csv
+     + learning_rate // how fast should our model converge
+   
+** Lesson 4: siraj's neural network
+   + env setup
+     + % conda create -n siraj-nn python=2
+       % conda install python=2 numpy
+   + Numpy // link: https://docs.scipy.org/doc/numpy-dev/user/quickstart.html
+   + CS231N Numpy // link: http://cs231n.github.io/python-numpy-tutorial/
+   + Perceptron // single layer feedforward neural network
+   + live stream on using tensorflow
+     link : https://www.youtube.com/watch?v=4urPuRoT1sE
+   + neural network : an algorithm that learns to identify patterns in data
+   + backpropagation : is  a technique to train a neural net by updating weights
+     via gradient descent
+   + deep learing = many layer neural net + big data + big compute
+   + tensor flow learning resources
+     + https://jalammar.github.io/visual-interactive-guide-basics-neural-networks/
+     + https://github.com/aymericdamien/TensorFlow-Examples
+     + https://www.youtube.com/watch?v=2FmcHiLCwTU&t=84s
+     + https://cs224d.stanford.edu/lectures/CS224d-Lecture7.pdf
+       + CS224d - Deep Learning for Natural Language Processing - Richard Socher, PhD
+         + link: https://cs224d.stanford.edu/lectures/         
+     + https://www.oreilly.com/learning/hello-tensorflow
+     + https://www.tensorflow.org/tutorials/mnist/beginners/
+
+** Lesson 5: intro to neural networks
+   + logistic regression
+     + best line fit to minimize error function // using gradient descent
+   + neural networks
+     + takes inputs, process info and finally produces an output in form of a decision
+   + when we initialize a neural network, we don't know what info will be most important
+     in making a decision. it's upto the neural network to learn for itself which data
+     is most important and adjsut how it considers that data. it does this with something
+     called weights
+   + these weights start out as random values, and as the neural network learns more about
+     what kind of input data leads to a student being accepted into a university, the network
+     adjusts the weights based on any errors in categorization that the previous weights
+     resulted in. This is called training the neural network
+   + higher weight means the neural network considers that input more important than other
+     inputs, and lower weight means that the data is considered less important
+   + activation function // simplest activation functions is Heaviside step function
+     + the function returns a 0 if the linear combination is less than 0, it returns a 1 if
+       linear combination is positive or equal to zero
+   + with neural networks we won't know in advance what values to pick for biases. just like
+     weights, the bias can also be updated and changed by the neural network during training
+   + perceptron formula
+     f(x1, x2, ..., xm) = 0 if b+sigma(wi.xi) < 0; = 1 if b+sigma(wi.xi) >= 0
+   + initially, the weights(wi) and bias(b) are assigned a random value, and then they are
+     updated using a learning algorithm like gradient descent. the weights and biases change
+     so that the next training example is more accurately categorized and patterns in data
+     are "learned" by the neural network
+   + gradient descend
+     + common error metric to measure is sum of the squared errors (SSE)
+       + SSE is a good choice: ensures the error is always positive and larger errors are
+         penalized more than smaller errors
+     + we want the network's prediction error to be as small as possible and the weights are
+       the knobs we can use to make that happen. our goal is to find weights that minimize
+       the squared error. to do this with a neural network, typically you'd use gradient descent
+     + the steps taken should be in the direction that minimizes the error the most. we can
+       find this direction by calculating the gradient of the squared error
+     + to brush up knowledge
+       + https://www.khanacademy.org/math/multivariable-calculus/multivariable-derivatives/gradient-and-directional-derivatives/v/gradient
+       + https://www.khanacademy.org/math/ap-calculus-ab/product-quotient-chain-rules-ab/chain-rule-ab/v/chain-rule-introduction
+     + to calculate a rate of change, a derivative is used. a derivative of a function returns
+       the slope at point x
+     + the gradient we calculated determines the direction we should move values, but the 
+       learning rate tells us if we should take a big step or a small step in that direction
+     + in real life you will often adjust your learning rate during training, starting off larger
+       and getting smaller as training nears completion
+     + the larger the error, the larger the step should be. when error is small, our steps can be
+       smallers since the weights are near the minimum
+     + since the weights will just go where ever the gradient takes them, they can end up where
+       the error is low, but not the lowest. these spots are called local minima. if the weights
+       are initialized with the wrong values, gradient descent could lead the weights into a local
+       minimum. there are methods to minimize this using "momentum"
+    + implementing gradient descent
+      + graduate school admissions data
+        link: http://www.ats.ucla.edu/stat/data/binary.csv
+    + error for units is proportional to the error in the output layer times the weight between
+      the units
+    + vector intro for linear algebra
+      + link : https://www.khanacademy.org/math/linear-algebra/vectors-and-spaces/vectors/v/vector-introduction-linear-algebra
+    + matrices
+      + link: https://www.khanacademy.org/math/precalculus/precalc-matrices
+    + matrix multiplication
+      + link : https://en.wikipedia.org/wiki/Matrix_multiplication
+    + backpropagation further reading
+      + backpropagation is fundamental to deep learning. TensorFlow and other libraries will perform the
+        backprop for you
+      + from andrej karpathy 
+        + https://medium.com/@karpathy/yes-you-should-understand-backprop-e2f06eab496b#.xl5yxkbr5
+        + https://www.youtube.com/watch?v=59Hbtz7XgjM
+ 
+** Lesson 6: anaconda
+   + link :  https://classroom.udacity.com/nanodegrees/nd101/parts/2a9dba0b-28eb-4b0e-acfa-bdcf35680d90/modules/329a736b-1700-43d4-9bf0-753cc461bebc/lessons/9e9ed61d-20c3-4431-95aa-a1099f28d601/concepts/b08dcd92-c3a0-43a0-b133-0deaf3d6f5cd
+   + libraries
+     + numpy, matplotlib, pandas // python data toolkit
+   + intro to data analysis course using numpy and pandas
+     + link : https://www.udacity.com/course/intro-to-data-analysis--ud170
+   + virtualenv // tool to create isolated python environments
+     + link : https://virtualenv.pypa.io/en/stable/#
+     + and pyenv // most popular environment managers
+   + anaconda // distribution of packages built for data science
+     + it comes with conda, a package and environment manager
+   + jupyter // notebook
+   + pip // default package manager for python for general use
+   + anaconda download
+     + link : https://www.continuum.io/downloads
+     + % conda upgrade --all // upgrade all packages
+     + % conda install <package_name> // install package_name
+     + % conda install numpy scipy pandas // install multiple packages
+     + % conda install numpy=1.10 // install numpy package version 1.10
+     + % conda remove <package_name> // remove package_name
+     + % conda update <package_name> // update package_name
+     + % conda search <search_term> // search for package with search_term
+       + % conda search beautifulsoup
+     + % conda create -n env_name <list of packages> // create environment
+       + % conda create -n my_env numpy
+       + % conda create -n py2 python=2
+     + % source activate my_env // enter environment
+       // env only has few packages installed by default plus you installed
+       // when creating it. install more packages using "condo install <pkg>"
+     + % conda list // list packages
+     + % conda env export > environment.yaml // writes out all packages in the environment
+       + % conda env create -f environment.yaml // create new env with same name list as environment.yaml
+     + % conda env list // list of environments
+     + % conda env remove -n <env_name> // remove environment env_name
+     + % pip freeze > requirements.txt // useful to share environment who doesn't use conda
+
+** Lesson 7: jupyter notebooks
+   + link : https://classroom.udacity.com/nanodegrees/nd101/parts/2a9dba0b-28eb-4b0e-acfa-bdcf35680d90/modules/329a736b-1700-43d4-9bf0-753cc461bebc/lessons/13f4b7d6-92a9-468d-9008-084fc8b53a23/concepts/75e1eee0-5f81-4d5b-a1ca-eaebe3c91759
+   + jupyter notebooks is a web application that allows you to combine explanatory text, math equations,
+     code and visualizations
+   + % jupyter notebook // run jupyter notebook server
+     + local host link : http://localhost:8888
+       + every additional notebook server will increment the port number like http://localhost:8889
+   + cells are where you write and run your code
+     + you can write any code, assigning variables, defining functions and classes, importing packages
+       and more
+     + any code executed in one cell is available in all other cells
+   + "New" -> python [default] // to create a notebook
+   + "<esc> + s" // to save a notebook
+   + "Markdown" and "reST" formats are great for using notebooks in blogs or documentation
+   + you'll often want to download it as HTML file to share with others who aren't using jupyter
+   + you can download the notebook as Notebook (.ipynb), Python(.py), HTML(.html), 
+     Markdown(.md), reST(.rst) PDF via LaTex (.pdf)
+   + "Shift + Enter" to run the cell
+   + Markdown is a formatting syntax that allows you to include links, style text and format code
+     + Markdown uses LaTeX symbols. Notebooks use Mathjax to render the LaTeX symbols as math symbols
+     + $y = mx + b$ // $ to start math mode
+   + Magic keywords are special commands you can run in cells that let you control the notebook itself
+     to perform system calls such as changing directories
+     + %matplotlib // to setup matplotlib to work interactively in the notebook
+     + preceded by % or %% for line or cell 
+     + %timeit // to time how long it takes for a function to run
+     + %matplotlib inline // inline backend 
+       + %config InlineBackend.figure_format = 'retina' after %matplotlib inline for render higher resolution images
+     + %pdb // you can turn on iteractive debugger
+       + "q" to quit pdb
+   + Notebooks are just big JSON files with the extension .ipynb
+     + nbconvert for converting to HTML, Markdown, slideshows etc
+     + % jupyter nbconvert --to html notebook.ipynb
+     + HTML is useful for sharing your notebooks with others who aren't using notebooks
+     + Markdown is great for including a notebook in blogs and other text editors that accept Markdown formatting
+     + % jupyter nbconver notebook.ipynb --to slides // convert to slides
+       + % jupyter nbconver notebook.ipynb --to slides --post serve // convert and present it
+
+** project 1: your first neural network
+   + data
+     link: https://archive.ics.uci.edu/ml/datasets/Bike+Sharing+Dataset
+   + project material
+     link: https://d17h27t6h515a5.cloudfront.net/topher/2017/January/588d28a7_dlnd-your-first-network/dlnd-your-first-network.zip
+   + conda env setup
+     + % conda create --name dlnd python=3
+     + % source activate dlnd
+     + % conda install numpy matplotlib pandas jupyter notebook
+     + % jupyter notebook dlnd-your-first-neural-network.ipynb
+   + python
+     + % python -i dlnd-your-first-neural-network.py // to run interactively
+     + to open and run python file inside interactive python
+       + % python
+       + % exec(open('./dlnd-your-first-neural-network.py').read()) // to load/re-load python file
+     + only in interactive python mode
+       + rides.head() // pandas
+       + rides[:24*10].plot(x='dteday', y='cnt') // matplotlib
+       + plt.show() // matplotlib: need to show plot
+
