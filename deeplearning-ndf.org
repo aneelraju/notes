@@ -275,7 +275,7 @@
      + % jupyter nbconver notebook.ipynb --to slides // convert to slides
        + % jupyter nbconver notebook.ipynb --to slides --post serve // convert and present it
 
-** project 1: your first neural network
+** Lesson 8: project 1: your first neural network
    + data
      link: https://archive.ics.uci.edu/ml/datasets/Bike+Sharing+Dataset
    + project material
@@ -294,4 +294,58 @@
        + rides.head() // pandas
        + rides[:24*10].plot(x='dteday', y='cnt') // matplotlib
        + plt.show() // matplotlib: need to show plot
+
+** additional
+*** repositories (github.com or bitbucket.org)
+   + % git init // initialize a new repository
+   + % git add -A // add all project files to staging area
+     + .gitingore // apart for the files mentioned in gitignore
+     + % git rm --cached <file1> <file2>  // to unstage without deleting it locally
+     + % git rm -r --cached <folder> // to unstage a folder without deleting it locally
+     + % git rm <file1> // to unstage and also delete locally
+     + % git rm -r <folder> // to unstage and also delete locally
+     + % git rm -f --cached <file> // remove if modified after upstage (keep local copy)
+     + % git rm -r -f --cahced <folder> // remove if modified after upstage (keep local copy)
+     + % git rm -f <file> // remove if modified after upstage (don't keep local copy)
+     + % git rm -r -f  <folder> // remove if modified after upstage (don't keep local copy)
+   + % git status // shows files in staging area
+   + % git commit -m "First repository" // commit changes
+     + -m // if we omit git opens default editor
+   + % git checkout -f // to checkout files if accidently deleted locally
+   + bitbucket.org
+     + % cat ~/.ssh/id_rsa.pub // copy public key and add it to "Add SSH key"
+                               // in bitbucket.org accout
+     + create a new repository
+       - Repository name: hello_app
+       - Access level: This is private repository
+       - Repository type: Git
+     + % git remote add origin git@bitbucket.org:aneelraju/hello_app.git 
+         // want to add bitbucket as the origin for your repository
+     + % git push -u origin --all // pushing your repository up to remote origin
+   + github.com
+     + create a new repository
+       - Repository name: dlnd
+       - Access level: Public
+       - don't create README.md file
+     + % git remote add origin git@github.com:aneelraju/dlnd.git // add github.com as origin
+     + % git push -u origin master // push repository up to remote origin
+   + branch, edit, commit, merge
+     + branches are helpful, in particular because the master branch is insulated from any
+       changes we make to the topic branch, even if we really mess things up we can always
+       abandon the changes by checking out the master branch branch and deleting the topic
+       branch
+     + if change is small, work on the parent branch
+     + % git checkout -b <dlnd_b> // creates new branch and switch to dlnd_b
+                                  // using parent repository is the master branch
+       + % git branch // show all branches; * shows which branch we are on
+     + edit file
+     + % git commit -a -m "add and commit file" // add to staging area and commit
+       // preferred usuage git add -A; git commit -m
+     + % git checkout master // switched to branch 'master'
+     + % git merge dlnd_b // merge branch dlnd_b to master
+     + % git branch -d dlnd_b // delete branch dlnd_b
+                              // it's common to keep new branches to edit+merge,edit+merge ...
+       + % git branch -D dlnd_b // unlike -d, -D will delete the branch even though 
+                                // branch is not merged
+     + % git push // if already done one push, we can omit origin master
 
