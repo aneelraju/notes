@@ -1,10 +1,49 @@
-* Coursera: Machine Learning, Stanford University
+* Coursera: Machine Learning - Andrew Ng, Stanford University
 ** Week1
 *** Introduction
     + Machine Learning 
       - Is a science of getting computers to learn, without being
         explicitly programmed
+      - examples: 
+        - database mining : web clicks, medical record, biology, engineering
+        - applications can't code by hand : autonomous helicopter, handwriting recognition, 
+          natural language processing, computer vision
+        - self-customizing programs : amazon, netflix
+        - understanding human learning (brain, real AI)
+    + supervised learning - "right answers" are given as data set
+      + classification - discrete valued output (0,1,2...)
+      + regression - continous value output
     + octave - open source high level interpreted language
       + used for rapid prototyping and then migrate to c++ and java
       + https://www.gnu.org/software/octave/
-      + 
+*** Linear Regression with One Variable
+    + 
+*** Linear Algebra Review
+** Week2
+*** Linear Regression with Multiple Variables
+*** Octave/Matlab Tutorial
+** Week3
+*** Logistic Regression
+*** Regularization
+** Week4
+*** Neural Networks:Representation
+** Week5
+*** Neural Networks:Learning
+** Week6
+*** Advice for Applying Machine Learning
+*** Machine Learning System Design
+** Week7
+*** Support Vector Machines
+** Week8
+*** Unsupervised Learning
+*** Dimensionality Reduction
+** Week9
+*** Anomaly Detection
+*** Recommender Systems
+** Week10
+*** Large Scale Machine Learning
+** Week11
+*** Application Example: Photo OCR
+** Additional
+
+
