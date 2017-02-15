@@ -556,6 +556,131 @@
 *** Week 5 - TBD
 
 
+* Ruby on Rails Tutorial: Learn Web Development with Rails - michael hartl (https://www.railstutorial.org/book)
+** chapter 1: from zero to deploy
+   + embrace these inevitable stumbling blocks as opportunities
+     + geek speak : "It's not a bug, it's a feature!"
+   + Teaches basic grounding in ruby, rails, html & css, databases, version control,
+     testing and deployment
+   + Teaches the essentials of Rails framework, including MVC and REST, generators,
+     migrations, routing and embedded Ruby
+   + famous 15m weblog video by rails creator David Heinemeier Hansson
+     + link : https://www.youtube.com/watch?v=Gzj723LkRJY
+   + used by companies: airbnb, basecamp, disney, github, hulu, kickstarter, shopify,
+     twitter and yello pages
+   + web development shops: entp, thoughtbot, pivotal labs, hashrocket and happyfuncorp
+   + gems: self-contained solutions to specific problems
+     + link: https://rubygems.org
+   + contributors: http://contributors.rubyonrails.org
+   + conference: http://railsconf.com
+   + prequisites
+     + developer fundamentals
+       + http://www.learnenough.com/command-line-tutorial
+       + http://www.learnenough.com/text-editor-tutorial
+       + http://www.learnenough.com/git-tutorial
+     + web basics
+       + http://www.learnenough.com/html-tutorial
+       + http://www.learnenough.com/css-and-layout-tutorial
+       + http://www.learnenough.com/javascript-tutorial
+     + intro ruby web development
+       + http://www.learnenough.com/ruby-tutorial
+       + http://www.learnenough.com/sinatra-tutorial
+       + http://www.learnenough.com/ruby-on-rails-tutorial
+     + professional ruby web development
+       + http://www.railstutorial.org/
+   + resources
+     + http://learnenough.com/story // learning resources
+     + https://www.codeschool.com/ // online programming courses
+     + http://turing.io/ // full-time, 27-week training program
+     + http://bloc.io/ // online bootcamp with a structured curriculum
+     + http://launchschool.com/railstutorial // online rails development bootcamp
+     + http://www.thefirehoseproject.com/?tid=HARTL-RAILS-TUT-EB2&pid=HARTL-RAILS-TUT-EB2
+       // mentor-driven, online coding bootcamp
+     + http://www.thinkful.com/a/railstutorial // online class that pairs you with a professional
+       engineer
+     + https://pragmaticstudio.com/refs/railstutorial // online ruby and rails courses from mike
+       and nicole clark along with dave thomas
+     + https://tutorials.railsapps.org/hartl // top-specific rails projects and tutorials
+     + http://guides.rubyonrails.org/ // topical and up-to-date rails references
+   + cloud IDE runs inside an ordinary web browser, and hence works the same across different
+     platforms, which is specically useful for operating systems (such as windows) on which rails
+     development has historically been difficult
+     + http://c9.io/ // excellent cloud development environment
+   + http://installrails.com/ // try steps for local rails installation
+   + % gem install rails -v 5.0.1 // installing rails
+   + % rails new rort_mh_c1_hello_app // create a new rails app
+   + file/directory
+     + app // core app code incl models, views, controllers and helpers
+     + app/asserts // app assets such as cascading style sheets (css), java script files and images
+     + bin // binary exe files
+     + config // app configuration
+     + db // database files
+     + doc // documentation for the application
+     + lib // library modules
+     + lib/assets // library assets such as cascading style sheets (css), java script files and images
+     + log // application log files
+     + public // data accessible to the public (e.g via web browsers) such as error pages
+     + bin/rails // prog for generating code, opening console sessions or starting a local server
+     + test // app tests
+     + tmp // temp files
+     + vendor // third-party code such as plugins and gems
+     + vendor/assets // third-party assets such as cascading style sheets (css), 
+                     // javascript files and images
+     + README.md // brief description of app
+     + Rakefile // utility tasks available via the rake command
+     + Gemfile // gem requirements for this app
+     + Gemfile.lock // list of gems used to ensure that all copies of the app use the same gem version
+     + config.ru // a config file for rack middleware
+     + .gitignore // patters for files that should be ignored by Git
+   + % gem list <gemname> // info on gem
+   + % bundle update; % bundle install // install gems
+   + % rails server // run rails server
+     + http://localhost:3000
+   + % ruby -v // to see ruby version
+   + model-view-controller (MVC)
+     + http://en.wikipedia.org/wiki/Model-view-controller
+     + model // ruby object that represents an element of the site (like user) and is in charge
+       of communicating with the database
+   + app/controllers/*_controller.rb // application current controllers
+   + config/routes.rb // Rails router which sits in front of the controller and determines where to
+     send requests that come in from the browser
+   + deploying rails application
+     + http://www.modrails.com/
+     + http://engineyard.com/
+     + http://railsmachine.com/
+     + http://cloud.engineyard.com/ // cloud deployment services
+     + http://heroku.com/ // cloud deployment services; makes deploying rails application very easy
+       + to deploy
+         + add "gem 'pg', '0.18.4'" in Gemfile
+         + % bundle install --without production // to prevent local installation of any production gems
+                                                 // updates Gemfile.lock file
+         + % heroku login // on new terminal with user email and passwd
+           + % heroku keys:add // if keys are note added
+         + % heroku create // creates a place on heroku servers https://still-sands-30240.herokuapp.com/
+         + % git push heroku master // deploy the application
+           + % heroku open // open the app in a browser
+       + other commands
+         + % heroku rename rails-tutorial-hello // rename app
+           + try random subdomain using ('a'..'z').to_a.shuffle[0..7].join 
+       + http://www.railstutorial.org/ // lives at Heroku; heroku also supports custom domains
+       + % heroku help // to see a list of heroku commands
+
+** chapter 2: a toy app
+** chapter 3: mostly static pages
+** chapter 4: rails-flavored ruby
+** chapter 5: filling in the layout
+** chapter 6: modeling users
+** chapter 7: sign up
+** chapter 8: basic login
+** chapter 9: advanced login
+** chapter 10: updating showing and deleting users
+** chapter 11: account activation
+** chapter 12: password reset
+** chapter 13: user microposts
+** chapter 14: following users
+
+
+
 
 
 

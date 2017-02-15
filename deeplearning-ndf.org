@@ -313,6 +313,7 @@
      + -m // if we omit git opens default editor
    + % git checkout -f // to checkout files if accidently deleted locally
    + bitbucket.org
+     + allows unlimited free private repos while charging for more than a certain number of collaborators
      + % cat ~/.ssh/id_rsa.pub // copy public key and add it to "Add SSH key"
                                // in bitbucket.org accout
      + create a new repository
@@ -323,6 +324,8 @@
          // want to add bitbucket as the origin for your repository
      + % git push -u origin --all // pushing your repository up to remote origin
    + github.com
+     + offers unlimited free repositories (with collaboration) for open-source repositories while charging
+       for private repos
      + create a new repository
        - Repository name: dlnd
        - Access level: Public
@@ -348,5 +351,8 @@
        + % git branch -D dlnd_b // unlike -d, -D will delete the branch even though 
                                 // branch is not merged
      + % git push // if already done one push, we can omit origin master
+     + % git log // list of commit messages; use 'q' to quit
+     + % git checkout -f // undo the changes with -f flag to force overwriting the current changes
+   + http://gitlab.com/ // third major git hosting company; allows unlimited public and private repositories
 
 
