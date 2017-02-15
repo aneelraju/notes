@@ -353,6 +353,7 @@
      + % git push // if already done one push, we can omit origin master
      + % git log // list of commit messages; use 'q' to quit
      + % git checkout -f // undo the changes with -f flag to force overwriting the current changes
+     + % git pull origin master // pull changes from origin (github.com) to branch master
    + http://gitlab.com/ // third major git hosting company; allows unlimited public and private repositories
 
 
