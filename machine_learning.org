@@ -13,9 +13,25 @@
     + supervised learning - "right answers" are given as data set
       + classification - discrete valued output (0,1,2...)
       + regression - continous value output
+    + unsupervised learning - data doesn't have any label; find structure automatically
+      + clustering - groups the data // news.google.com
+      + eg:- organize computing clusters; social network analysis, market segmentation,
+        astronomical data analysis
+      + cocktail party problem algorithm // 2 microphone listens 2 speakers
+        // one line algo:  [W,s,v] = svd((repmat(sum(x.*x,1),size(x,1),1).*x)*x');
+        // svd - single value decomposition -> linear algebra routine built in ocative
+      + with unsupervised learning there is no feedback based on the prediction results   
     + octave - open source high level interpreted language
       + used for rapid prototyping and then migrate to c++ and java
       + https://www.gnu.org/software/octave/
+    + prerequisite for this course
+      + basic computer science principles and skills
+      + basic probability theory
+      + basic linear algebra
+    + other matlab or octave are clojure, julia, python and R
+    + sample problems or assignments link: http://cs229.stanford.edu/materials.html
+    + 
+      
 *** Linear Regression with One Variable
     + 
 *** Linear Algebra Review
