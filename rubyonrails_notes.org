@@ -666,6 +666,55 @@
        + % heroku help // to see a list of heroku commands
 
 ** chapter 2: a toy app
+   + create new rails app
+     +  % rails new rort_mh_top_app
+     + update Gemfile as http://gemfiles-4th-ed.railstutorial.org/
+     + % bundle install --without production
+   + add git repository
+     + % git init; % git add -A; % git commit -m "Initialize repository"
+     + % git remote add origin git@github.com:aneelraju/rort_mh_c2_toy_app.git
+     + % git push -u origin master
+   + edit app/controllers/application_controller.rb and config/routes.rb files and git commit
+   + deploy to heroku
+     + % git commit -am "Add hello"
+     + % heroku login
+     + % heroku create
+     + % git push heroku master
+   + % rails generate scaffold User name:string email:string // generate resource User model
+   + % rails db:migrate // update database with new users model
+     // before Rails 5; % rake db:migrate - Rake is Ruby make
+     // % rake test; to run the automated test suite
+     + localhost:3000/users - index - page to list all users
+       /users/1 - show - page to show user with id 1
+       /users/new - new - page to make a new user
+       /users/1/edit - edit - page to edit user with id 1
+     + rails uses JavaScript to issue the request needed to destroy user
+   + mvc steps 
+     + browser issues a request for the /users URL
+     + rails routes /users to the index action in the Users controller
+     + the index action asks the user model to retrieve all users (User.all)
+     + User model pulls all the users from the database
+     + User model returns the list of users to the controller
+     + controller captures the users in the @users variable, which is passed to the
+       index view
+     + view uses embedded Ruby to render the page as HTML
+     + controller passes the HTML back to the browser
+   + REST arch in Rails is based on the ideas of REpresentational State Transfer identified
+     and named by computer scientist Roy Fielding
+     + HTTP request : URL : Action : Purpose
+       GET : /users : index : page to list all users
+       GET : /users/1 : show : page to show user with id 1
+       GET : /users/new : new : page to make a new user
+       POST : /users : create : create a new user
+       GET : /users/1/edit : edit : page to edit user with id 1
+       PATCH : /users/1 : update : update user with id 1
+       DELETE : /users/1 : destroy : delete user with id 1
+   + app/models/user.rb // user model
+   + app/views/users/index.html.erb // view for the user index
+
+
+
+
 ** chapter 3: mostly static pages
 ** chapter 4: rails-flavored ruby
 ** chapter 5: filling in the layout
