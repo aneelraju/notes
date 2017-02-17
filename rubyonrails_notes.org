@@ -868,6 +868,30 @@
         + Ctrl-D // to exit guard
 
 ** chapter 4: rails-flavored ruby
+   + use rort_mh_c3_sample_app
+   + % git checkout -b rails-flavored-ruby
+   + stylesheet_link_tag : http://api.rubyonrails.org/classes/ActionView/Helpers/AssetTagHelper.html#method-i-stylesheet_link_tag
+     + to include application.css for all media types
+   + edit app/helpers/application_helper.rb for full_title function
+   + edit application.html.erb to use full_title
+   + edit test static_pages_controller_test.rb to remove Home
+   + % rails test
+   + edit home.html.erb 
+   + % rails test
+   + ruby tutorial
+     + ruby help link : http://ruby-doc.org
+     + comments
+     + strings
+     + printing
+     + objects and message passing
+     + method definitions
+     + other data structures
+       + arrays and ranges
+       + blocks
+       + hashes and symbols
+         + symbols (:name) are like basically strings without all the extra baggage
+     + ruby classes
+
 ** chapter 5: filling in the layout
 ** chapter 6: modeling users
 ** chapter 7: sign up
