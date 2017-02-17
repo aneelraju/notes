@@ -729,6 +729,144 @@
      + % heroku run rails db:migrate // to migrate the production database
 
 ** chapter 3: mostly static pages
+   + % rails new rort_mh_c3_sample_app
+   + edit Gemfile as http://gemfiles-4th-ed.railstutorial.org/
+   + % bundle install --without production
+   + % bundle update
+   + % git init; % git add -A; % git commit -m "Initialize repository"
+   + edit README.md with useful info
+   + % git commit -am "Improve the README"
+   + % git remote add origin git@github.com:aneelraju/rort_mh_c3_sample_app.git
+   + % git push -u origin master
+   + edit to display "hello, world!"
+   + % heroku login
+   + % heroku create
+   + % git push heroku master
+   + % heroku logs // to check logs
+   + % git checkout -b static-pages
+   + % rails generate controller StaticPages home help // generating controller
+     + because Ruby uses CamelCase for class names, my preferecne is to refer
+       to controllers using their CamelCase names
+     + since Ruby filenames typically use snake case, the Rails generator converts
+       CamelCase to sanke case using the underscore method
+     + % rails destroy controller StaticPages home help // to undo controller
+       + % rails destroy model User // to undo model
+     + % rails db:rollback // to undo a single migration step
+     + % rails db:migrate VERSION=0 // to way back to the beginning
+     + % rails db:migrate VERSION=10 // migrate to VERSION 10
+     + % rails server -> % rails s
+     + % rails console -> % rails c
+     + % rails generate -> % rails g
+     + % rails test -> % rails t
+     + % bundle install -> % bundle
+  + % git add -A
+  + % git commit -m "Add a Static Pages controller"
+  + % git push -u origin static-pages
+  + HTTP
+    + GET, POST, PATCH and DELETE refers to operation between a client and a server
+    + GET -> used for reading data on the web
+    + POST -> request sent by browser when you submit a form, used for creating things
+    + PATCH and DELETE -> for updating and destroying things
+  + edit app/views/static_pages/home.html.erb and help.html.erb
+  + testing
+    + Test-driven development uses a "Red, Green, Refactor" cycle
+    + developed over the course of building an application, the resulting test suite serves
+      as a safety net and as executable documentation of the application source code
+    + it's a good practice to write and automated test to verify that the feature is implemented
+      correctly
+    + test-driven development: a testing technique in which the programmer writes failing tests
+      first, and then writes the application code to get the tests passing
+    + three main benefits
+      + tests protect against regressions, where a functioning feature stops working for some
+        reasons
+      + tests allow code to be refactored with greater confidence
+      + tests act as a client for the application code, thereby helping determine its design
+        and its interface with other parts of the system
+    + guidelines
+      + when a test is especially short or simple compared to the application code it tests,
+        lean toward writing the test first
+      + when the desired behavior isn't yet crystal clear, lean toward writing the application
+        code first, then write a test to codify the result
+      + because security is a top priority, err on the side of writing tests of the security
+        model first
+      + whenever a bug is found, write a test to reproduce it and protect against regressions,
+        then write the application code to fix it
+      + lean against writing tests for code (such as detailed HTML structure) likely to change
+        in the future
+      + write tests before refactoring code, focusing on testing error-prone code that's especially
+        likely to break
+    + we write controller and model tests first and integration tests (which test functionality 
+      across models, views and controllers) second. when we're writing application code that isn't
+      particularly brittle or error-prone or is likely to change we'll often skip testing altogether
+    + testing tools: controller tests, model tests and integration tests
+    + integration tests are especially powerful, as they allow us to simulate the actions of 
+      a user interacting with our application using a web browser. Integration tests will eventually
+      be our primary testing technique
+    + default test: test/controllers/static_pages_controller_test.rb
+    + % rails test // to run test suite
+      + % rails s // should run rails server
+    + write a failing test for the About page // test/controllers/static_pages_controller_test.rb
+    + % rails test
+    + fix routes.rb
+    + % rails test
+    + fix static_pages_controller.rb
+    + % rails test
+    + touch app/views/static_pages/about.html.erb and edit
+    + % rails test
+  + slightly dynamic pages
+    + mv app/views/layouts/application.html.erb layout_file // created by default, but it's instructive
+      // to ignore it initially
+    + HTML is not sensitive to whitespace, and ignore both tabs and spaces
+    + add title test to test/controllers/static_pages_controller_test.rb
+    + % rails test
+    + add page titles to app/views/static_pages/home.html.erb help.html.erb and about.html.erb
+    + % rails test
+    + refactor test/controllers/static_pages_controller_test.rb
+    + % rails test
+  + remove duplication code
+    + edit app/views/static_pages/home.html.erb help.html.erb and about.html.erb
+    + .erb -> embedded ruby file, primary template system for including dynamic content in web pages
+    + <% ... %> -> executes the code inside
+    + <%= ... %> -> executes it and inserts the result into the template
+    + % rails test
+    + mv layout_file app/views/layouts/application.html.erb and edit for :title // rails comes with this special layout file
+    + remove HTML structure in home.html.erb, help.html.erb and about.html.erb
+    + % rails test
+  + % git add -A
+  + % git commit -m "Finish static pages"
+  + % git checkout master
+  + % git merge static-pages
+  + % git push // to git
+  + % rails test
+  + % git push heroku // to heroku
+  + advance testing setup
+    + % git checkout master
+    + edit test/test_helper.rb to use minitest-reporters gem
+    + Guard to automate the running of the tests
+      + Guard monitors changes in the filesystem so that, for example,
+        when we change the static_pages_controller_test.rb file, only
+        those tests get run. Even better, we can configure Gaurd so
+        that when, say, the home.html.erb file is modified, the
+        static_pages_controller_test.rb automatically runs
+      + % bundle exec guard init // initialize guard
+      + update Guardfile
+      + guard uses spring server to speed up loading times while also
+        preventing Guard from running the full test suite upon starting
+      + add /sprint/*.pid directory to the .gitignore file
+        + if your tests seem to be getting unusually sluggish, it's thus
+          a good idea to inspect the system processes and kill them if
+          necessary
+          + % ps aux // to see all the processes on your system
+          + % ps aux | grep spring // to grep spring processes
+          + % kill -15 12241 // to kill pid=12241
+          + % spring stop // first try stopping the processes with the spring command
+          + % pkill -15 -f spring // using pkill with name spring
+      + % bundle exec guard // run guard in new terminal
+        + hit return on guard prompt to run all tests
+        + sometimes gives an error indicating a failure to connect to the spring server.
+          To fix the problem, just hit return again
+        + Ctrl-D // to exit guard
+
 ** chapter 4: rails-flavored ruby
 ** chapter 5: filling in the layout
 ** chapter 6: modeling users
