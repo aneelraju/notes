@@ -672,6 +672,8 @@
      + % bundle install --without production
    + add git repository
      + % git init; % git add -A; % git commit -m "Initialize repository"
+       + % git checkout <commit> . // to checkout older commits
+         // % git checkout 73f4f1c .
      + % git remote add origin git@github.com:aneelraju/rort_mh_c2_toy_app.git
      + % git push -u origin master
    + edit app/controllers/application_controller.rb and config/routes.rb files and git commit
@@ -711,9 +713,20 @@
        DELETE : /users/1 : destroy : delete user with id 1
    + app/models/user.rb // user model
    + app/views/users/index.html.erb // view for the user index
-
-
-
+   + % rails generate scaffold Micropost content:text user_id:integer // generate Micropostes resource
+   + % rails console // console for rails
+     + >> first_user = User.first
+     + >> first_user.microposts
+     + >> micropost = fist_user.microposts.first
+     + >> micropost.user
+     + >> exit
+   + deploying the toy app
+     + % git status
+     + % git add -A
+     + % git commit -m "Finish toy app"
+     + % git push
+     + % git push heroku
+     + % heroku run rails db:migrate // to migrate the production database
 
 ** chapter 3: mostly static pages
 ** chapter 4: rails-flavored ruby
