@@ -893,6 +893,96 @@
      + ruby classes
 
 ** chapter 5: filling in the layout
+   + Adding and editing markup wouldn't need tests. TDD only added to contact page
+     + one important test, integration test added to check the links on the final layout
+   + we'll add some structure to the layout and give it some minimal styling with CSS.
+     In addition to use some custion CSS rules, we'll make use of Bootstrap, an open-source
+     web design framework from Twitter. Also some code styling using partials to tidy up
+     the layout once it gets a little cluttered
+     + bootstrap link : http://getbootstrap.com/
+   + % git checkout -b filling-in-layout
+   + edit application.html.erb // with additional HTML structures, some additional divisions,
+                               // some CSS classes, and the start of out site navigation
+   + edit home.html.erb // a link to the signup page
+   + copy http://railstutorial.org/rails.png to app/assets/images/
+   + add gem 'bootstrap-sass' in Gemfile
+     + bootstrap framework uses Less CSS language but Rails asset pipeline supports Sass language.
+       so bootstrap-sass converts Less to Sass
+   + % bundle install
+   + % touch app/assets/stylesheets/custom.scss // though rails generate auto creates a separate CSS
+     // for each controller, it's surprisingly hard to include them all properly in right order. so
+     // we'll put all of the CSS needed in a single file
+   + edit custom.scss to include bootstrap css framework
+   + add some css to custom.scss that will be used site-wide for styling the layout and each
+     individual page
+     + in general, css rules refer either to a class, an id, an HTML tag or some combination thereof
+       followed by a list of styling commands
+   + add to custom.scss typography
+   + add some rules to style the site's logo
+   + partials
+     + is used to package logical unit (HTML forms) in one place
+     + edit application.html.erb with partials for the stylesheets and header
+     + create _shim.html.erb and _header.html.erb
+     + create _footer.html.erb also
+   + asset pipeline
+     + which significantly simplifies the production and management of static assets such as CSS,
+       JavaScript and images
+     + asset directories
+       + app/assets: specific to the present application
+       + lib/assets: for libraries written by your dev team
+       + vendor/assets: from third-party vendors
+       + each has subdirectories: images/, javascripts/, stylesheets/
+     + mainfest files
+       + once you've place your assets in their logical locations, you can use manifest files
+         to tell Rails how to combine them to form single files
+         + app/assets/stylesheets/application.css
+       + for more details : http://guides.rubyonrails.org/asset_pipeline.html
+     + preprocessor engines
+       + After you've assembled your assets, Rails prepares them for the site template by running
+         them through several preprocessing engines and using the manifest files to combine
+         them for delivery to the browser
+         + .scss for sass; .coffee for CoffeeScript; .erb for embedded Ruby
+         + preprocessor engines can be chained: foobar.js.erb.coffee -> runs through CoffeeScript 
+           and then ERb
+     + asset pipleline combines all the application stylesheets into one CSS file (application.css),
+       combines all the application JavaScript into one JavaScript file (application.js) ane then
+       minifies them to remove the unnecessary spacing and indentation that bloats file size. The
+       result is the best of both worlds: convenience in development and efficiency in production
+     + Sass is a language for writing stylesheets that improves on CSS
+       + nesting, variables and mixins
+         + edit custom.scss for nesting
+         + bootstrap variables : http://getbootstrap.com/customize/#less-variables
+     + edit layout links 
+       + "#" -> stubbed version of links; replace them
+       + use common convention of using the _path form except when doing redirects, where
+         use the _url form (HTTP requires a full URL after redirects)
+       + get 'help', to: 'static_pages#help' creates help_path and help_url
+       + % rails test
+       + edit static_pages_controller_test.rb
+       + % rails test
+       + edit _header.html.erb, _footer.html.erb
+   + integration tests
+     + % rails generate integration_test site_layout
+     + edit test/integration/site_layout_test.rb
+       + assert_select "div" -> <div>foobar</div>
+         assert_select "div", "foobar" -> <div>foobar</div>
+         assert_select "div.nav" -> <div class="nav">foobar</div>
+         assert_select "div#profile" -> <div id="profile">foobar</div>
+         assert_select "div[name=yo]" -> div name="yo">hey</div>
+         assert_select "a[href=?]", '/;, count: 1 -> <a href="/">foo</a>
+         assert_select "a[href=?]", '/', text: "foo" -> <a href="/">foo</a>
+     + % rails test:integration // run only integration test
+     + % rails test // run full test suite
+     + write direct test of full_title helper (test/helpers/application_helper_test.rb)
+   + user signup
+     + % rails generate controller Users new // create second controller Users
+     + % rails test
+     + edit routes.rb, users_controller_test.rb, home.html.erb, new.html.erb
+   + commit and push changes to git and heroku       
+     + % git remote show origin // check git remote origin
+     + % git remote show heroku // check git remote heroku
+     + % git remote rm origin // remove remote origin
+   
 ** chapter 6: modeling users
 ** chapter 7: sign up
 ** chapter 8: basic login
