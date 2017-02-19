@@ -45,7 +45,7 @@
      + rspec - unit testing
        + % git install rspec
 ***** rails application
-     + % rails new test_app
+     + % rails new test_app // rails _4.2.3_ new my_new_app
        + directory
          + app // core app code, including models, views, controllers and helpers
          + app/assets // application assets such as cascading style sheets (css),
@@ -992,10 +992,5 @@
 ** chapter 12: password reset
 ** chapter 13: user microposts
 ** chapter 14: following users
-
-
-
-
-
 
 
