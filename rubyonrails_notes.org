@@ -984,6 +984,80 @@
      + % git remote rm origin // remove remote origin
    
 ** chapter 6: modeling users
+   + examples of authentication and authorization systems
+     + Clearance, Authlogic, Devise and CanCan
+     + non-rails solucations built on top of OpenId or OAuth
+   + It's better to write a custom authentication system
+   + model - in rails, default data structure for a data model
+   + default rails solution is to use database for long-term data
+     storage, and the default library for interacting with database
+     is called Active Record
+   + Active Record - host of methods for creating, saving and finding
+     data objects all without having to use SQL
+   + Rails has a feature called migrations to allow data definitions
+     to be written in pure ruby, without having to learn an SQL language
+   + Book: SQLite for development and PostgreSQL (via Heroku) for deployment
+   + % git checkout -b modeling-users
+   + % rails generate model User name:string email:string // generate user model
+     + controller names are plural and model names are singular
+     + generates new file called a migration
+       + db/migrate/[timestamp]_create_users.rb
+       + "change" uses a Rails method call create_table
+   + % rails db:migrate
+     + creates db/development.sqlite3 which is SQLite database
+     + DB browser for SQLite: http://sqlitebrowser.org/
+     + rails uses a file called schema.rb in the db/ directory to keep track
+       of structure of database
+     + % rails db:rollback executes drop_table
+   + migrations guide link : http://guides.rubyonrails.org/migrations.html
+   + app/models/user.rb // user model code
+     + % rails console --sandbox // loading development environment in sandbox
+       + any modifications you make will be rolled back on exit
+       + experiment with user model
+   + commen validation cases: validating presence, length, format and uniqueness, confirmation
+   + write a validity test in test/models/user_test.rb
+     + for model validations, TDD is a perfect fit
+   + % rails test:models
+   + add validates to app/models/user.rb
+   + % rails test:models
+   + Rubular : interactive regular expression
+   + Active Record uniqueness validation does not guarantee uniqueness at the database level
+     + we need to enforce uniqueness at the database level as well as at the model level
+       + we need to create a database index on the email column and then require that the index
+         be unique
+   + rails generate migration add_index_to_users_email // we are adding structure to an existing model
+     + edit db/migrate/[timestamp]_add_index_to_users_email.rb to add add_index
+   + rails db:migrate
+     + test suite will fail due to a violation of the uniqueness constraint in the fixtures, which 
+       contain sample data for the test database
+       + edit test/fixtures/users.yml to remove code as we don't need it
+       + link: http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+   + has_secure_password method
+     + ability to save a securely hashed password_digest
+     + a pair of virtual attributes (password and password_confirmation) including
+       presence validations upon object creation and a validation requiring that they match
+     + an authenticate method that returns the user when the password is correct
+   + % rails generate migration add_password_digest_to_users password_digest:string
+     + migration to add a password_digest // db/migrate/[timestamp]_add_password_digest_to_users.rb
+   + % rails db:migrate
+   + add gem 'bcrypt;, '3.1.11' to Gemfile
+   + % bundle install
+   + add has_secure_password to user.rb
+   + % rails test
+   + edit user_test.rb set_up function
+   + % rails test
+   + submit to git
+     % rails test
+     % git add -A
+     % git commit -m "Make a basic User mode (including secure passwords)"
+     % git checkout master
+     % git merge modeling-users
+     % git push
+   + deploy to heroku
+     % rails test
+     % git push heroku
+     % heroku run rails db:migrate
+
 ** chapter 7: sign up
 ** chapter 8: basic login
 ** chapter 9: advanced login

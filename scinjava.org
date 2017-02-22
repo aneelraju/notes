@@ -1,0 +1,31 @@
+
+* Software Construction in Java - MITx 6.005.1x - Prof. Rob Miller
+** course handouts
+   + syllabus
+     +   https://d37djvu3ytnwxt.cloudfront.net/assets/courseware/v1/3fa26a139145897cd0db436e0d2e2ce1/asset-v1:MITx+6.005.1x+3T2016+type@asset+block/6.005.1xSyllabus.pdf
+   + collaboration guidelines
+     + https://d37djvu3ytnwxt.cloudfront.net/assets/courseware/v1/7c3a1d4541d4d58353a25b582268362b/asset-v1:MITx+6.005.1x+3T2016+type@asset+block/6.005xCollaborationGuidelines.pdf
+   + forum guidelines
+     + https://d37djvu3ytnwxt.cloudfront.net/assets/courseware/v1/7ed83379f908b540fe33f0cd0e690e3d/asset-v1:MITx+6.005.1x+3T2016+type@asset+block/6.005xForumGuidelines.pdf
+** Reading 1: Static Checking
+   + Objectives: Static typing
+   + Big 3 properties of good software
+     + 1. safe from bugs
+     + 2. easy to understand for other programmers
+     + 3. ready to be changed in the future
+   + python tutor : python, java, javascript, typescript, ruby, c and c++
+     + link : http://pythontutor.com
+
+
+
+   
+
+* Advanced Software Construction in Jave - MIT 6.005.2x - Prof. Rob Miller
+** course handouts
+   + syallbus
+     + https://d37djvu3ytnwxt.cloudfront.net/assets/courseware/v1/3f2b5092a3be65d4bd6ca6c9aebee964/asset-v1:MITx+6.005.2x+1T2017+type@asset+block/6.005.2xSyllabus.pdf
+   + collaboration guidelines
+     + https://d37djvu3ytnwxt.cloudfront.net/assets/courseware/v1/7c3a1d4541d4d58353a25b582268362b/asset-v1:MITx+6.005.2x+1T2017+type@asset+block/6.005xCollaborationGuidelines.pdf
+   + forum guidelines
+     + https://d37djvu3ytnwxt.cloudfront.net/assets/courseware/v1/f1bd96832894ed9c8a836b12a7940959/asset-v1:MITx+6.005.2x+1T2017+type@asset+block/6.005xForumGuidelines.pdf
+
