@@ -295,6 +295,156 @@
        + rides[:24*10].plot(x='dteday', y='cnt') // matplotlib
        + plt.show() // matplotlib: need to show plot
 
+** Lesson 9: Model Evaluation and Validation
+   + you will learn how
+     + to create a test set for your models
+     + to use confusion matrices to evaluate false positives and false negatives
+     + to measure accuracy and other model metrics
+     + to evaluate regression
+     + to detect whether you are overfitting or underfitting based on the complexity
+       of your model
+     + to use cross validation to ensure your model is generalizable
+   + Testing
+     + regression mode : predict a value; returns a numeric value
+     + classification : yes/no; returns a state
+     + how do we find a model that generalizes well
+       + which model errors are small
+       + training set
+       + testing set
+         + testing in sklearn
+           + -----* code *-----------
+             from sklearn.model_selection import train_test_split
+             X_train, y_train, X_test, y_test = train_test_split(X, y, test_size=0.25)
+         + thou shalt never use your testing data for training
+   + confusion matrix
+     + evaluation matrix
+       + how good our model is ?
+         + medical model: healthy / sick
+           + matrix: 
+             sick, diagnosed sick: true positive
+             sick, diagnosed healthy: false negative
+             healthy, diagnosed sick: false positive
+             healthy, diagnosed healthy: true negative
+           + confusion matrix: 10000 patients
+             sick, diagnosed sick: true positive : 1000
+             sick, diagnosed healthy: false negative : 200
+             healthy, diagnosed sick: false positive : 800
+             healthy, diagnosed healthy: true negative : 8000
+         + spam classifier model : not spam / spam
+           spam, sent to spam folder: true positive
+           spam, sent to inbox: false negative
+           not spam, sent to spam folder: false positive
+           not spam, sent to inbox: true negative
+           + confusion matrix: 1000 emails
+             spam, sent to spam folder: true positive : 100
+             spam, sent to inbox: false negative : 170
+             not spam, sent to spam folder: false positive : 30
+             not spam, sent to inbox: true negative : 700
+   + accracy
+     + out of all the data, how many points did we classify correctly ?
+       + (no. of correct clasified points/ total points) * 100
+       + -----* code *--------
+         from sklearn.metrics import accuracy_score
+         accuracy_score (y_true, y_pred)
+   + regression metrics
+     + mean abolute error in sklearn
+       + ----* code *-----
+         from sklearn.metrics import mean_absolute_error
+         from sklearn.linear_model import LinearRegression
+         classifier = LinearRegression()
+         classifier.fit(X,y)
+         guesses = classifier.predict(X)
+         error = mean_absolute_error(y, guesses)
+       + not differential so not good to use in gradient descent
+     + mean squared error in sklearn
+       + ----* code *-----
+         from sklearn.metrics import mean_squared_error
+         from sklearn.linear_model import LinearRegression
+         classifier = LinearRegression()
+         classifier.fit(X,y)
+         guesses = classifier.predict(X)
+         error = mean_squared_error(y, guesses)
+     + R2 score regression metrics
+       + bad model: the errors of mean squared error for the linear
+         regression model should be similar to the mean squared error
+         for the simple model (R2 = 0)
+       + good model: the errors of mean squared error for the linear
+         regression model should be a lot smaller than the mean
+         squared error for the simple model (R2 = 1)
+       + R2 close to 1 -> model is good; R2 close to 0 -> model is bad
+       + ----* code *----
+         from sklearn.metrics import r2_score
+         y_true = [1, 2, 4]
+         y_pred = [1.3, 2.5, 3.7]
+         r2_score(y_true, y_pred)
+   + types of errors
+     + underfitting - over simplifying
+       + does not do well in the training set
+       + error due to bias
+       + bad on testing set
+     + overfitting - over complicated
+       + does well in the training set, but it tends to memorize
+         it instead of learning the characteristics of it
+       + error due to variance
+       + performs poorly in the testing set
+     + Good model
+       + good on training set
+       + good on testing set
+       + fit data well and also generalize well
+   + model complexity graph
+     + linear model (degree = 1) - over simplify (bad training & bad testing)
+     + quadratic model (degree = 2) - good model (decent training & decent testing)
+     + polynomial model (degree = 6) - over complicated (good training & bad testing)
+     + model complexity graph (y-axis: error; y-axis: degress of complexity)
+       + plot testing data and training data
+       + but we shouldn't use testing data for training
+         + solution: cross validation
+           + instead of having training data and testing data we should have
+             training set, cross validation set and testing set
+           + training set to use for training; validation set to find the degree of polynomial
+             and testing set for final testing
+   + K-Fold cross validation
+     + data into K buckets (like 4)
+     + train our model k times, each time using different bucket as our testing set and remaining
+       points as training set
+     + cross validation in sklearn
+       + ----* code *----
+         from sklearn.model_selection import KFold
+         kf = KFold(12,3)
+         for train_indices, test_indices in kf:
+           print train_indices, test_indices
+     + ranomize data to eradicate any bias
+       + kf = KFold(12, 3, shuffle = True)
+
+** Lesson 10: Sentiment Analysis with Andrew Trask
+** Lesson 11: Intro to TFLearn
+** Lesson 12: Preparing for Siraj's Lesson
+** Lesson 13: Siraj's Sentiment Analysis
+** Lesson 14: Siraj's Math Notations
+** Lesson 15: MiniFlow
+** Lesson 16: Intro to TensorFlow
+** Lesson 17: Siraj's Data Preparation
+** Lesson 18: Deep Neural Networks
+** Lesson 19: Convolution Networks
+** Lesson 20: Siraj's Image Classification
+** Lesson 21: Cloud Computing
+   + GPU's are much faster when training neural networks than CPUs
+     + suggest to use https://aws.amazon.com/ec2/ instance than buying a GPU machine
+   + create account or sign in @ aws.amazon.com; provide credit/debit card for account verification;
+     choose the free basic support plan
+   + Elastic Compute Cloud (EC2) allows to launch virtual servers called instances. Specific type of
+     instance you'll be using is "g2.2xlarge". It's a GPU instance.
+   + https://console.aws.amazon.com/ec2/v2/home?#Limits // if g2.2xlarge instances limit is 0 then you'll
+     need to "Submit a Limit Increase Request"
+   + Once AWS approves your GPU Limit increase Request, you can start the process of launching your
+     instance
+     + 
+
+** Lesson 22: Project 2: Image Classification
+** Lesson 23: Project 3: Generate TV Scripts
+** Lesson 24: Project 4: Translation Project
+** Lesson 25: Project 5: Generative Adversarial Network (GAN) Project
+
 ** additional
 *** repositories (github.com or bitbucket.org)
    + % git init // initialize a new repository
@@ -308,6 +458,11 @@
      + % git rm -r -f --cahced <folder> // remove if modified after upstage (keep local copy)
      + % git rm -f <file> // remove if modified after upstage (don't keep local copy)
      + % git rm -r -f  <folder> // remove if modified after upstage (don't keep local copy)
+     + % git add <file1> <file2> // files that want to be staged (cached)
+     + % git diff // shows changes b/w working directory and the index. This shows what
+                  // has been changed, but is not staged for a commit
+     + % git diff --cached // diff between index and HEAD (what has been added to index and staged)
+     + % git diff HEAD // diff all the changes between working directory and HEAD
    + % git status // shows files in staging area
    + % git commit -m "First repository" // commit changes
      + -m // if we omit git opens default editor
@@ -355,5 +510,5 @@
      + % git checkout -f // undo the changes with -f flag to force overwriting the current changes
      + % git pull origin master // pull changes from origin (github.com) to branch master
    + http://gitlab.com/ // third major git hosting company; allows unlimited public and private repositories
-
+   
 
