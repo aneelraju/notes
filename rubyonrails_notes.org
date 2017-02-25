@@ -236,7 +236,7 @@
       + % git push heroku master
 
 ** course2: ruby on rails - rails with active record and action pack
-*** Week 1 - introduction
+*** Week 1 - introduction to active record
 **** beginning databases in rails
 ***** some terms
       + scaffolding // quickly generate code to view, delete and update resources
@@ -353,6 +353,257 @@
         + delete(id) // removes the row from DB
           + joe = Person.find_by first_name: "Joe"; % Person.delete(joe.id);
         + delete(all) // careful
+*** Week 2 - deep dive into active record
+**** advanced querying
+     + advanced querying
+       + sql fragments; dangers of sql injection; array syntax; hash syntax
+     + database relationships
+       + one-to-one; one-to-many; many-to-many; rich many-to-many
+     + more active record
+       + validations; transactions; N+1 queries
+     + git repository
+       + link : https://github.com/jhu-ep-coursera/fullstack-course2-module2-advanced-ar
+     + books
+       + agile web development with rails 4 - Dave Thomas, Sam Ruby and David Heinemeier Hansson
+       + ruby on rails tutorial - Michael Hartl
+       + Rails 4 in action - Ryan Bigg, Yehuda Katz, Steve Klabnik, Rebecca Skinner
+       + Eloquent Ruby - Russ Olsen
+       + Programming Ruby - Dave Thomas, Andy Hunt and Chad Fowler
+       + Beginning Ruby - Peter Cooper
+       + Head First Ruby - Jay McGavren
+       + Learn To Program - Chris Pine
+       + Ruby Cookbook - Lucas Carlson, Leonard Richardson
+       + The Well Grounded Rubyist - David A Black
+       + Metaprogramming Ruby - Paolo Perrotta
+     + seeding the database
+       + % rails _4.2.3_ new advanced_ar ; % cd advanced_ar
+       + % rails g model person first_name age:integer last_name
+       + % rake db:migrate
+       + db/seeds.rb // to populate development data
+         + add entries to db/seeds.rb
+       + % rake db:seed // rake --describe db:seed
+         + % rails db
+         + >> .headers on
+         + >> .mode columns
+         + >> select * from people;
+     + sql fragments and dangers of sql injection
+       + % Person.where("age BETWEEN 30 and 33").to_a
+       + % Person.find_by("first_name LIKE 'Xman'")
+       + sql injection dangers
+         + maninpulating raw sql to hack into a database
+         + includes maliciously dropping/deleting tables or
+           gaining acces to confidential info
+         + link: https://en.wikipedia.org/wiki/SQL_injection
+         + quick demo
+           + % rails g migration add_login_pass_to_people login pass // add login and pass fields
+           + % rake db:migrate
+           + % rails c
+             + % login = "john2"; pass = "no_idea"
+             + % Person.where("login = '#{login}' AND pass = '#{pass}'")
+             + % pass = "got you" OR "x" = "x" // can fetch all users by hacker
+             + % Person.where("login = '#{login}' AND pass = '#{pass}'")
+         + array and hash parameters to avoid SQL injection
+       + array and hash condition syntax
+         + two alternatives to directly specifying sql literals
+           + array condition syntax
+             + lets you specify SQL fragment with ? followed by values(parameters)
+             + automagically performs conversions on the input values and escapes strings
+               in the sql
+             + immune to sql injection
+             + similar in java via PreparedStatement in Java
+             + % rails c
+               % Person.where("age BETWEEN ? and ?", 28, 34).to_a
+               % Person.where("first_name LIKE ? OR last_name LIKE ?", '%J%, '%J').to_a
+             + but tehre are two small problems
+               + keep track of the order of parameters hiding behind the "?"
+               + if you have n "?" - you need to pass in n values, even if they are
+                 a reference to the same value
+           + hash condition syntax
+             + instead of "?", you specify symbols which map to the values in the hash
+               passed in as a second parameter
+             + % Person.where("age BETWEEN :min_age AND :max_age", min_age: 28, max_age: 32).to_a
+             + % Person.where("first_name LIKE :pattern OR last_name LIKE :pattern", pattern: '%J%').to_a
+             + hash syntax seems more intuitive to most people
+**** expressing database relationships
+     + one-to-one association
+       + relational aspect of RDBMS
+       + one-to-one association/relation
+         + one person has exactly one person_info entry
+         + one person_info entry belongs to exactly one person
+         + the "belongs to" side is the one with a foreign key (primary key of other table)
+           + default name for the for the foreign key is {master_table_singular}_id e.g. person_id
+         + % rails g model personal_info height:float weight:float person:references
+           // model pointing to existing model person
+         + % rake db:migrate
+         + % rails db; % .schema personal_infos
+         + % rails c
+           % bill = Person.find_by first_name: "Bill"
+           % pi1 = PersonInfo.create height: 6.5, weight: 220
+           % bill.personal_info = pi1
+           + build_personal_info(hash)
+             + doesn't creates a record in DB
+             + removes the previous reference in DB
+           + create_personal_info(hash)
+             + creates a record in DB
+             + removes the previous reference in DB
+           + % bill = Person.find_by last_name: "Gates"
+             % bill.personal_info
+             % bill.build_personal_info height: 6.0, weight: 180
+             % bill.save
+             % josh = Person.find_by first_name: "Josh"; 
+             % josh.create_personal_info height: 5.5, weight: 135
+         + % rails db
+           % .headers on
+           % .mode columns
+           % select * from personal_infos;
+           % select * from people;
+         + has_one/belongs_to (and integer column in DB) is all you need to
+           establish a one-to-one association           
+     + one-to-many association
+       + one person has one or more jobs
+       + one job entry belongs to exactly one person
+       + the "belongs to" side is the one with a foreign key
+         + default name for the foreign key is {master_table_singular}_id, e.g. person_id
+       + % rails g model job title company position_id person:references
+       + % rake db:migrate
+       + % rails c
+         % ActiveRecord::Base.logger = nil // reduce logs
+         % Job.create company: "MS", title: "Developer", position_id: "#1234"
+         % p1 = Person.first
+         % p1.jobs
+         % p1.jobs << Job.first // jobs are appended
+         % Job.first.person // first job of a person
+       + % person.jobs = jobs // replaces existing jobs with a new array
+       + % person.jobs.clear // disassociates jobs from this person by setting the
+                             // foreign key to NULL
+       + create and where methods for jobs become scoped to the person!
+       + edit seed.rb Person.first.jobs.create! and Person.last.jobs.create!
+         + options for has_many - :class_name
+         + % Person.first.may_jobs
+       + % rake db:seed
+       + % rails c
+         % ActiveRecord::Base.logger = nil
+         % Person.first.jobs.where(company: "MS").count
+         % Person.last.jobs.where(company: "MS").count
+         % Person.last.jobs.where(company: "MS").to_a
+       + :dependent
+         + has_many, has_one and belongs_to support :dependent option which lets you
+           specify the fate of the association when the parent gets destroyed
+         + :delete - remove associated objects
+         + :destroy - same as above, but remove the association by calling destroy on it
+         + :nullify - set the FK to NULL and leave associated entity alone
+         + edit person.rb for has_one dependent
+           + % mike = Person.find_by first_name: "Michael"
+             % mike.personal_info
+             % mike.destroy
+             % PersonalInfo.find 13 // active record not found
+     + many-to-many association
+       + one person can have many hobbies
+       + one hobby can be shared by many people
+       + habtm (has_and_belongs_to_many)
+       + need to create an extra (a.k.a. join) table (without a model, i.e. just a migration)
+         + no need of a ruby model, can be in the db
+         + plural model names separated by an underscore in alphabetical order
+           // Hobbies and Hobbies_People
+       + % rails g model hobby name
+         // person and hobby model will not have references
+       + % rails g migration create_hobbies_people person:references hobby:references
+       + % rake db:migrate
+       + % rails db
+         % .schema %hobbies%
+       + edit person.rb and hobby.rb for has_and_belongs_to_many
+       + % josh = Person.find_by first_name: "John"
+         % lebron = Person.find_by first_name: "LeBron"
+         % programming = Hobby.create name: "Programming"
+         % josh.hobbies << programming; lebron.hobbies << programming
+         % programming.people
+       + join table needs to only exist in the DB, but not in Ruby code
+       + many-to-may contains 2 models and 3 migrations
+     + rich many-to-many association
+       + sometimes, you need to keep some data on the join table or you
+         need to store grandchild relations on a model,
+         like user -> articles -> comments
+       + in our case - all salary ranges for a particular person
+       + ActiveRecord provides a :through option for this purpose
+         + you first create a regular parent-child relation and then
+           use the child model as a "join" between the parent and
+           grandchild
+       + % rails g model salary_range min_salary:float max_salary:float job:references
+         % rake db:migrate
+       + edit job.rb and person.rb
+       + % rails c
+         % lebron = Person.find_by(first_name: "LeBron")
+         % lebron.jobs.count
+         % lebron.jobs.pluck(:id)
+         % Job.find(12).create_salary_range(min_salary: 10000.00, max_salary: 20000.00)
+         % Job.find(13).create_salary_range(min_salary: 15000.00, max_salary: 35000.00)
+         % lebron.approx_salaries
+       + add max_salary method to person.rb
+         + average, minimum and sum also available
+           + link: http://api.rubyonrails.org/classes/ActiveRecord/Calculations.html
+       + % lebron = Person.find_by last_name: "James"
+         % lebron.max_salary
+**** more active record
+     + active record scopes
+       + default scope
+         + class "method" for specifying how the records are retrieved by default from
+           the database (instead of relying on the database default)
+           + % Hobby.pluck :name
+         + use unscoped to break out of default
+           + edit hobby.rb for default_scope { order :name }
+           + % Hobby.pluck :name
+           + % Hobby.unscoped.pluck :name
+       + named scope
+         + scope :name, lambda
+         + % Person.ordered_by_age.pluck :age
+           % Person.ordered_by_age.starts_with("Jo").pluck :age, :first_name
+           % Person.ordered_by_age.limit(2).starts_with("Jo").pluck :age, :first_name
+       + scopes always return ActiveRecord::Relation
+       + can make your ActiveRecord queries very expressive
+     + validations
+       + active record validations
+         + you would like to have some control over what goes into the database
+         + not every input might be appropriate
+         + if these validations fail - your info should not be saved to the database
+         + active record provides a lot of built-in validations
+           + presence :true // field contains some data
+           + uniqueness: true // make sure no record exists in the database already
+         + edit job.rb for validates
+         + % rails c
+           % job = Job.new
+           % job.errors
+           % job.save
+           % job.errors
+           % job.errors.full_messages
+         + :numbericality - validates numeric input
+           :length - validates value is a certain length
+           :format - validates value complies with some regular expression format
+           :inclusion - validates value is inside specified range
+           :exclusion - validates value is out of the specified range
+       + writing custom validations
+         + write a method that does some validation and calls errors.add(columnname, error) when
+           it encounters an error condition
+         + specify it as a symbol for the validate method
+         + edit salary_range.rb for validate :min_is_less_than_max
+         + % sr = SalaryRange.create min_salary: 30000.00, max_salary: 10000.00
+           % sr.errors
+           % sr.errors.full_messages
+           % sr.save!
+       + links
+         + http://guides.rubyonrails.org/active_record_basics.html
+         + http://guides.rubyonrails.org/active_record_querying.html
+         + http://guides.rubyonrails.org/association_basics.html
+         + http://guides.rubyonrails.org/active_record_callbacks.html
+     + N+1 Queries issue and DB Transactions
+       + % rails c
+         % Person.first.personal_info.weight
+         % Person.all.each { |p| puts p.personal_info.weight } // has N+1 problem does N+1 queries
+         % Person.includes(:personal_info).all.each { |p| puts personal_info.weight } // only 2 queries
+       + Active Record Transactions
+         + every thing you do with Active Record happens through transactions
+
+*** Week 3 - introduction to active pack
+*** Week 4 - security and nested resources in action pack
 ** course3: ruby on rails - ruby on rails web services and integration with mongodb
 *** Week 1 - introduction to mongodb, mongodb-api and crud
 **** introduction to nosql and mongodb
@@ -1057,8 +1308,58 @@
      % rails test
      % git push heroku
      % heroku run rails db:migrate
-
+     
 ** chapter 7: sign up
+   + % git checkout -b sign-up
+   + add some debug info to app/views/layouts/application.html.erb
+   + rails comes equipped with 3 environments: test, development and production
+     + % rails console; % Rails.env => "development"; % Rails.env.test? => false
+     + % rails console test // run console in test environment
+     + % rails server --environment production // run rails server in production environment
+     + % rails db:migrate RAILS_ENV=production // running production database
+     + also % RAILS_ENV=production rails server // if using preceding
+   + adding code for a pretty debug box, including a Sass mixin app/assets/stylesheets/custom.scss
+   + % rails console; % User.create(name: "Michael Hartl", email: "mhartl@example.com",
+     password: "foobar", password_confirmation: "foobar"); % User.count
+   + REST architecture actions corresponding to four fundamental operations POST, GET, PATCH
+     and DELETE defined by the HTTP standard
+   + add "resources :users" in config/routes.rb
+   + RESTful routes provided by the Users resource
+     HTTP-request     URL        Action      Named-route          Purpose
+     --------------------------------------------------------------------
+     GET           /users        index      users_path        page to list all users
+     GET           /users/1      show       users_path(user)  page to show a user
+     GET           /users/new    new        new_user_path     page to make a new user(signup)
+     POST          /users        create     users_path        create a new user
+     GET           /users/1/edit edit       edit_user_path(user) page to edit user with id 1
+     PATCH         /users/1      update     user_path(user)   update user
+     DELETE        /users/1      destroy    user_path(user)   delete user
+   + add app/views/users/show.html.erb
+   + add "show" action in app/controllers/users_controller.rb
+   + there is a more direct way to get debugging information using byebug gem
+     + add line "debugger" to "show" action in app/controllers/users_controller.rb
+     + when we visit /users/1, Rails server shows a byebuyg prompt "(byebug)"
+       + (byebug) @user.name
+       + (byebug) @user.email
+       + (byebug) params[:id]
+       + Ctrl-D to release prompt
+   + remove "debugger" line from "show" action
+   + whenever you're confused about something in a Rails application, it's a good practice
+     to put "debugger" close to the code you think might be causing the trouble
+   + inspecting the state of the system using byebug is a powerful method for tracking
+     down application errors and interactively debugging your application
+   + http://gravatar.com/ // Gravatar is a free service that allows users to upload images
+     and associate them with email addresses they control
+   + add user show view with name and Gravatar in app/views/users/show.html.erb
+   + defining a gravatar_for helper method in app/helpers/users_helper.rb
+   + adding a sidebar to the user show view app/views/users/show.html.erb
+   + scss for styling the user show page, including the sidebar app/assets/stylesheets/custom.scss
+   + signup form
+     
+
+
+
+
 ** chapter 8: basic login
 ** chapter 9: advanced login
 ** chapter 10: updating showing and deleting users
