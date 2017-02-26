@@ -417,6 +417,43 @@
        + kf = KFold(12, 3, shuffle = True)
 
 ** Lesson 10: Sentiment Analysis with Andrew Trask
+   + andrew w trask
+     + PhD student at University of Oxford
+     + Deep Learning for natural language processing
+     + author : grekking Deep Learning book (40% discount)
+   + sentiment analysis
+     + convert text input to numerical data to discover correlation
+   + recap
+     + neural networks, fwd/back propagation, gradient descent, mean squared error and
+       train/test splits
+   + 6 different mini projects
+     + creating a data set and come up with predictive theory where correlation exists in our
+     data set
+     + validate the theory and tranform to input and output data; iterate several times
+     + download https://d17h27t6h515a5.cloudfront.net/topher/2017/February/5892be63_sentiment-network/sentiment-network.zip
+       + a notebook for each miniproject
+       + a notebook for the solution for each mini project
+       + labels.txt
+       + reviews.txt
+     + % conda create -n sentiment-network python=3 // new env that will hold package
+     + % source activate sentiment-network
+     + % conda install numpy jupyter notebook matplotlib scikit-learn bokeh
+     + % jupyter notebook Sentiment\ Classification\ -\ Intro.ipynb // for introduction
+       + intro: framing the problem
+       + project 1: curate a dataset; develop a "predictive theory"; quick theory validation
+       + project 2: transforming text to numbers; creating the output/input data
+       + project 3: putting it all together in a neural network; building our neural network
+       + project 4: understanding neural noise; making learning faster by reducing noise
+       + project 5: analyzing inefficiencies in our network; making our network train and run faster
+       + project 6: further noise reduction; reducing noise by strategically reducing the vocabulary
+
+
+
+
+       
+       
+
+
 ** Lesson 11: Intro to TFLearn
 ** Lesson 12: Preparing for Siraj's Lesson
 ** Lesson 13: Siraj's Sentiment Analysis

@@ -20,6 +20,8 @@
       + cocktail party problem algorithm // 2 microphone listens 2 speakers
         // one line algo:  [W,s,v] = svd((repmat(sum(x.*x,1),size(x,1),1).*x)*x');
         // svd - single value decomposition -> linear algebra routine built in ocative
+        // single value decomposition
+        + wiki link: https://en.wikipedia.org/wiki/Cocktail_party_effect
       + with unsupervised learning there is no feedback based on the prediction results   
     + octave - open source high level interpreted language
       + used for rapid prototyping and then migrate to c++ and java
@@ -30,10 +32,28 @@
       + basic linear algebra
     + other matlab or octave are clojure, julia, python and R
     + sample problems or assignments link: http://cs229.stanford.edu/materials.html
-    + 
-      
 *** Linear Regression with One Variable
-    + 
+    + model representation
+      + supervised learning - given the "right answer" for each example in the data
+      + regression problem - predict real-valued output
+      + classfication problem - discrete valued output
+      + training set -> learning algorithm -> h (hypothesis) (training)
+        size of house -> h (hypothesis) -> estimated price (value out)
+      + linear regression with one variable or univariate linear regression
+        y = c + mx
+      + when the target variable that we're trying to predict is continuouse we call
+        the learning problem a regression problem
+      + when y can take on only a small number of discrete values we call it a classification
+        problem
+    + cost function
+      + 1/2m * sum of "m" training samples((h(x) - y)**2)
+      + called as "cost function" or "squared error function" or "mean squared error"
+      + most commonly used for regression problems
+      + the mean is halved (1/2) as a convenience for the computation of the gradient
+        descent, as the derivative term of the square function will cancel out the 1/2
+        term
+
+      
 *** Linear Algebra Review
 ** Week2
 *** Linear Regression with Multiple Variables

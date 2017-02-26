@@ -602,6 +602,52 @@
        + Active Record Transactions
          + every thing you do with Active Record happens through transactions
 
+**** assignment
+     + download bootstrap file
+       Link: https://drive.google.com/file/d/0Bwvt4e6DQqn4XzAzQVJLSFlSeXM/view?usp=sharing
+     + intructions: https://drive.google.com/open?id=0Bwvt4e6DQqn4MlB3bXE3blpicjQ
+     + % rails _4.2.3_ new todolists
+       + add "group :test do gem 'rspec-rails', '~>3.0' end" to Gemfile
+       % rails generate rspec:install
+       + add "--format documentation" to .rspec
+       + copy Gemfile, spec/assignment_spec.rb 
+       % bundle install
+       % rspec // to run test suite
+       % rspec -e rq01 // to evaluate rq01 requirement
+       % rspec -e rq02
+       % rails generate model User username:string password_digest:string
+       % rake db:migrate
+       % rspec -e rq02
+       % rails generate model Profile gender:string birth_year:integer first_name:string last_name:string user:references
+       % edit user.rb for "has_one :profile" to Profile
+       % rake db:migrate
+       % rspec -e rq03
+       % rails generate model TodoList list_name:string list_due_date:date
+       % rake db:migrate
+       % rspec -e rq04
+       % rails g migration AddUserToTodoList user:references
+          // % rails destroy migration AddUserTodoList; to remove generated migration file
+       % edit user.rb for "has_one :todo_list" and todo_list.rb for "belongs_to :user"
+       % rake db:migrate
+       % rspec -e rq05
+       % rails g model TodoItem due_date:date title:string description:text completed:boolean todo_list:references
+       % edit migration create_todo_items.rb to mention boolean type :default => false
+       % edit model todo_list.rb for "has_many :todo_item, dependent: :destroy"
+       % rake db:migrate
+       % rspec -e rq06
+       % rake db:migrate
+       % rspec -e rq07
+       % edit user.rb for "has_many :todo_items, through: :todo_lists
+       % rspec -e rq08
+       % add items to db/seeds.rb as specified
+       % rake --describe db:seed
+       % rspec -e rq09
+       % add "default_scope { order :list_due_date }" to todo_list.rb
+       % add "default_scope { order :due_date }" to todo_item.rb
+       % rspec -e rq10
+       % add validates to profile.rb and user.rb
+
+
 *** Week 3 - introduction to active pack
 *** Week 4 - security and nested resources in action pack
 ** course3: ruby on rails - ruby on rails web services and integration with mongodb
