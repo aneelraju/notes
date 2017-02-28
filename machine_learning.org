@@ -52,9 +52,55 @@
       + the mean is halved (1/2) as a convenience for the computation of the gradient
         descent, as the derivative term of the square function will cancel out the 1/2
         term
-
-      
+    + cost function - intuition II
+      + contour plots or contour figures
+        + is a graph that contains many contour lines. A contour line of a two variable
+          function has a constant value at all points of the same line
+    + gradient descent
+      + to minimize cost function J(c, m)
+      + start with some c0, m0 and keep change c0, m0 to reduce J(c0, m0) until we
+        hopefully end up at a minimum
+      + the way to find minimum is by taking the derivative of our cost function. the
+        slope of the tangent is the derivative at that point and it will give us a
+        direction to move towards. we make steps down the cost function in the direction
+        with the steepest descent. the size of each step is determined by learning rate
+      + if learning rate is too small, gradient descent can be slow; if learning rate is
+        too large, gradient descent can overshoot the minimu. it may fail to converge
+        or even diverge
+      + as we approach a local minimum, gradient descent will automatically take smaller
+        steps. so, no need to decrease learning rate over time
+      + at local minimum, gradient descent will not change as slope is flat ('0')
+      + if the slope of gradient descent is negative, the value of parameter (c, m) increases;
+        if the slope of gradient descent is positive, the value of parameter (c, m) decreases
+      + the cost function (convex quadratic function) always a bowl-shaped function, always converge to
+        global minimum (no multiple local minimum)
+      + "batch" gradient descent: each step of gradient descent uses all the training examples
 *** Linear Algebra Review
+    + matrix: rectangular array of numbers
+    + dimension of matrix: number of rows x number of columns
+    + M[i,j]: ith row, jth column
+    + vector V: an nx1 matrix (only one column) of n dimensional
+    + V[i] = ith element; 1-indexed vector start with index 1; 0-indexed vector start with index 0
+    + Matrix addition
+      + Mi + Mj = Mi11 + Mj11; Mi12 + Mj12; Mi21 + Mj21; Mi22 + Mj22; 
+       you can add matrices of same dimensions only
+    + scalar multiplication
+      + 2 * M = 2*M11; 2*M12; 2*M21; 2*M22
+    + Mi2x3 * Mj3x1 = Mi11*Mj11 + Mi12*Mj21 + Mi13*Mj31; Mi21*Mj11 + Mi22*Mj21 + Mi23*Mj31;
+      + result V2x1 matrix
+    + Mi2x3 * Mj3x2 = Mi11*Mj11 + Mi12*Mj21 + Mi13*Mj31; Mi21*Mj11 + Mi22*Mj21 + Mi23*Mj31;
+                      Mi11*Mj12 + Mi12*Mj22 + Mi13*Mj32; Mi21*Mj12 + Mi22*Mj22 + Mi23*Mj32;
+      + result M2x2 matrix
+    + A * B != B * A (not commutative)
+    + A*(B * C) == (A*B)*C (associative)
+    + Identity matrix, I: diagonal is '1' rest elements are '0'
+    + A*I = I*A = A
+    + Matrix Inverse and Transpose
+      + A*AInv = I
+      + AInv calculated by octave
+      + Matrix will all '0' doesnt have inverse
+      + Matrix Transpose 
+        + Let A be an mxn matrix and let B = A(T). Then B is an nxm matrix and Bij = Aji    
 ** Week2
 *** Linear Regression with Multiple Variables
 *** Octave/Matlab Tutorial
