@@ -1,0 +1,472 @@
+* google cloud platform - cloud.google.com
+** 10 min interactive tutorial
+*** run a server
+    + all resources and APIs for this project have already been enabled
+    + apache is preinstalled on the machine image launched when you
+      started the tutorial
+    + each VM has an external IP address. you can set the IP address to
+      the ephemeral or static
+    + link: https://interactive-tutorial.appspot.com/server
+    + your VM running on Google Compute Engine works as if you are running 
+      on your own data center
+    + you have full admin and config rights
+    + when you launch an instance, you choose a machine type and operating system
+      and can create custom machine images
+    + connect o your server using ssh
+      + https://cloudssh.developers.google.com/projects/interactive-tutorial-9b0a81/zones/us-central1-b/instances/my-instance?authuser=aneelraju@gmail.com&_ga=1.144162357.1236183293.1488377808&undefined
+    + check that an apache web server is running
+      % sudo apachectl start
+    + view your web server in a browser
+      + % gcloud compute instances list my-instance
+      + copy the IP address listed under EXTERNAL_IP into your browser address bar.
+        your browser window should display the Apache2 default page
+      + keep your ssh window open and proceed to the next step
+*** store files
+    + each store location, called a bucket, has a name that is globally unique.
+      to ensure uniqueness, the tutorial created a bucket name using your
+      project id:interactive-tutorial-9b0a81-bucket
+    + a set of sample files comes preloaded on the machine when you started the
+      tour. this command uses the gsutil tool to recursively copy the files under
+      /sample-files from the server to your bucket
+    + when you upload files to google cloud storage, they are backed up to multiple
+      physical locations. this ensures your files are protected even if a data center
+      goes down and makes it possible for you - from anywhere in the world - to have
+      fast access to them
+    + upload your files
+      + % gsutil cp -r /sample-files gs://interactive-tutorial-9b0a81-bucket
+        + by default, the files you upload to Google Cloud Storage are private
+    + view a private file
+      + check that files you uploaded are private by clicking the following link. you should
+        see XML containing an AccessDenied error code
+        + link: http://storage.googleapis.com/interactive-tutorial-9b0a81-bucket/sample-files/public/photo.jpg
+    + make some files public
+      + % gsutil acl ch -r -u AllUsers:READ gs://interactive-tutorial-9b0a81-bucket
+        + link: http://storage.googleapis.com/interactive-tutorial-9b0a81-bucket/sample-files/public/photo.jpg
+        + this command recursively makes all of the objects in the public folder readable by all users
+        + when you make a file public, anyone in the world can access it using a URL
+*** build database
+    + your database running on google cloud sql acts just like a MySql database
+      running on a local machine, except that you don't have to manage it: backups,
+      autoscaling and upgrades are all handle for you
+    + import a database
+      + % gcloud sql instances import sql-instance \
+        gs://interactive-tutorial-9b0a81-bucket/sample-files/sample.sql
+      + you uploaded sample files to cloud storage, including a SQL dump
+        file, sample.sql. now import the contents of this SQL file into your
+        database. this file must be UTF-8 format
+    + connect to your database with a MySQL client
+      + add a root password to the cloud SQL instance
+        + % gcloud sql instances set-root-password sql-instance --password my-password
+      + connect with a MySQL client
+        + % sudo gcloud beta sql connect sql-instance --user root
+      + query the database
+        + % SELECT Title, Date FROM Blog.Post WHERE Date > '2015-08-01';
+      + close the MySQL client connect
+        + % quit
+      + you can use any standard MySQL client or tool to connect with your database
+        on cloud platform
+      + you can use standard SQL for your queries, with a few restriction around
+        functions, plugins and interacting with files
+      + more help: https://cloud.google.com/sql/docs/introduction?&_ga=1.177526309.1236183293.1488377808#features
+*** analyze data
+    + load petabytes of data into Google BigQuery, then query that data in near real-time
+      using SQL-like syntax. Keep your data private, or share it publicly
+    + Google BigQuery stores tables and data inside datasets
+    + create a dataset
+      + % bq mk my_dataset
+    + load data
+      + bq load --skip_leading_rows=1 \
+        interactive-tutorial-9b0a81:my_dataset.shakesspeare \
+        gs://interactive-tutorial-9b0a81-bucket/\
+        sample-files/shakespeare.csv \
+        word,word_count:integer,corpus,corpus_date:integer
+      + you can load data into BigQuery from several formats, including CSV
+    + run a query
+      + bq query "SELECT SUM(word_count) count, word FROM \
+        [interactive-tutorial-9b0a81:my_dataset.shakerspeare] \
+        GROUP BY word ORDER BY count DESC LIMIT 10"
+      + this query counts all words in the complete works of Shakespeare and
+        returns the ten most frequently used
+      + you can design your own queries using the SQL-like syntax described
+        in BigQuery documentation https://cloud.google.com/bigquery/query-reference?_ga=1.81580823.1236183293.1488377808    
+*** command-line tools
+    + to run commands from local machine and upload your own files and data install
+      Google Cloud SDK - https://cloud.google.com/sdk/gcloud?_ga=1.176469925.1236183293.1488377808
+    + gcloud
+      + tool that provides the primary command-line interface to Google Cloud Platform
+      + can be used to create and manage
+        + Google Compute Engine VM instances and other resources
+        + Google Cloud SQL instances
+        + Google Container Engine clusters
+        + Google Cloud Dataproc clusters and jobs
+        + Google Cloud DNS managed zones and record sets
+        + Good Cloud Deployment manager deployments
+        + to deploy App Engine applications and perform other tasks
+      + ref: https://cloud.google.com/sdk/gcloud/reference
+      + command groups
+        + gcloud compute // commands related to compute engine in general availability
+        + gcloud compute instances // compute engine instances in general availability
+        + gcloud beta compute // compute engine in beta
+        + gcloud preview app // to app engine in preview
+    + sdk install
+      + link: https://cloud.google.com/sdk/downloads
+      + initialize: https://cloud.google.com/sdk/docs/initializing
+      + by default SDK installs those gcloud commands that are at
+        general availability and preview levels only
+      + additional functionality is available in SDK components named
+        alpha and beta
+        + these components allow you to use gcloud to work with Google Cloud Bigtable, Google
+          Cloud Dataflow and other parts of the Cloud Platform at earlier release levels than
+          General Availability
+      + properties
+        + Link: https://cloud.google.com/sdk/docs/properties
+        + govern the behavior of the gcloud command-line tool (across invocations)  and other SDK tools
+      + configurations
+        + Link: https://cloud.google.com/sdk/docs/configurations
+        + are named sets of properties
+        + gcloud automatically provides a config named default and uses it as intial active
+          configuration which is suitable for most use cases
+        + you can also create additional configs and switch b/w them
+      + global flags
+        + link: https://cloud.google.com/sdk/gcloud/reference/
+        + a set of global flags that govern the behavior of commands on a per-invocation level. Flags
+          override any values set in SDK properties
+      + output formatting
+        + link: https://cloud.google.com/sdk/gcloud/reference/topic/formats
+        + -format global flag changes the default output for gcloud commands
+        + supported formats include json, yaml, value and csv for scripting
+        + table and flattened for interactie display
+      + running gcloud commands
+        + you can run gcloud commands from the command line in the same way you use other command-line tools
+        + you can also run gcloud commands from within scripts and other automations, like when using Jenkins
+          to automate cloud platform tasks
+        + link: https://cloud.google.com/sdk/docs/scripting-gcloud
+      + installing cloud SDK (Mac OS)
+        + link: https://cloud.google.com/sdk/downloads#interactive
+        + export CLOUDSDK_PYTHON="/Users/yaraju/miniconda2/bin/python2" // add to .bash_profile
+        + % curl https://sdk.cloud.google.com | bash
+        + % exec -l $SHELL // restart your shell
+        + % gcloud init // initialize gcloud enironment
+          + % gcloud init --console-only // prevent the command from launching a browser based 
+                                         // authorization flow
+      + gcloud --help // to see Cloud Platform services you can interact with
+        + gcloud help COMMAND // to get help on any gcloud COMMAND
+        + gcloud topic -h // to learn advanced features of SDK like arg files and output formatting
+        + gcloud tool guide : https://cloud.google.com/sdk/gcloud
+        + command-line tools : https://cloud.google.com/sdk/cloudplatform
+        + client application developer : https://developers.google.com/api-client-library
+** quickstarts
+*** create a Linux VM
+    + product: Google Compute Engine
+    + create a VM instance, connect to it and delete it
+      + select or create a cloud platform project
+        + link: https://console.cloud.google.com/project?_ga=1.140939442.1236183293.1488377808
+      + enable billing for your project
+        + link: https://support.google.com/cloud/answer/6293499#enable-billing
+      + in the cloud platform console, go to the VM instances page
+        + link: https://console.cloud.google.com/compute/instances?_ga=1.138918835.1236183293.1488377808
+      + click the create instance button
+      + in the boot disk section, click change to begin configuration your boot disk
+      + in the OS images tab, choose the Debian 8 image
+      + click select
+      + in the firewall section, select Allow HTTP traffic
+      + click create button to create the instance
+      + allow a short time for the instance to start up. once ready, it will be listed on the VM instances
+        page with the green status icon
+      + connect to your instance
+        + in the cloud platform console, go to the VM instances page
+        + link: https://console.cloud.google.com/compute/instances?_ga=1.138918835.1236183293.1488377808
+        + in the list of VM's, click the SSH button in the row of the instance to which you want to connect
+        + you now have a terminal window for interacting with your Linux instance
+      + clean up
+        + to avoid incurring charges to your Google Cloud Platform account for the resouces used in the
+          quick start
+        + go to the VM instances page in the Google Cloud Platform Console
+        + link: https://console.cloud.google.com/compute/instances?_ga=1.172474147.1236183293.1488377808
+        + click the name of the instance you created
+        + at the top of the instance's details page, click delete
+      + next
+        + set up a basic web server
+          + link: https://cloud.google.com/compute/docs/tutorials/basic-webserver-apache
+        + getting started tutorial of Google Cloud Platform console
+          + link: https://console.cloud.google.com/start?tutorial=compute_quickstart&_ga=1.106756227.1236183293.1488377808
+        + create and manage virtual machine instances 
+          + link: https://cloud.google.com/compute/docs/instances/create-start-instance
+        + linux images available on compute engine
+          + link: https://cloud.google.com/compute/docs/images#os-compute-support
+*** store a file and share it
+    + product: Google Cloud Storage
+    + create a bucket, upload a file to it, share it and organize it in a folder
+      + open Cloud Storage browser in the Google Cloud Platform Console
+        + link: https://console.cloud.google.com/storage/browser?_ga=1.105224963.1236183293.1488377808
+      + click "create bucket"
+      + enter a unique name for you bucket
+        + do not include sensitive information in the bucket name, because the bucket namespace is global
+          and publicly visible
+      + choose multi-regional for storage class
+      + choose united states for location
+      + click create
+    + upload an object into the bucket
+      + right-click on the image above and download it to your computer
+      + in the Cloud Storage browser, click on the bucket that you created
+      + click upload files
+      + in the file dialog, navigate to the file that you downloaded and select it
+    + download and display an object
+      + right click the file and select the option to save it
+      + click on the file to view it in your browser
+    + share an object publicly // to create a publicly accessible URL for the file
+      + select the checkbox in the shared publicly column for the file
+      + click the public link that is displayed next to the checkbox wait for the object to load
+        in a new browser window, and note the object's shareable URL in the browser's address bar
+        + link: https://storage.googleapis.com/<your-bucket-name>/quickstart-console.png
+    + to stop sharing the file publicly
+      + clear the checkbox in the Shared publicly column for the file
+      + reload the URL from the step above to verify that it's no longer publicly accessible
+    + create folders
+      + click create folder
+      + enter folder1 for Name and click create // also can create subfolder
+    + delete objects
+      + click the buckets link to return to the buckets level
+      + select the bucket
+      + select the checkbox next to folder1
+      + click on the icon of the trash can
+      + click OK to permanently delete the folder and all objects and subfolders in it
+    + clean up
+      + to avoid incurring charges to your Google Cloud Platform account for the resources
+        used in this quickstart
+      + open the Cloud Storage browser in the Google Cloud Platform Console
+        + link: https://console.cloud.google.com/storage/browser?_ga=1.144545973.1236183293.1488377808
+      + select the checkbox next to the bucket that you created
+      + click delete to permanently delete the bucket and its contents
+    + next
+      + work through the cloud storage quickstart using the gsutil tool
+        + link: https://cloud.google.com/storage/docs/getting-started-gsutil
+      + how to host a static website using Google Cloud Storage
+        + link: https://cloud.google.com/storage/docs/website-configuration
+      + learn how to share your data publicly
+        + link: https://cloud.google.com/storage/docs/access-control/making-data-public
+      + learn about the types of storage
+        + link: https://cloud.google.com/storage/docs/storage-classes
+*** deploy a docker container image
+    + product: Container Engine (GKE), Cloud SDK
+    + use cloud shell to configure gcloud and run a container image
+    + this quickstart shows you how to use Google Cloud Shell to deploy a prebuilt Docker container
+      image with simple Node.js example app
+      + before you begin
+        + go to https://console.cloud.google.com/project/_/kubernetes/list?_ga=1.181712423.1236183293.1488377808
+        + create or select a project
+        + click continue to enable the API and any related services
+        + enable billing for your project
+          + link: https://support.google.com/cloud/answer/6293499#enable-billing
+      + use google shell
+        + to interact with kubectl immediately use Google Clock Shell, 
+          + link: https://cloud.google.com/shell/docs/
+        + Go to Google Cloud Platform Console
+          + link: https://console.cloud.google.com/?_ga=1.181719847.1236183293.1488377808
+        + click Activate Google Cloud Shell button at the top of console window
+          + a cloud shell session opens inside a new frame at the bottom of the console and
+            displays a command-line prompt
+      + set defaults for the gcloud command line tool
+        + link: https://cloud.google.com/compute/docs/zones#available
+        + % gcloud config set compute/zone us-central1-b
+        + you can view your defaults in the gcloud by running following command
+          + % gcloud config list
+      + run a container image
+        + prebuilt container image at Google Container Registry: https://cloud.google.com/container-registry
+          + source code: https://cloud.google.com/container-engine/docs/quickstart#hello_node_code_review
+        + create a cluster
+          + % gcloud container clusters create example-cluster
+        + ensure kubectl has authentication credentials
+          + % gcloud auth application=default login
+        + run the container
+          + % kubectl run hello-node --image=gcr.io/google-samples/node-hello:1.0 --port=8080
+        + expose the container. note that the type="LoadBalancer" option requests load balancer provision
+          for your container and is billed
+          + % kubectl expose deployment hello-node --type="LoadBalancer"
+        + copy the external IP address for the hello-node app
+          + % kubectl get service hello-node
+        + view the app
+          + http://EXTERNAL-IP:8080
+      + clean up
+        + to avoid incurring charges to your google cloud platform 
+        + delete the services you created to remove the load balancing resources 
+          % kubectl delete service hello-node
+        + wait a few minutes for the service to spin down, then use the following command to delete
+          the cluster you created
+          % gcloud container clusters delete example-cluster
+      + kuberetes and kubectl
+        + google container engine uses kubernetes for container management, deployment and scaling
+          + link: http://kubernetes.io/
+        + kubectl - command line interface for managing kubernetes clusters
+          + link: http://kubernetes.io/docs/user-guide/kubectl-overview/
+      + next
+        + hello node code review
+          + extremely simple app consists of 
+            + server.js // responds to any request by sending a respone containing the message 
+            + dockerfile // the image you want to build and specifies which port the app should listen
+        + install gcloud command-line tool
+          + install google cloud sdk // https://cloud.google.com/sdk/#Quick_Start
+          + % gcloud components install kubectl
+          + to learn how to run hello node locally, see kubernetes https://cloud.google.com/sdk/#Quick_Start
+        + some walkthrough apps
+          + running wordpress with a single pod
+            + link: https://cloud.google.com/container-engine/docs/tutorials/hello-wordpress
+          + create a guestbook with redis and PHP
+            + link: https://cloud.google.com/container-engine/docs/tutorials/guestbook
+          + using persistent storage with wordpress and mysql
+            + link: https://cloud.google.com/container-engine/docs/tutorials/persistent-disk
+          + on your own
+            + link: https://cloud.google.com/container-engine/docs/clusters/operations
+        + google cloud platform github
+          + link: http://googlecloudplatform.github.io
+*** train a tensorflow model
+    + product: machine learning API
+    + Train locally in the cloud with a single worker and in the cloud distributedly
+    + TBD
+*** run label detection on an image
+    + product: Vision API
+    + upload an image to cloud storage and make a label detection request to the cloud
+      vision API service
+    + TBD
+*** deploy a python application on app engine
+    + product: Google App Engine
+    + create a small app engine application that displays a short message
+    + before running and deploying, you must install the cloud sdk and create
+      or use an existing cloud platform console project
+    + create a new cloud platform console project or retrieve project id from
+      + link: https://console.cloud.google.com/project?_ga=1.72733203.1236183293.1488377808
+    + to install gcloud tool, you install and then initialize the gcloud cloud sdk
+      + link: https://cloud.google.com/sdk/docs/
+    + clone the hello world sample app repository to your local machine
+      + % git clone https://github.com/GoogleCloudPlatform/python-docs-samples
+      + % cd python-docs-samples/appengine/standard/hello_world
+      + link: https://github.com/GoogleCloudPlatform/python-docs-samples/archive/master.zip
+    + test the application
+      + % dev_appserver.py app.yaml // start the local development server
+        + ref: https://cloud.google.com/appengine/docs/standard/python/tools/devserver
+      + visit http://localhost:8080/
+    + deploy your app
+      + % gcloud app deploy
+        // --project [YOUR_PROJECT_ID] - flag to specify an alternate cloud platform console projectID
+        // -v [YOUR_PROJECT_ID] - flag to specify a version ID otherwise one is generated
+    + to learn more
+      + link: https://cloud.google.com/appengine/docs/standard/python/tools/uploadinganapp
+    + view your application
+      + % gcloud app browse // http://[YOUR_PROJECT_ID].appspot.com
+    + to learn more about Hello World app
+      + link: https://cloud.google.com/appengine/docs/standard/python/quickstart#hello_world_code_review
+    + clean up
+      + go to https://console.cloud.google.com/iam-admin/projects?_ga=1.185505961.1236183293.1488377808
+      + select the project you want to delete and click Delete project
+    + next 
+      + develop a basic flask app
+        + learn how to develop and deploy basic python 2.7 app that run on the 
+          https://cloud.google.com/appengine/docs/standard/
+        + https://cloud.google.com/appengine/docs/standard/python/getting-started/python-standard-env
+      + use a custom domain instead of appspot.com
+        + https://cloud.google.com/appengine/docs/standard/go/console/using-custom-domains-and-ssl
+      + some more topics
+        + an overview of app engine
+          + link: https://cloud.google.com/appengine/docs/about-the-standard-environment
+        + application architecture
+          + link: https://cloud.google.com/appengine/docs/standard/python/microservices-on-app-engine
+        + handling requests
+          + link: https://cloud.google.com/appengine/docs/standard/python/how-requests-are-handled
+        + routing requests
+          + link: https://cloud.google.com/appengine/docs/standard/python/how-requests-are-routed
+** cloud minute
+*** connect to google cloud sql on the command line
+    + link: https://www.youtube.com/watch?v=78itdGJpJAQ&autoplay=1
+*** autohealing instance groups
+    + link: https://www.youtube.com/watch?v=dT7xDEtALPQ&autoplay=1
+*** managing google cloud resources using powershell
+    + link: https://www.youtube.com/watch?v=R6GG30hKn-M&autoplay=1
+*** creating managed instance group templates
+    + link: https://www.youtube.com/watch?v=bpf230Gdrv4&autoplay=1
+*** all 1 min videos
+    + link: https://www.youtube.com/playlist?annotation_id=annotation_3602792269&feature=iv&list=PLIivdWyY5sqIij_cgINUHZDMnGjVx3rxi&src_vid=09-OlnQ6fGs
+** sample project
+*** bookshelf app
+    + products: Google App Engine flexible environment; Google Cloud SQL; Google Cloud Datastore;
+                Google Cloud Store; Google Cloud Pub/Sub; Google Compute Engine
+    + available in language: .NET, Go, Java, Node.js, PHP, Python
+    + Go Bookshelf App
+      + 
+*** translating text
+    + using google cloud translation api
+    + link: https://cloud.google.com/translate/docs/translating-text
+    + TBD
+*** sentiment analysis tutorial
+    + start exploring and developing applications with Google Cloud Natural Language API
+    + link: https://cloud.google.com/natural-language/docs/sentiment-tutorial
+    + TBD
+*** google cloud vision API samples
+    + cloud vision API 
+    + link: https://cloud.google.com/vision/docs/samples
+    + TBD
+*** google cloud speech api samples
+    + cloud speech API; mobile app example on iOS
+    + link: https://cloud.google.com/speech/docs/samples
+    + TBD
+** developer and management tools
+   + tools and libraries to enhance developer productivity on Google Cloud Platform
+    + TBD
+*** cloud sdk
+    + command line interface for Google Cloud Platform products and services
+    + link: https://cloud.google.com/sdk/
+    + TBD
+*** cloud shell
+    + manage your infrastructure and applications from the command line in any browser
+    + link: https://cloud.google.com/shell/
+    + TBD
+*** cloud console
+    + your integrated Google Cloud Platform management console
+    + link: https://cloud.google.com/cloud-console/
+    + TBD
+** Tutorials : https://cloud.google.com/sdk/auth_success#tutorials
+*** quickstarts and tutorials
+    + link : https://cloud.google.com/docs/?_ga=1.178041381.1236183293.1488377808
+    + TBD
+*** Build a web app and host it on Google App Engine
+    + link : https://console.cloud.google.com/start/appengine?_ga=1.106738435.1236183293.1488377808
+    + TBD
+*** launch large compute clusters on Google Compute Engine
+    + link : https://cloud.google.com/compute/docs/quickstart
+    + TBD
+*** store vast amounts of data on Google Cloud Storage
+    + link : https://cloud.google.com/storage/docs/hellogooglestorage
+    + TBD
+*** analyze big data in the cloud with Google BigQuery
+    + link : https://cloud.google.com/bigquery/bq-command-line-tool-quickstart
+    + TBD
+*** store and manage data using a mysql database with Google Cloud SQL
+    + link : https://cloud.google.com/cloud-sql/docs/cloud-sdk
+    + TBD
+*** make your applications and services available to your users with Google Cloud DNS
+    + link : https://cloud.google.com/cloud-dns/getting-started
+    + TBD
+** additional resources
+*** documentation
+    + technical documentation for GCP products and services
+    + link: https://cloud.google.com/docs/
+    + TBD
+*** solutions
+    + tutorials, architecture guides and additional resources to help you build on GCP
+    + link: https://cloud.google.com/solutions/
+    + TBD
+*** support
+    + discover support options, find developer communities, and contact technical support
+    + link: https://cloud.google.com/support/
+    + TBD
+*** in-depth tutorials
+    + combine GCP features and services to create business solutions
+    + link: https://cloud.google.com/docs/tutorials
+    + TBD
+*** pricing
+    + link: https://cloud.google.com/pricing/
+    + TBD
+*** training
+    + quickly learn to develop, manage and design solutions on GCP with training and certification
+      programs
+    + link: https://cloud.google.com/training/
+    + TBD

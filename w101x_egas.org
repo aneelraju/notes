@@ -1,0 +1,28 @@
+* edx: write101x english grammar and style
+** Week1
+*** Introduction
+    + syllabus: https://courses.edx.org/courses/course-v1:UQx+Write101x+1T2017/348322dea5d74c8fa635b967152d55db/
+    + faq: https://courses.edx.org/courses/course-v1:UQx+Write101x+1T2017/a44eb5329466408994a80a1110c0c0e6/
+    + presenters: https://courses.edx.org/courses/course-v1:UQx+Write101x+1T2017/6983ce3d53c54c16acfa65575ef8571b/
+    + discussion forum: https://courses.edx.org/courses/course-v1:UQx+Write101x+1T2017/courseware/988f431cb63249298b8798823e93737c/19a4ac19a0c546b6a2ed943d8012eba2/
+    + diagnostic test: https://courses.edx.org/courses/course-v1:UQx+Write101x+1T2017/courseware/d1d4b43b591541a385ec707b44677a8a/5e01c60ded77494d852fe3f3cda7b46b/
+    + Dates:
+      + 27Feb17: Course begins
+      + 20Mar17: Style Guide Entry#1 assigned
+      + 28Mar17: Style Guide Entry#1 due
+      + 30Mar17: Style Guide Entry#1 peer-review due
+      + 31Mar17: Style Guide Entry#1 self-review due
+      + 10Apr17: Style Guide Entry#2 assigned
+      + 18Apr17: Style Guide Entry#2 due
+      + 20Apr17: Style Guide Entry#2 peer-review due
+      + 21Apr17: Style Guide Entry#2 self-review due
+      + 1May17: Quizzes due and course closes
+      + 4May17: Verified certificates awarded
+*** 
+** Week2
+** Week3
+** Week4
+** Week5
+** Week6
+** Week7
+** Week8
