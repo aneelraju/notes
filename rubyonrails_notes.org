@@ -649,7 +649,263 @@
 
 
 *** Week 3 - introduction to active pack
-*** Week 4 - security and nested resources in action pack
+**** action pack
+     + action pack: enables to expose data to web
+     + restful principles: index, show and destroy, new and create, edit and update
+     + action view
+       + to enable you to store data in the database via web, we need forms
+       + forms are mechanisms of how you input the data on the web and then store
+         the data in the database via action pack
+       + form helpers
+       + layouts
+         + rails application lets you have different layouts for different kinds of
+           controllers of a whole application as a whole
+       + partials
+         + pieces of code that you can reuse in parts between different actions in your
+           action pack code
+     + % git clone  https://github.com/jhu-ep-coursera/fullstack-course2-module3-blogposts
+     + module 3 pdf: https://github.com/jhu-ep-coursera/fullstack-course2-module3-blogposts/tree/master/Lectures
+     + books
+       + agile web development with rails 4 - Dave Thomas, Sam Ruby and David Heinemeier Hansson
+       + ruby on rails tutorial - Michael Hartl
+       + Rails 4 in action - Ryan Bigg, Yehuda Katz, Steve Klabnik, Rebecca Skinner
+       + Eloquent Ruby - Russ Olsen
+       + Programming Ruby - Dave Thomas, Andy Hunt and Chad Fowler
+       + Beginning Ruby - Peter Cooper
+       + Head First Ruby - Jay McGavren
+       + Learn To Program - Chris Pine
+       + Ruby Cookbook - Lucas Carlson, Leonard Richardson
+       + The Well Grounded Rubyist - David A Black
+       + Metaprogramming Ruby - Paolo Perrotta
+     + Action Pack = ActionController + Action View
+       + % rails _4.2.3_ new my_blog
+       + % rails g scaffold post title content:text
+       + % rake db:migrate
+       + scaffolding creates:
+         + migration
+         + model
+         + routes
+         + restful controller
+         + views
+       + actionview: erb
+         + html file with an .erb extension
+         + erb is a templating library (similar to jsp) that lets you embed ruby into your html
+         + two tag patters
+           + <% ...ruby code... %> - evaluate ruby code
+           + <%= ...ruby code... %> - output evaluated ruby code
+         + they are many view helpers that assist in code creation, link link_to ...
+       + action controller
+         + ruby class containing one or more actions
+         + each action is responsible for responding to a request to perform some task
+         + when an action is finished firing it renders a view with the same name as the
+           action
+         + the action always needs to be mapped in routes.rb // config/routes.rb
+       + action pack is controller and view work together to let you interact with
+         resources in the model layer
+       + rest and rails
+         + REpresentational State Transfer
+         + Roy T. Fielding's Ph.D. dissertation
+         + http://www.xfront.com/REST-Web-Services.html
+         + REST is all about resources // app/controllers/posts_controller.rb
+           + List available resources
+           + Show a specific resource
+           + Destroy an existing resource
+           + Provide a way to create a new resource (like a html form)
+           + Create a new resource
+           + Provide a way to update an existing resource (like a html form)
+           + Update an existing resource
+         + named routes from 'Resources :Posts'
+           + HTTP Method  : Named Routes   : Parameters  : Controller Action  : Purpose
+             GET            posts_path                     Index                List all
+             GET            post_path        ID            show                 show one
+             GET            new_post_path                  new                  provide form to input new post
+             POST           posts_path       Record hash   create               create new record(in DB)
+             GET            edit_post_path   ID            edit                 provide form to edit post
+             PUT/PATCH      post_path        ID and Record update               update record(in DB)
+                                             hash 
+             DELETE         post_path        ID            destroy              remove record
+         + % rake routes // to view routes
+**** restful actions
+     + index
+       + retrieve all posts
+       + look for app/views/posts/xindex.html.erb template to render response
+       + edit views/posts/index.json.jbuilder to invoke json or html view // jbuilder : https://github.com/rails/jbuilder
+     + show and destroy
+       + retrieve specific post based on id parameter
+       + show.html.erb template to render response
+       + respond_to : rails helper that specifies how to respond to a request based on a request format
+         + takes an optional block where the argument is the format (eg: html, json, xml etc.)
+         + block specifies how to handle each format
+           + format.format_name - matching template
+           + format.format_name
+             { do_something_other_than_just_displaying_the_matching_template }
+       + redirect_to : instead of rendering a template - send a response to the browser
+         + usually takes full URL as a parameter
+         + could either be a regular URL or a named route
+         + if the parameter is an object - rails will attempt to generate a URL for that object
+       + destroy
+         + redirect instead of render is done because when you want the client to be able to bookmark
+           a certain page or you don't have a specific template to show (destroy action) and instead want
+           the client to go to a generic page (index)
+     + new and create
+       + new: create a new empty post object
+         + new.html.erb
+           + render 'form' -> form is a partial
+       + create: create a new post object with parameters that were passed from the new form
+         + try to save the object to the database
+         + if successful, redirect to show template
+         + if unsuccessful (due validation unsuccesfull), render new action (template - again)
+     + strong parameters and flash
+       + strong parameters
+         + link: guides.rubyonrails.org/action_controller_overview.html#stron-parameters
+         + post_params method to sanitizes params
+       + flash
+         + we want to redirect a user to a different page on our site, but at the same
+           time give him some sort of message
+         + a hash where the data you put in persists for exactly ONE request AFTER the current
+           request
+         + flash[:attribute] = true; common are :notice (good) and :alert (bad)
+           + redirect_to takes a :notice or :alert
+     + edit and update
+       + edit
+         + retrieve a post object based on the id
+         + edit.html.erb
+       + update
+         + retrieve an existing post using id parameter
+         + update post object with (strong) parameters that were passed from the edit form
+         + try to save the object to the database
+         + if successful, redirect to show template
+         + if unsuccessful, render edit action (template) again
+**** action view
+     + partials
+       + DRY - Don't Repeat Yourself
+       + application.html.erb which enables you to maintain layout code for the entire application
+         in one place
+       + it would also be nice to reuse snippets of view code in multiple templates
+       + for eg: edit and new forms are they really that different
+       + partials are similar to regular templates, but they have a more refined set of capabilities
+       + named with underscore (_) as the leading character
+       + rendered with render 'partialname' (no underscore)
+       + render method also accepts a second argument, a has of local variables used in the partial
+       + object partial
+         + similar to passing local variables, you can also render a specific object
+         + <%= render @post %> will render a partial in app/views/posts/_post.html.erb and 
+           automatically assign a local variable post (convention over configuration)
+         + rendering collection of partials
+           <%= render @posts %> is equivalent to
+           <% @posts.each do |post| %>
+             <%= render post %>
+           <% end %>
+     + form helpers and layouts
+       + form helpers
+         + _form.html.erb -> form_for() is helper
+         + form_for
+           + generates a form tag for passed in object
+           + unlike a regular HTML form, Rails uses POST by default
+           + as your password is not passed as part of your URL
+           + anything that will end up modifying data on the server should
+             definitely be a POST and not GET
+           + f.label
+             + outputs HTML label tage for the provided attribute
+             + to customize label description, pass in a string as a second parameter
+             + <div class="field">
+                 <%= f.label :title, "Heading" %><br>
+                 <%= f.text_field :title %>
+               </div>
+           + f.text_field
+             + generates input type="text" field
+             + use :placeholder hash entry to specify a placeholder (hint) to be displayed
+               inside the field until the user provides a value
+             + <div class="field">
+                 <%= f.label :title, "Heading" %><br>
+                 <%= f.text_field :title, placeholder: "Have a great title?" %>
+               </div>
+           + f.text_area
+             + similar to f.text_field but for a text area instead of a text field input (default: 40c x 40r)
+             + can specify a different size (colsxrows) with a :size attribute
+             + <div class = "field">
+               <%= f.label :content %><br>
+               <%= f.text_area :content, size: "10x3" %>
+               </div>
+           + f.date_select
+             + set of select tags (year, month, day) pre-selected for accessing an attribute in the DB. many
+               formatting options f.time_select
+             + f.datetime_select
+             + distance_of_time_in_words_to_now
+           + for more
+             + ActionView::Helpers::DataHelper docs
+               + link: http://api.rubyonrails.org/classes/ActionView/Helpers/DateHelper.html
+           + other form helpers (not frequenlty used)
+             + search_field
+             + telephone_field
+             + url_field
+             + email_field
+             + number_field
+             + range_field
+             + some of these are browser dependent
+           + f.submit
+             + submit button
+             + accepts the name of the submit button as its first argument
+             + if you don't provide a name - generates one based on the model and type of action
+               e.g. "Create Post" or "Update Post"
+             + http://guides.rubyonrails.org/form_helpers.html
+       + layouts
+         + application.html.erb is applied by default as a shell for any view template
+         + layout that matches the name of a controller is applied if present
+         + you can use layout method inside controller (outside any action) to set a layout
+           for the entire controller
+           + layout 'some_layout'
+         + you can include a layout for a specific action with an explicit call to render inside
+           the action
+           + render layout: 'my_layout'
+           + if you don't want a layout - just pass false instead of layout name 
+             + render layout: false
+**** assignment
+     + instructions: https://drive.google.com/open?id=0BxOTj_EJTdDGMDd3MTkxMkthOW8
+     + bootstrap files: https://drive.google.com/file/d/0Bwvt4e6DQqn4aXNkZlpSc2R6VnM/view?usp=sharing
+     + grader requires rails 4.2.8 since ruby 2.4 and rails 4.2.4 have compatibility issues
+       + % gem install rails --version=4.2.8
+       + % brew install rbenv ruby-build
+         % echo 'if which rbenv > /dev/null; then eval "$(rbenv init -)"; fi' >> ~/.bash_profile
+         % source ~/.bash_profile
+         % rbenv install 2.4.0
+         % rbenv global 2.4.0
+         % ruby -v
+     + % rails _4.2.3_ new todolists
+     + add to Gemfile
+       group :test do
+         gem 'rspec-rails', '~> 3.0'
+         gem 'capybara'
+       end
+     + add "--format documentation" to .rspec
+     + % bundle 
+     + % rails generate rspec:install
+     + overwise Gemfile, db/seed.rb, spec/features/module3_action_pack_spec.rb from bootstrap file
+     + % bundle
+     + % rspec // run all requirements
+       + % rspec -e rq01 // run specific requirements
+       + % rails g scaffold TodoItem due_date:date title:string description:text completed:boolean
+           + % rails destroy scaffold TodoItem
+       + % rake db:migrate
+           + % rake db:rollback
+       + % rspec -e rq02 
+       + % rake db:seed
+       + % rspec -e rq03
+       + % rails s // in another terminal
+       + % rspec -e rq04
+       + "create a new TodoItem (any data)"
+       + % rspec -e rq05
+       + % rake routes
+       + edit create in todo_item_controller to redirect to action: :index and 
+         change :notice to flash[:notice]
+       + % rspec -e rq06
+       + remove edit line in index.html.erb
+       + % rspec -e rq07
+       + check @todo_item.persisted? to view completed property in _form.html.erb
+       + % rspec -e rq08
+       + add count method in todo controller and call the instance variable in index view page
+       + % rspec -e rq09
+**** Week 4 - security and nested resources in action pack
 ** course3: ruby on rails - ruby on rails web services and integration with mongodb
 *** Week 1 - introduction to mongodb, mongodb-api and crud
 **** introduction to nosql and mongodb

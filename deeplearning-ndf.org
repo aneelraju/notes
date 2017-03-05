@@ -415,12 +415,11 @@
            print train_indices, test_indices
      + ranomize data to eradicate any bias
        + kf = KFold(12, 3, shuffle = True)
-
 ** Lesson 10: Sentiment Analysis with Andrew Trask
    + andrew w trask
      + PhD student at University of Oxford
      + Deep Learning for natural language processing
-     + author : grekking Deep Learning book (40% discount)
+     + author : grokking Deep Learning book (40% discount)
    + sentiment analysis
      + convert text input to numerical data to discover correlation
    + recap
@@ -441,7 +440,11 @@
      + % jupyter notebook Sentiment\ Classification\ -\ Intro.ipynb // for introduction
        + intro: framing the problem
        + project 1: curate a dataset; develop a "predictive theory"; quick theory validation
+         + % python
+           % exec(open("./mini_project1.py").read(), globals())
        + project 2: transforming text to numbers; creating the output/input data
+         + % python
+           % exec(open("./mini_project2.py").read(), globals())
        + project 3: putting it all together in a neural network; building our neural network
        + project 4: understanding neural noise; making learning faster by reducing noise
        + project 5: analyzing inefficiencies in our network; making our network train and run faster
