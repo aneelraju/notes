@@ -1,0 +1,7 @@
+* emacs help
+** links
+** commands
+*** operate on select region (c-spc and select rows)
+   + c-u m-| nl -w 2 // apply line numbering on the region
+** elisp
+   + "m-:"(Eval:) (dotimes (i 20) (insert (format "%2d. \n" (1+ i)))) // add numbers from 1 to 20

@@ -8,8 +8,131 @@
 * go cmd
   + go run hello_world.go // run the program
   + go build hello_world.go; ./hello_world // build binary and execute
-
 * go web development
   + web framework buffalo
     + link: http://gobuffalo.io/
+* golang.org
+  + link: https://golang.org
+** write go code
+   + go tool commands
+     + link: https://golang.org/cmd/go/
+   + youtube link : https://www.youtube.com/watch?v=XCsL89YtqCs
+   + golang.org git repo: https://github.com/golang
+   + code organization
+     + keep Go code in a single workspace
+     + workspace contains many version control repositories (like Git)
+     + each repository contains one or more packages
+     + each package consists of one or more Go source files in a single directory
+     + the path to a package's directory determines import path
+     + go tool builds source packages and installs the resulting binaries to the pkg and bin
+     + src subdirectory typically contains multiple version control repositories (like Git or
+       Mercurial) that track the development of one or more source packages
+     + workspace
+       + src -> go source files
+       + pkg -> package objects
+       + bin -> executable commands
+       + example directory structure
+         bin/
+             hello  // command executable
+             output // command executable
+         pkg/
+             linux_amd65/
+                github.com/golang/example/
+                   stringutil.a // package object
+         src/
+            github.com/golang/example/
+               .git     // Git repository metadata
+               hello/
+                 hello.go  // command source
+               outyet/
+                 main.go   // command source
+                 main_test.go  // test source
+               stringutil/
+                 reverse.go  // package source
+                 reverse_test.go // test source
+            golang.org/x/image/
+               .git      // Git repository metadata
+               bmp/    // image package: https://godoc.org/golang.org/x/image
+                reader.go // package source
+                write.go  // package source
+     + GOPATH env variable
+       + specifies the location of your workspace
+       + % export PATH=$PATH:$(go env GOPATH)/bin // add to your path
+     + import paths
+       + a string that uniquely idenfies a package
+       + a package's import path corresponds to its location inside a workspace or in
+         remote repository
+       + from standard libary are give short import paths as "fmt" and "net/http"
+       + choose a base path that is unlikely to collide with future additions to the standard library
+         or other external libraries
+         + use github.com/<user>
+         + % mkdir -p $GOPATH/src/github.com/user
+   + first program: hello
+     + % mkdir  $GOPATH/src/github.com/user/hello
+     + create hello.go
+     + % go install github.com/user/hello // build and install with go tool
+       + or % cd $GOPATH/src/github.com/user/hello; % go install
+     + % $GOPATH/bin/hello // run program
+     + git submit
+       + % cd $GOPATH/src/github.com/user/hello
+       + % git init
+       + % git add hello.go
+       + % git commit -m "initialx commit"
+   + first library: stringutil
+     + % mkdir $GOPATH/src/github.com/user/stringutil
+     + create reverse.go
+     + % go build github.com/user/stringutil
+       + or % cd $GOPATH/src/github.com/user/stringutil; % go build
+     + edit hello.go and add import "github.com/user/stringutil" and use
+     + % go install github.com/user/hello // stringutil package will be installed as well
+       + package installed at pkg/linux_amd64/github.com/user/stringutil.a
+     + executable commands must always use package main
+   + testing
+     + go test is lightweight test framework composed and the testing package
+     + create file with name ending with _test.go
+     + % go test github.com/user/stringutil // run the test
+       + % go help test // help test: https://golang.org/cmd/go/#hdr-Test_packages
+     + link: https://golang.org/pkg/testing/
+   + remote packages (Git or Mercurial etc..,)
+     + % go get github.com/golang/example/hello // go get will fetch, build and install it
+       // link: https://github.com/golang/example
+   + what's next
+     + https://groups.google.com/group/golang-announce // subscribe to golang-announce
+     + https://golang.org/doc/effective_go.html // tips on writing clear, idiomatic Go code
+     + https://tour.golang.org/ // learn the language proper
+     + https://golang.org/doc/#articles // in-depth articles about go language, its libraries and tools
+     + http://freenode.net/ // for real-time help, ask the helpful gohers in #go-nuts
+     + https://groups.google.com/group/golang-nuts // official mailing list for discussion
+     + https://golang.org/issue // report bugs
 
+** effective go
+   + link: https://golang.org/doc/effective_go.html
+   + go programming language specification : https://golang.org/ref/spec
+   + a tour of go: https://tour.golang.org/welcome/1
+   + go package source: https://golang.org/src/
+     + go package sources are intended to serve not only as the core library but also as
+       examples of how to use the language
+     + many of the packages contain working, self-contained executable examples you can
+       run directly from https://golang.org
+   + packages: https://golang.org/pkg/
+   + gofmt program
+     + operates at the package level rather than source file level
+     + read a go program and emits the source in a standard style of indentation and vertical
+       alignment, retaining and if necessary reformatting comments
+   + godoc
+     + godoc processes Go source files to extract documentation about the contents of the package
+     + comments that appear before top-level declarations, with no intervening newlines, are
+       extracted along with the declaration to serve as explanatory text for the item
+     + the nature and style of these comments determines the quality of the documentation godoc
+       produces
+     + Doc comments work best as complete sentences, which allow a wide variety of automated presentations
+       + The first sentence should be a one-sentence summary that starts with the name being declared
+       + Package starts each doc comment with the name
+       + every package should have a package comment, a block comment preceding the package clause. For
+         multi-file pcakges, the package comment only needs to be present in one file and any one will do
+       + inside a package, any comment immediately preceding a top-level declaration serves as a doc comment for
+         the declaration. Every exported (capitalized) name in a program should have a doc comment
+   + package names
+     + packages are given lower case, single-word names; there should be no need for underscores or mixedCaps
+
+     

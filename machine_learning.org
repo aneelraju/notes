@@ -102,8 +102,64 @@
       + Matrix Transpose 
         + Let A be an mxn matrix and let B = A(T). Then B is an nxm matrix and Bij = Aji    
 ** Week2
-*** Linear Regression with Multiple Variables
-*** Octave/Matlab Tutorial
+*** Environment Setup instructions
+    + matlab
+      + https://www.mathworks.com/licensecenter/classroom/machine_learning_od/ // create account
+      + download and install matlab
+    + octave
+      + https://support.apple.com/en-us/HT202491 // os gatekeeper
+      + system perference -> security & privacy -> need to configure it to allow the Octave installer
+      + http://sourceforge.net/projects/octave/files/Octave%20MacOSX%20Binary/2013-12-30%20binary%20installer%20of%20Octave%203.8.0%20for%20OSX%2010.9.1%20%28beta%29/GNU_Octave_3.8.0-6.dmg/download // download octave
+      + follow installer's instructions
+      + octave cli is needed to complete machine learning's programming assignments
+        + octave includes experimental octave-gui but octave-cli is recommended as it's more stable
+        + http://wiki.octave.org/Octave_for_MacOS_X#Package_Managers // install with brew
+          + % brew tap homebrew/science
+          + % brew update && brew upgrade
+          + % brew install octave
+            + % brew tap --repair // incase brew complains about not having a formula for ocatave
+          + % brew update && brew upgrade // upgrades octave and its dependencies 
+      + help
+        + octave
+          + % help // at octave-cli
+          + link: http://www.gnu.org/software/octave/doc/interpreter/
+        + matlab
+          + % help <command> // at MATLAB command line
+          + link: http://www.mathworks.com/help/matlab/
+          + series of vidoes
+            + introduction
+              + http://youtu.be/rXwTiKGlilE // what is matlab
+              + http://youtu.be/iYTzJXXI9vI // the matlab environment
+              + http://youtu.be/jURDBsIPt5I // matlab variables
+              + http://youtu.be/E7KllorEWkA // matlab as calculator
+              + http://youtu.be/R-kBvJ3kVVk // math functions
+            + vectors
+              + http://youtu.be/2VNFqxmVqw8 // creating vectors via concatenation
+              + http://youtu.be/GihLWwp8sBw // accessing elements of a vector
+              + http://youtu.be/t9Kla_YFdfs // vector arithmetic
+              + http://youtu.be/USehPX2iEa4 // vector transpose
+              + http://youtu.be/L7cERR5J9XY // creating uniformly spaced vectors (the colon operator)
+              + http://youtu.be/3QM3LRnb4Tw // creating uniformly spaced vectors (the LINSPACE func)
+            + visualization
+              + http://youtu.be/00k9A9W0cl8 // line plots
+              + http://youtu.be/ab3XIDdloNI // annotating graphs
+            + matrices and arrays
+              + http://youtu.be/5tm6PKaJdI8 // creating matrices
+              + http://youtu.be/DDnm7vek6KY // array creation functions
+              + http://youtu.be/qqQnFp5aiuM // accessing elements of an array
+              + http://youtu.be/SqvtT_VspKU // array size and lenght
+              + http://youtu.be/TgopxS-_zl8 // concatenating arrays
+              + http://youtu.be/-jgXqAYBhxI // matrix multiplication
+            + programming
+              + http://youtu.be/TZr6GyxnI_w // using MATLAB editor
+              + http://youtu.be/5gVKJVVmbrM // logical operators
+              + http://youtu.be/8wxh4LtT--g // conditional data selection
+              + http://youtu.be/oaK2-ZT9dls // if else statements
+              + http://youtu.be/1u3RahlWEZA // for loops
+              + http://youtu.be/dofj51Ovdl4 // while loops
+*** Multivariate Linear Regression
+*** Computing Parameters Analytically
+*** Submitting Programming Assignment
 ** Week3
 *** Logistic Regression
 *** Regularization
