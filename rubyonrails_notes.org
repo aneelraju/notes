@@ -647,7 +647,6 @@
        % rspec -e rq10
        % add validates to profile.rb and user.rb
 
-
 *** Week 3 - introduction to active pack
 **** action pack
      + action pack: enables to expose data to web
@@ -905,7 +904,74 @@
        + % rspec -e rq08
        + add count method in todo controller and call the instance variable in index view page
        + % rspec -e rq09
-**** Week 4 - security and nested resources in action pack
+*** Week 4 - security and nested resources in action pack
+**** nested resources
+     + nested resources
+       + when one resource dependent on another resources
+     + security
+       + authentication
+         + protects the website that you're trying to access
+           and enables authentication
+         + how we authorize the person to be able to only view
+           his/her own resources, not everybody else's resources
+       + http sessions and cookies
+         + a sequence of requests and responses between a browser and
+           a server
+     + pagination
+       + when you have many records that you want to access at different
+         times, so you paginate between multiple records at a time
+     + github link: https://github.com/jhu-ep-coursera/fullstack-course2-module4-i-reviewed
+       + % git clone https://github.com/jhu-ep-coursera/fullstack-course2-module4-i-reviewed.git // to clone
+     + building app with multiple resources
+       + write an app that lets a user make notes about the books he/she read
+       + % rails _4.2.3_ new i_reviewed; % cd i_reviewed
+       + three tables
+         + reviewers: name, password_digest
+         + books: name, author, reviewer_id
+         + notes: title, note, book_id
+       + % rails g model reviewer name password_digest -q // "-q" quiet; don't display info
+       + % rails g model book name author reviewer:references -q
+       + % rails g model note title note:text book:references -q
+       + % rails db:migrate
+       + specify associations in the models
+         + add "has_many :books" to app/model/reviewer.rb
+         + add "has_many :notes, dependent: :destroy" to app/model/book.rb
+       + seeding with some data
+         + db/seeds.rb
+       + % rake db:seed
+         + % rails db
+           sqlite> .headers on
+           sqlite> .mode columns
+           sqlite> select * from books;
+           sqlite> .exit
+       + % rails g scaffold_controller book name author // already have book model but generate controller
+         + generally, people generate models and then scaffold_controller
+       + add below to config/routes.rb
+         resources :books
+         root to: "books#index"
+       + % rails s // separate terminal
+         + http://localhost:3000
+       + pull " <p id="notice"><%= notice %></p> " from app/views/index.html.erb to app/views/layouts/application.html.erb
+         + will be displayed on every page of application
+         + flash keys - :notice, :alert
+       + notes resoureces
+         + we can scaffold a regular RESTful controller for notes as well, but
+         + notes resource depends on the book resource
+         + in other words, when do'g anything with the notes resources, we have to
+           be talking about a specific book for it to be meaningful
+         + rails calls such secondary resources "Nested Resources"
+       + % rails g controller notes // no actions specified during creation
+       + add below in config/routes.rb // nest notes inside books; notes always have book id
+         resources :books do
+           resources :notes
+         end
+       + % rake routes // to see routes
+         
+
+       
+
+**** security
+**** enhancements and deployment
 ** course3: ruby on rails - ruby on rails web services and integration with mongodb
 *** Week 1 - introduction to mongodb, mongodb-api and crud
 **** introduction to nosql and mongodb

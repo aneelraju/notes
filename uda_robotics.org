@@ -1,0 +1,38 @@
+* Udacity: Robotics Nanodegree Program
+** Term 1:
+*** Lesson 1: Introduction to Robotics
+    + Instructors : From Electronic Movement
+      + Thomas - Dynamics and Computer Simulation
+      + Harsh - Robotics Software Engineer
+      + Brandon - CTO
+    + Projects
+      + Project 1: NASA Sample return Robot Competition
+        + Robotics 3 Essential elements
+          + Perception, Decision-Making and Action
+      + Project 2: Manipulate Robotic Arm in 360d freedom in simulation to pick
+                   and place objects
+        + Apply knowledge of kinematics and ROS
+      + Project 3: Apply computer vision and identify object of interest and move 
+                   it to different location
+      + Project 4: Apply Deep Learning To track target in simulation and issue 
+                   commands to quadcopter to follow the target
+    + Student support
+      + Live Help Mentorship
+      + Slack Community: https://udacity-robotics.slack.com/messages/C4FHVRJ6A/
+      + Review
+      + Feedback
+        + Report issue on waffle: https://waffle.io/udacity/robotics-nanodegree-issues
+      + Final Deadline : 4 week extension to complete any outstanding projects
+    + Project 1 : NASA sample return challenge
+      + simulated environment build on "Unity" game engine
+        + link: https://unity3d.com/unity
+      + project code repository: https://github.com/udacity/RoboND-Rover-Unity-Simulator
+      + macOS simulator build: https://s3-us-west-1.amazonaws.com/udacity-robotics/Rover+Unity+Sims/Mac_Roversim.zip
+      + 
+
+*** Lesson 2: ROS Essentials
+*** Lesson 3: Kinematics
+*** Lesson 4: Perception
+*** Lesson 5: Controls
+*** Lesson 6: Deep Learning
+** Term 2:
