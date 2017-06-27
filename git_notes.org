@@ -178,6 +178,3 @@
        + % git remote set-url origin git@github.com:aneelraju/RoR-Course2-WithArAndAp // if remote origin is wrong
      + % git push -u origin master
 
-
-    
-
