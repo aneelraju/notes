@@ -1,0 +1,177 @@
+* containers notes
+** docker
+*** udemy - docker mastery: the complete toolset from a docker captain - bret fisher
+**** course introduction and docker setup
+***** getting course resources
+      + resources
+        + https://github.com/bretfisher/udemy-docker-mastery - course repository
+***** installing docker: the fast way
+      + installation
+        + ubuntu:xenial64
+ 	  + install docker-ce
+  	    + % sudo apt-get remove docker docker-engine docker.io; # remove old versions
+            + % sudo apt-get update; # update the apt package index
+	    + % sudo apt-get install apt-transport-https ca-certificates curl software-properties-common; # install packages to allow apt to use repository over HTTPS
+	    + % curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -; # add docker's official GPG key
+	    + % sudo apt-key fingerprint 0EBFCD88; # verify key with the fingerprint
+	    + % sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"; # set up stable repository
+	    + % sudo apt-get update; # update the apt package index
+	    + % sudo apt-get install docker-ce; # install latest version of docker ce
+	    + % sudo docker run hello-world
+	    + to avoid typing sudo (not recommended)
+	      + % sudo usermod -aG docker <user>; # add <user> to docker group
+	      + relogin
+          + install docker-compose
+	    + % sudo curl -L https://github.com/docker/compose/releases/download/1.17.0/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose; # download and install docker compose
+	    + % sudo chmod +x /usr/local/bin/docker-compose
+	    + % docker-compose --version
+	    + % sudo curl -L https://raw.githubusercontent.com/docker/compose/1.17.0/contrib/completion/bash/docker-compose -o /etc/bash_completion.d/docker-compose; # Place following script in /etc/bash_completion.d/
+	    + re-login
+          + install docker-machine
+	    + % curl -L https://github.com/docker/machine/releases/download/v0.13.0/docker-machine-`uname -s`-`uname -m` > /tmp/docker-machine ; # downlaod docker machine and extract to your PATH
+            + % sudo chmod +x /tmp/docker-machine
+            + % sudo cp /tmp/docker-machine /usr/local/bin/docker-machine
+	    + % docker-machine version; # check docker machine
+	    + % scripts=( docker-machine-prompt.bash docker-machine-wrapper.bash docker-machine.bash ); for i in "${scripts[@]}"; do sudo wget https://raw.githubusercontent.com/docker/machine/v0.13.0/contrib/completion/bash/${i} -P /etc/bash_completion.d; done
+	    + re-login
+	  + because docker-compose and docker-machine are installed manually, make sure you check for latest version frequently
+      + run more nodes: % docker-machine create --driver
+        + virtualbox, aws etc. https://docs.docker.com/machine/drivers/
+      + resources
+        + https://labs.play-with-docker.com - run one or more docker instances inside your browser
+        + https://docs.docker.com/engine/installation/linux/docker-ce/ubuntu/ - ubuntu docker installation
+        + https://get.docker.com; # install docker via running script
+	  + % curl -fsSL get.docker.com -o get-docker.sh
+	  + % sh get-docker.sh
+        + https://docs.docker.com/machine/install-machine/ - docker machine install (docker docs)
+        + https://docs.docker.com/compose/install/ - docker compose install (docker docs)
+        + www.bretfisher.com/shell - customize shell      
+***** docker for windows 10 pro/ent: setup and tips
+      + resources
+        + https://store.docker.com/editions/community/docker-ce-desktop-windows - download docker ce for windows
+        + https://desktop.github.com - download github desktop
+        + https://code.visualstudio.com - download visual studio code
+        + https://docs.docker.com/docker-for-windows/#explore-the-application-and-run-examples - setup tab completion for powershell
+        + http://cmder.net - download cmder
+        + https://docs.docker.com/docker-for-windows/faqs/ - docker for windows FAQ
+***** docker for mac setup and tips
+      + resources
+        + https://store.docker.com/editions/community/docker-ce-desktop-mac  - docker ce for mac
+        + https://www.iterm2.com - iterm2
+        + https://docs.docker.com/docker-for-mac/#installing-bash-completion - installing bash completion on mac
+        + https://brew.sh - installing homebrew (the brew cli)
+***** docker for linux setup and tips
+      + resources
+        + https://docs.docker.com/compose/install/ - install docker compose 
+        + https://docs.docker.com/machine/install-machine/ - install docker machine
+**** creating and using containers like a boss
+***** check our docker install and config
+      + % sudo docker version; # gives version of client and server
+      + % sudo docker info; # gives config and setup
+      + % sudo docker; # gives list of commands and management commands
+      + new syntax "sudo docker <management-commands> <sub-commands>"
+***** starting a Nginx web server
+      + hub.docker.com - default image "registry"
+      + % sudo docker container run --publish 80:80 nginx; # run nginx container
+	+ go to "localhost" in browser
+	+ "--publish" opened port 80 on the host IP and routes that traffic to the container IP, port 80
+	+ % sudo docker container run --publish 80:80 --detach nginx; # to run in background
+      + % sudo docker container ls; # lists running containers
+      + % sudo docker container stop <container_id>; # stop container
+      + % sudo docker container ls -a; # 
+      + % sudo docker container run --publish 80:80 --detach --name webhost nginx; # assing container name
+      + % sudo docker container logs webhost; # shows logs
+      + % sudo docker container top webhost; # lists process running inside container
+      + % sudo docker container --help; # list of container commands
+      + % sudo docker container rm <container id1> <container id2>; # removes stopped containers
+      + % sudo docker container rm -f <container id1> <container id2>; # removes running and stopped containers
+***** debrief: what happens when we run a container
+      + % sudo docker container run --publish 8080:80 --name webhost -d nginx:1.11 nginx -T; # run nginx version 1.11 and command "nginx -T"
+***** container vs vm: it's just a process
+      + resources
+        + https://www.youtube.com/watch?v=sK5i-N34im8&feature=youtu.be&list=PLBmVKD7o3L8v7Kl_XXh3KaJl9Qw2lyuFl - docker internals
+***** getting a shell inside containers: no need for ssh
+      + resources
+        + https://www.digitalocean.com/community/tutorials/package-management-basics-apt-yum-dnf-pkg - package management basics:apt,yum,dnf,pkg
+***** docker networks: concepts for private and public comms in containers
+      + resources
+        + https://docs.docker.com/engine/admin/formatting/ - docker's --format for filtering cli output
+**** container images, where to find them and how to build them
+***** what's an image (and what isn't)
+      + resources
+        + https://github.com/moby/moby/blob/master/image/spec/v1.md - official docker image specification
+***** the mighty hub: using docker hub registry images
+      + resources
+        + https://github.com/docker-library/official-images/tree/master/library - list of official docker images
+***** images and their layers: discover the image cache
+      + resources
+        + https://docs.docker.com/engine/userguide/storagedriver/imagesandcontainers/ - images and containers from docker docs
+**** container lifetime & persistent data: volumes, volumes, volumes
+***** container lifetime & persistent data
+      + resources
+        + https://oreilly.janrainsso.com/static/server.html?origin=https%3A%2F%2Fwww.oreilly.com%2Fideas%2Fan-introduction-to-immutable-infrastructure - intro to immutable infrastructure concepts
+        + https://12factor.net - the 12-factor app (everyone should read: key to cloud native app design, deployment and operation)
+        + https://medium.com/@kelseyhightower/12-fractured-apps-1080c73d481c - 12 fractured apps (a follow-up to 12-factor, a greate article on how to do 12F correctly in containers)
+***** assignment: edit code running in containers with bind mounts
+      + resources
+        + https://jekyllrb.com - jekyll, a static site generator
+**** making it easier with docker compose: the multi-container tools
+***** docker compose and the docker-compose.yml file
+      + resources
+        + http://www.yaml.org/start.html - the yaml format: sample generic yaml file
+        + http://www.yaml.org/refcard.html - the yaml format: quick reference
+        + https://docs.docker.com/compose/compose-file/compose-versioning/ - compose file version differences (docker docs)
+        + https://github.com/docker/compose/releases - docker compose release downloads (good for linux users that need to download manually)
+***** trying out basic compose commands
+      + resources
+        + https://github.com/docker/compose/releases - docker-compose download for linux via github, win/mac already have it
+***** adding image building to compose files
+      + resources
+        + https://docs.docker.com/compose/compose-file/#build - (docker docs) compose file build options
+**** docker services and the power of swarm: built-in orchestration
+***** swarm mode: built-in orchestration
+      + resources
+        + https://www.youtube.com/watch?v=dooPhkXT9yI - docker 1.12 swarm mode deep dive part 1: topology (YouTube)
+        + https://www.youtube.com/watch?v=dooPhkXT9yI - docker 1.12 swarm mode deep dive part 2: topology (YouTube)
+        + https://speakerdeck.com/aluzzardi/heart-of-the-swarmkit-topology-management - Heart of the SwarmKit: Topology Management (slides)
+        + https://www.youtube.com/watch?v=EmePhjGnCXY - Heart of the SwarmKit: Store, Topology & Object Model (YouTube)
+        + http://thesecretlivesofdata.com/raft/ - Raft Consensus Visualization (Our Swarm DB and how it stays in sync across nodes)
+***** create your first service and scale it locally
+      + resources
+        + https://docs.docker.com/engine/swarm/services/ - deploy services to a swarm (docker docs)
+***** creating a 3-node swarm cluster
+      + resources
+        + https://www.digitalocean.com/?refcode=b813dfcad8d4&utm_campaign=Referral_Invite&utm_medium=Referral_Program&utm_source=CopyPaste - digital ocean coupon for $10
+        + https://www.digitalocean.com/community/tutorials/how-to-use-ssh-keys-with-digitalocean-droplets - create and upload a SSH key to digital ocean
+        + https://www.bretfisher.com/docker-swarm-firewall-ports/ - docker swarm firewall ports
+        + https://www.digitalocean.com/community/tutorials/how-to-configure-custom-connection-options-for-your-ssh-client - configure SSH for saving options for specific connections
+***** scaling out with routing mesh
+      + resources
+        + https://docs.docker.com/engine/swarm/ingress/ - use swarm mode routing mesh (docker docs)
+***** swarm stacks and production grade compose
+      + resources
+        + https://docs.docker.com/compose/compose-file/#not-supported-for-docker-stack-deploy - features not supported in stack deploy
+***** using secrets in swarm services
+      + resources
+        + https://docs.docker.com/engine/swarm/secrets/ - secrets in compose files (docker docs)
+***** full app lifecycle: dev, build and deploy with a single compose design
+      + resources
+        + https://docs.docker.com/compose/extends/#multiple-compose-files - using multiple compose files (docker docs)
+        + https://docs.docker.com/compose/production/ - using compose files in production (docker docs)
+**** container registries: image storage and distribution
+***** docker hub: digging deeper
+      + resources
+        + https://hub.docker.com - docker hub
+***** docker store: what is it for ?
+      + resources
+        + https://store.docker.com - docker store
+***** docker cloud: CI/CD and server ops
+      + resources
+        + https://cloud.docker.com - docker cloud
+***** understanding docker register
+      + resources
+        + https://docs.docker.com/registry/configuration/ - registry configuration docs
+        + https://docs.docker.com/registry/garbage-collection/ - registry garbage collection
+        + https://docs.docker.com/registry/recipes/mirror/ - use registry as a "mirror" of docker hub
+**** bonus section
+** kubernetes
