@@ -88,8 +88,15 @@
 ***** debrief: what happens when we run a container
       + % sudo docker container run --publish 8080:80 --name webhost -d nginx:1.11 nginx -T; # run nginx version 1.11 and command "nginx -T"
 ***** container vs vm: it's just a process
+      + % sudo docker run --name mongo -d mongo; # run mongodb
+      + % sudo docker ps; # lists running containers
+      + % ps aux; # lists all running hosts process
+      + % ps aux | grep mongo; # filter running mongo process
+      + % sudo docker start mongo; # start mongo container
       + resources
         + https://www.youtube.com/watch?v=sK5i-N34im8&feature=youtu.be&list=PLBmVKD7o3L8v7Kl_XXh3KaJl9Qw2lyuFl - docker internals
+***** assignment: manage multiple containers
+      + docs.docker.com and --help are your friend
 ***** getting a shell inside containers: no need for ssh
       + resources
         + https://www.digitalocean.com/community/tutorials/package-management-basics-apt-yum-dnf-pkg - package management basics:apt,yum,dnf,pkg
