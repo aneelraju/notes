@@ -95,33 +95,236 @@
       + % sudo docker start mongo; # start mongo container
       + resources
         + https://www.youtube.com/watch?v=sK5i-N34im8&feature=youtu.be&list=PLBmVKD7o3L8v7Kl_XXh3KaJl9Qw2lyuFl - docker internals
-***** assignment: manage multiple containers
+***** assignment answers: manage multiple containers
       + docs.docker.com and --help are your friend
+      + % sudo docker container run -d -p 3306:3306 --name db -e MYSQL_RANDOM_ROOT_PASSWORD=yes mysql; # run mysql db, --e is to pass environment variables
+      + % sudo docker container logs db; # check for "GENERATED ROOT PASSWORD" from mysql logs
+      + % sudo docker container run -d --name webserver -p 8080:80 httpd; # run apache webserver
+      + % sudo docker ps; # checker item PORTS for each container
+      + % sudo docker container run -d --name proxy -p 80:80 nginx; # run nginx to act as proxy
+      + % sudo docker container ls; # same as "sudo docker ps"
+      + % curl localhost; # should give nginx
+      + % curl localhost:8080; # should give apache
+      + % sudo docker container stop <proxy cont id> <webserver cont id> <db cont id>; # you can check tab completion after "sudo docker container stop <tab>"
+      + % sudo docker ps -a
+      + % sudo docker container rm <proxy cont id> <webserver cont id> <db cont id>
+      + % sudo docker ps -a; # everything is cleaned up
+      + % sudo docker image ls; # images are still present
+***** what's going on in containers: CLI process monitoring
+      + % sudo docker container run -d --name nginx nginex; # run nginx
+      + % sudo docker run -d --name mysql -e MYSQL_RANDOM_ROOT_PASSWORD=true mysql; # run mysql
+      + % sudo docker container ls
+      + % sudo docker container top mysql; # process list in one container
+      + % sudo docker container top nginx; # process list in one container
+      + % sudo docker container inspect mysql; # details of one container config; shows metadata about the container (startup config, volumes, networking etc)
+      + % sudo docker container stats --help; # displays help
+      + % sudo docker container stats; # show live performance data for all containers
 ***** getting a shell inside containers: no need for ssh
+      + % sudo docker container run -it --name proxy nginx bash; # start new container interactively, no ssh needed; '-t'='--tty' -> simulates a real terminal like ssh; '-i'='--interactive' -> keep session open to receive terminal input; bash shell if run with -it, it will give you a terminal inside the running container
+        + we can do additional things from shell like installing additional packages and etc; '% exit' to exit from shell and container stops
+      + % sudo docker container run -it --name ubuntu ubuntu; # full distribution of linux
+        + c% apt-get update; # update packages inside ubuntu container
+        + c% apt-get install -y curl; # install curl
+        + c% curl www.google.com; # running curl inside container
+        + c% exit; exit and stops container
+      + % sudo docker start -ai ubuntu; # start ubuntu and curl is installed; new run container will not have curl installed; '-a'='--attach', 'i'='--interactive'
+      + % sudo docker start --help; #  start command help
+      + % sudo docker exec --help; #  exec command help
+      + % sudo docker exec -it mysql bash; # run additional command in existing container; bash shell on running container mysql; 
+        c% ps aux; # process list inside container
+        c% exit; # exit container
+      + 'alpine' is another distribution of linux which is a small security focused distribution
+      + sudo docker pull alpine; # pull alpine image, has it's own package manager
+      + sudo docker container run -it alpine bash; # throws error as bash is not installed
+      + sudo docker container run -it alpine sh; # but has shell; package manager is 'apk' which can be used to install bash
       + resources
         + https://www.digitalocean.com/community/tutorials/package-management-basics-apt-yum-dnf-pkg - package management basics:apt,yum,dnf,pkg
 ***** docker networks: concepts for private and public comms in containers
+      + docker networks defaults
+        + each container connected to a private virtual network 'bridge'
+        + each virtual network routes through NAT firewall on host IP; NAT firewall is docker daemon configuring host IP on its default i/f so that your containers can access internet 
+        + all containers on a virtual network can talk to each other without -p
+        + best practice is to create a new virtual network for each app
+          + network "my_web_app" for mysql and php/apache containers
+          + network "my_api" for mongo and nodejs containers
+        + defaults work well in many cases, but easy to swap out parts to customize it
+        + make new virtual networks and attach containers to more than one virtual network
+        + skip virtual networks and use host IP (--net=host)
+        + use different docker network drivers to gain new abilities
+      + 'docker container run -p' - exposes ports on your machine
+      + % sudo docker container run -p 80:80 --name webhost -d nginx; # -p (--publish) publishing port in HOST:CONTAINER format
+      + % sudo docker container port webhost; # displays port
+      + % sudo docker container inspect --format '{{ .NetworkSettings.IPAddresss }}' webhost; # --format - a common option for formatting the output of commands using "Go templates"; display container ip address which is different that host IP
+      + % ifconfig en0; # mac ip address
       + resources
         + https://docs.docker.com/engine/admin/formatting/ - docker's --format for filtering cli output
+***** docker networks: cli management of virtual networks
+      + a recent june 2017 change, removes ping in nginx; so replace "nginx" to "nginx:latest" which still has ping
+      + running docker inside docker (mac)
+        + % docker run -v /var/run/docker.sock:/var/run/docker.sock -it ubuntu bash; # run ubuntu container sharing that sock
+        + c% apt-get update && apt-get install curl
+        + c% curl -sSL https://get.docker.com/ | sh
+        + c% docker version
+        + c% docker container run hello-world
+        + c% exit
+      + % sudo docker network ls; # lists all created networks: bridge, host, null; '--network bridge' is default docker virtual network which is NAT'ed behind the HOST IP; '--network host' is gains performance by skipping virtual networks but sacrifices security of container model; '--network none' removes eth0 and only leaves you with localhost interface in container
+      + % sudo docker network inspect bridge; # can see list of containers attached to it; IPAM shows default IP's assigned
+      + % sudo docker network create my_app_net; # spawns a new virtual network for you to attach containers to
+      + % sudo docker network ls; # shows list of networks
+      + % sudo docker network --help; # network command help
+      + % sudo docker container run -d --name new_nginx --network my_app_net nginx
+      + % sudo docker network inspect my_app_net; # new_nginx is on that network
+      + % sudo docker network connect <network id1> <network id2>; # connect dynamically creates a NIC in a container on an existing virtual network
+      + % sudo docker network inspect <network id1>; # you can see both networks
+      + % sudo docker network disconnect <network id1> <network id2>; # disconnect dynamically rmeoves a NIC from a container on a specific virtual network
+      + create your apps so frontend/backend sit on same docker network and their inter-communication never leaves host. all externally exposed ports closed by default and must manually expose via -p which is better default security
+***** docker networks: dns and how containers find each other
+      + static IP's and using IP's for talking to containers is an anti-patern. do your best to avoid it
+      + docker daemon has a built in DNS server that containers use by default
+      + % sudo docker container ls
+      + % sudo docker network inspect <my_app_net network id>; # not default network brigde
+      + dns default names, docker defaults the hostname to the container's name, but you can also set aliases
+      + % sudo docker container run -d --name my_nginx --network my_app_net; # my_app_net contains two containers
+      + % sudo docker container exec -it my_nginx ping new_nginx; # ping new_nginx from my_nginx
+      + % sudo docker container exec -it new_nginx ping my_nginx; # ping my_nginx from new_nginx
+      + % sudo docker network ls; # default bridge doesn't have default dns server, need to use --link, it's easier to create new network than bridge -l; docker compose makes it easier for dns
+***** assignment answers: using containers for cli testing
+      + % sudo docker container run --rm -it centos:7 bash
+        + c% yum update curl
+        + c% curl --version
+        + c% exit
+      + % sudo docker container run --rm -it ubuntu:14.04 bash
+        + c% apt-get update && apt-get install -y curl
+        + c% curl --version
+        + c% exit
+      + % sudo docker ps -a; # both centos and ubuntu disappears
+***** assignment answers: dns round robin test
+      + From docker engine 1.11, we can have multiple containers on a created network respond to the same DNS address
+      + 'elasticsearch' is becoming popular, is RESTful search and analytics engine
+      + % sudo docker network create dude
+      + % sudo docker container run -d --net dude --net-alias search elasticsearch:2
+      + % sudo docker container run -d --net dude --net-alias search elasticsearch:2
+      + % sudo docker container ls
+      + % sudo docker container run --rm --net dude alpine nslookup search; # shows two dns entries
+      + % sudo docker container run --rm --net dude centos curl -s search:9200; # gives first container
+      + % sudo docker container run --rm --net dude centos curl -s search:9200; # gives second container in random fashion
+      + % sudo docker container ls
+      + % sudo docker container rm <container 1> <container 2>
 **** container images, where to find them and how to build them
 ***** what's an image (and what isn't)
       + resources
         + https://github.com/moby/moby/blob/master/image/spec/v1.md - official docker image specification
 ***** the mighty hub: using docker hub registry images
+      + 'https://hub.docker.com' # docker hub
+        + official images are great way to start
+      + % sudo docker pull nginx; # pulls nginx latest version
+      + % sudo docker pull nginx:1.11.9; # pulls nginx 1.11.9 version, especially needed for production development
+      + % sudo docker pull nginx:1.11.9-alpine; # 'alpine' is linux distribution which is very small
       + resources
         + https://github.com/docker-library/official-images/tree/master/library - list of official docker images
 ***** images and their layers: discover the image cache
+      + % sudo docker image history nginx:latest; # history show layers of changes made in image
+      + % sudo docker image inspect nginx; # inspect returns JSON metadata about the image; gives details of image
+      + images are made up of file system changes and metadata; a container is just a single read/write layer on top of image
       + resources
         + https://docs.docker.com/engine/userguide/storagedriver/imagesandcontainers/ - images and containers from docker docs
+***** image tagging and pushing to docker hub
+      + % sudo docker image tag --help; # tag assign one or more tags to an image; images are referred as <user>/<repo>:<tag>
+      + office repositories live at the "root namespace" of the registry, so they don't need account name in front of repo name
+      + % sudo docker pull mysql/mysql-server; # pulls mysql/mysql-server image
+      + % sudo docker image tag nginx aneelraju/nginx; # rename image 'nginx' to 'aneelraju/nginx; syntax 'sudo docker image tag 'SOURCE_IMAGE[:TAG] TARGET_IMAGE[:TAG]''
+      + % sudo docker login; # 'sudo docker login <server>' defaults to logging in hub, but you can override by adding server url
+        + type username and password; # wrote to file ~/.docker/config.json
+      + % sudo docker image push aneelraju/nginx; # push uploads changed layers to a image registry (default is hub)
+      + % sudo docker image tag aneelraju/nginx aneelraju/nginx:testing
+      + % sudo docker image push aneelraju/nginx:testing
+      + % sudo docker logout; # always logout from shared machines or servers when done, to protect your account
+***** building images: the dockerfile basics
+      + 'sudo docker image build -f some-dockerfile'; # builds docker image
+      + package manager like apt and yum are one of the reasons to build containers FROM Debian, Ubuntu, Fedora and CentOS
+      + environment variables are one reason they were chosen as preferred way to inject key/value is they work everywhere
+      + % cp material/udemy-docker-mastery/dockerfile-sample-1 work/. && cd work/
+      + % sudo docker image build -t customnginx .; # builds docker image in current directory
+***** building images: extending official images
+      + % sudo docker container run -p 80:80 --rm nginx; # default behavior
+      + % cp material/udemy-docker-mastery/dockerfile-sample-2 work/. && cd work/
+      + % sudo docker image build -t nginx-with-html .; # as much as possible use popular docker images from docker hub
+***** assignment answers: build your own image
+      + Dockerfiles are part process workflow and part art
+      + % cp material/udemy-docker-master/dockerfile-assignment-1 work/. && cd work/
+      + prepare dockerfile
+      + 'CMD ["executable", "param1", "param2"]'
+      + % sudo docker image build -t testnode .
+      + % sudo docker container run --rm -p 80:3000 testnode
+      + % sudo docker image tag testnode aneelraju/testing-node
+      + % sudo docker push aneelraju/testing-node
+      + % sudo docker image ls
+      + % sudo docker image rm aneelraju/testing-node
+      + % sudo docker container run --rm -p 80:3000 aneelraju/testing-node; # downloads from docker hub
 **** container lifetime & persistent data: volumes, volumes, volumes
 ***** container lifetime & persistent data
+      + container are usually immutable and ephemeral; "immutable infrastructure": only re-deploy containers, never change
+      + container should not mix data with binaries; docker gives us features to ensure these "separation of concerns"
+      + for "persistent data" two solutions are available: volumes and bind mounts
+      + volumes: make special location outside of container UFS (union file system); container see as a local file path
+      + bind mounts: link container path to host path
       + resources
         + https://oreilly.janrainsso.com/static/server.html?origin=https%3A%2F%2Fwww.oreilly.com%2Fideas%2Fan-introduction-to-immutable-infrastructure - intro to immutable infrastructure concepts
         + https://12factor.net - the 12-factor app (everyone should read: key to cloud native app design, deployment and operation)
         + https://medium.com/@kelseyhightower/12-fractured-apps-1080c73d481c - 12 fractured apps (a follow-up to 12-factor, a greate article on how to do 12F correctly in containers)
-***** assignment: edit code running in containers with bind mounts
+***** persistent data: data volumes
+      + VOLUME command in Dockerfile; # search Dockefile for official mysql in docker file (best way to learn dockerfile best practices); creates and assign volumes; volumes needs manual deletion
+      + % sudo docker pull mysql
+      + % sudo docker image inspect mysql; # under Config check for "Volumes"
+      + % sudo docker container run -d --name mysql -e MYSQL_ALLOW_EMTPY_PASSWORD=True mysql
+      + % sudo docker container inspect mysql; # inspect for Mounts and Volumes
+      + % sudo docker volume ls; # shows one volume
+      + % sudo docker volume inspect <volume name>
+      + % sudo docker container run -d --name mysql2 -e MYSQL_ALLOW_EMTPY_PASSWORD=True mysql
+      + % sudo docker volume ls; # shows two volumes
+      + % sudo docker container stop mysql
+      + % sudo docker container stop mysql2
+      + % sudo docker container ls
+      + % sudo docker container ls -a
+      + % sudo docker volume ls; # volumes still present
+      + % sudo docker container rm mysql mysql2
+      + % sudo docker volume ls; # volumes still present; data still safe
+      + 'named volumes' are friendly way to assing vols to containers
+      + % sudo docker container run -d --name mysql -e MYSQL_ALLOW_EMTPY_PASSWORD=True -v mysql-db:/var/lib/mysql mysql; # mysql-db is named volume
+      + % sudo docker volume ls
+      + % sudo docker volume inspect mysql-db
+      + % sudo docker container rm -f mysql; # remove container
+      + % sudo docker container run -d --name mysql3 -e MYSQL_ALLOW_EMTPY_PASSWORD=True -v mysql-db:/var/lib/mysql mysql
+      + % sudo docker volume ls; # doesn't create new volume
+      + % sudo docker container inspect mysql3; # name friendly
+      + % sudo docker volume create --help; # 'docker volume create' required to do this before "docker run" to use custom drivers and labels
+      + sometime you need to create volumes ahead of run, usually for local development specifying in Dockerfile or in run command is fine
+***** persistent data: bind mounting
+      + mapping a host file or directory to a container file or directory; basically just two locations pointing to the same files
+      + can't use in Dockerfile, must be at container run as bind mount are host specific
+      + bind mounts starts with '/' and full path
+      + % cd work/dockerfile-sample-2
+      + % sudo docker container run -d --name nginx -p 80:80 -v $(pwd):/usr/share/nginx/html nginx; # bind mounts current directory
+      + % sudo docker container exec -it nginx bash; # get shell into container
+      + c% cd /usr/share/nginx/html; # we can host files 
+***** assignment answers: database upgrades with named volumes
+      + get volume path from docker hub postgres:9.6.1
+      + % sudo docker container run -d --name psql -v psql:/var/lib/postgresql/data postgres:9.6.1
+      + % sudo docker container logs -f psql; # -f keeps watching as it runs
+      + ctrl-c
+      + % sudo docker container stop <container id>
+      + % sudo docker container run -d --name psql2 -v psql:/var/lib/postgresql/data postgres:9.6.2
+      + % sudo docker container ps -a
+      + % sudo docker volume ls; # one volume psql
+      + % sudo docker container logs <container id>; # postgress is successfully upgraded
+***** assignment answers: edit code running in containers with bind mounts
+      + good for local development and local testing (similar to vagrant /vagrant folder); allows you to edit files on host machine
+      + "Jekyll" is static site generator; # for a simple web site
+      + % cp material/udemy-docker-mastery/bindmount-sample-1 work/. && cd work
+      + % sudo docker run -p 80:4000 -v $(pwd):/site bretfisher/jekyll-serve
       + resources
         + https://jekyllrb.com - jekyll, a static site generator
+        + https://hub.docker.com/r/bretfisher/jekyll-serve/ - info about how to use jekyll in a docker container for easy SSG development
 **** making it easier with docker compose: the multi-container tools
 ***** docker compose and the docker-compose.yml file
       + resources
