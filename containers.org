@@ -243,15 +243,15 @@
       + 'sudo docker image build -f some-dockerfile'; # builds docker image
       + package manager like apt and yum are one of the reasons to build containers FROM Debian, Ubuntu, Fedora and CentOS
       + environment variables are one reason they were chosen as preferred way to inject key/value is they work everywhere
-      + % cp material/udemy-docker-mastery/dockerfile-sample-1 work/. && cd work/
+      + % cp material/udemy-docker-mastery/dockerfile-sample-1 work/. && cd work/dockerfile-sample-1
       + % sudo docker image build -t customnginx .; # builds docker image in current directory
 ***** building images: extending official images
       + % sudo docker container run -p 80:80 --rm nginx; # default behavior
-      + % cp material/udemy-docker-mastery/dockerfile-sample-2 work/. && cd work/
+      + % cp material/udemy-docker-mastery/dockerfile-sample-2 work/. && cd work/dockerfile-sample-2
       + % sudo docker image build -t nginx-with-html .; # as much as possible use popular docker images from docker hub
 ***** assignment answers: build your own image
       + Dockerfiles are part process workflow and part art
-      + % cp material/udemy-docker-master/dockerfile-assignment-1 work/. && cd work/
+      + % cp material/udemy-docker-master/dockerfile-assignment-1 work/. && cd work/dockerfile-assignment-1
       + prepare dockerfile
       + 'CMD ["executable", "param1", "param2"]'
       + % sudo docker image build -t testnode .
@@ -320,24 +320,64 @@
 ***** assignment answers: edit code running in containers with bind mounts
       + good for local development and local testing (similar to vagrant /vagrant folder); allows you to edit files on host machine
       + "Jekyll" is static site generator; # for a simple web site
-      + % cp material/udemy-docker-mastery/bindmount-sample-1 work/. && cd work
+      + % cp material/udemy-docker-mastery/bindmount-sample-1 work/. && cd work/bindmount-sample-1
       + % sudo docker run -p 80:4000 -v $(pwd):/site bretfisher/jekyll-serve
       + resources
         + https://jekyllrb.com - jekyll, a static site generator
         + https://hub.docker.com/r/bretfisher/jekyll-serve/ - info about how to use jekyll in a docker container for easy SSG development
 **** making it easier with docker compose: the multi-container tools
 ***** docker compose and the docker-compose.yml file
+      + docker componse is a cli tool and configuration file; it is comprised of 2 separate but related things
+        + 1. YAML formatted file that describes our solution options for: containers, networks and volumes
+        + 2. A cli tool docker-compose used for local dev/test automation with those YAML files
+      + % sudo docker-compose --help; # docker compose help
+      + % cp material/udemy-docker-mastery/compose-sample-1 work/. && cd work/compose-sample-1
+      + go through template.yml, docker-compose.yml, compose-2.yml, compose-3.yml
       + resources
         + http://www.yaml.org/start.html - the yaml format: sample generic yaml file
         + http://www.yaml.org/refcard.html - the yaml format: quick reference
+        + https://docs.docker.com/compose/compose-file - docker compose file
         + https://docs.docker.com/compose/compose-file/compose-versioning/ - compose file version differences (docker docs)
         + https://github.com/docker/compose/releases - docker compose release downloads (good for linux users that need to download manually)
+        + https://wordpress.com - website using wordpress
+        + https://ghost.org - open source professional publishing platform
 ***** trying out basic compose commands
+      + docker-compose cli is not a production-grade tool but idea for local development and test
+      + 'docker-compose up' - setup volumes/networks and start all containers
+      + 'docker-compose down' - stop all containers and remove cont/vol/net
+      + if your projects had a Dockerfile and docker-compose.yml then "new developer onboarding" would be
+        + 'git clone github.com/some/software'
+        + 'docker-compose up'
+      + % cp material/udemy-docker-mastery/compose-sample-2 work/. && cd work/compose-sample-2
+      + % sudo docker-compose up; # docker-compose is not installed by default on linux with docker
+        + % ctrl-c
+      + % sudo docker-compose -d; # to run it in the background
+      + % sudo docker-compose logs; # to see logs
+      + % sudo docker-compose --help; # docker-compose help
+      + % sudo docker-compose ps; # list of running containers
+      + % sudo docker-compose top; # streaming running process
+      + % sudo docker-compose down; # stop and clean-up running processes
       + resources
         + https://github.com/docker/compose/releases - docker-compose download for linux via github, win/mac already have it
+***** assignment answers: build a compose file for a multi-container service
+      + 'drupal' is content management system website
+      + % cp material/udemy-docker-mastery/compose-assignment-2 work/. && cd work/compose-assignment-2
+      + % sudo docker pull drupal
+      + % sudo docker image inspect drupal
+      + check for exposed ports
+      + compose docker-compose.yml file
+      + % sudo docker-compose up
+      + % sudo docker-compose down -v; # remove volumes as well
+      + resources
+        + https://www.drupal.org; # opensource content management framework
 ***** adding image building to compose files
+      + % cp material/udemy-docker-mastery/compose-sample-3 work/. && cd work/compose-sample-3
+      + % sudo docker-compose up
+      + % sudo docker-compose down -v -rmi local; # remove volumes and images as well
       + resources
         + https://docs.docker.com/compose/compose-file/#build - (docker docs) compose file build options
+***** assignment answers: compose for run-time image building and multi-container dev
+      + 
 **** docker services and the power of swarm: built-in orchestration
 ***** swarm mode: built-in orchestration
       + resources
