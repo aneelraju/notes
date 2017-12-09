@@ -528,7 +528,7 @@
         + https://docs.docker.com/engine/swarm/ingress/ - use swarm mode routing mesh (docker docs)
 ***** assignment answers: create a multi-service multi-node web app
       + docker's distributed voting app
-      + % cp material/udemy-docker-mastery/swarm-app-13 work/. && cd work/swarm-app-13
+      + % cp material/udemy-docker-mastery/swarm-app-1 work/. && cd work/swarm-app-1
       + 1 volume, 2 networks and 5 services needed
       + create the commands needed, spin up services and test app
       + everything is using docker hub images, so no data needed on swarm; don't build on production swarms/cloud as they eat resources)
@@ -553,29 +553,266 @@
       + node1% sudo docker container logs <workercontainername>
       + In browser <node1ip> to vote and <node2ip>:5001 to check result
 ***** swarm stacks and production grade compose
+      + stacks: production grade compose
+        + stacks accpt compose files as their declarative definition for services, networks and volumes
+        + 'docker stack deploy' rather then docker service create
+        + stacks manages all those objects for us, including overlay network per stack. Adds stack name to start of their name
+        + new 'deploy:' key in compose file. can't do build: - building shouldn't happen on swarm, it should happen by CI tool jenkins and upload to repository
+        + docker-compose now ignores 'deploy:' (on local machine), docker swarm ignores 'build:'
+        + docker-compose cli not needed on swarm server - it's not a production tool, it's used on local m/c
+        + stack is only for one swarm
+      + node1% sudo docker service ls; # lists services
+      + node1% sudo docker service rm db redis result vote worker; # remove services
+      + % cp material/udemy-docker-master/swarm-stack-1 work/. && cd work/swarm-stack-1
+      + % scp -r example-voting-app-stack.yml root@node1ip:.
+      + node1% sudo docker stack deploy -c example-voting-app-stack.yml voteapp; # deploy's app
+      + node1% sudo docker stack --help; # docker stack help
+      + node1% sudo docker stack ls; # lists stack's and it's services
+      + node1% sudo docker stack ps voteapp; # lists processes
+      + node1% sudo docker stack services voteapp; # lists services; this and above command are useful
+      + node1% sudo docker network ls; # lists network
+      + in browser <node3ip>:5000 for vote and <node2ip>:5001 for results; # vote is on node3 and result on node2
+      + in browser <node3ip>:8080 for visualize; # visualizer is on node3; gives details of nodes and it's service details in visual form
+      + change vote replicas to 3 in example-voting-app-stack.yml for update
+      + node1% sudo docker stack deploy -c example-voting-app-stack.yml voteapp; # updates services
       + resources
         + https://docs.docker.com/compose/compose-file/#not-supported-for-docker-stack-deploy - features not supported in stack deploy
+***** secrets storage for swarm: protecting your environment variables
+      + secrets storage
+        + easiest "secure" solution for storing secrets in swarm
+        + secrets are - usernames and passwords; TLS certificates and keys; SSH keys ...
+        + supports generic strings or binary content up to 500kb in size
+        + doesn't require app to be re-written
+        + as of docker 1.13.0 swarm raft DB is encrypted on disk
+        + only stored on disk on manager nodes
+        + default is managers and workers "control plane" is TLS + Mutual Auth
+        + secrets are first stored in swarm db, then assigned to a service(s)
+        + only containers is assigned service(s) can see them
+        + they look like files in container but are actually in-memory fs
+        + /run/secrets/<secret_name> or /run/secrets/<secret_alias>
+        + local docker-compose can use file-based secrets, but not secure - fakes secrets, secrets are used to run on swarm
 ***** using secrets in swarm services
+      + % cp material/udemy-docker-mastery/secrets-sample-1 work/. && cd work
+      + % scp -r secrets-sample-1 root@node1ip:.
+      + node1% cd secrets-sample-1
+      + node1% sudo docker secret create psql_user psql_user.txt
+      + node1% echo "myDBpassWORD" | sudo docker secret create psql_pass - ; # '-' is read from input; not safe as it's in history
+      + node1% sudo docker secret ls; # lists secret
+      + node1% sudo docker secret inspect psql_user; # info about psql_user
+      + node1% sudo docker service create --name psql --secret psql_user --secret psql_pass -e POSTGRES_PASSWORD_FILE=/run/secrets/psql_pass -e POSTGRES_USER_FILE=/run/secrets/psql_user postgres; # run service using secrets
+      + node1% sudo docker service ps psql
+      + node1% sudo docker exec -it <containername> bash
+      + c% cat /run/secrets/psql_user; # on node3 as psql launched on node3
+      + c% cat /run/secrets/psql_pass
+      + c% exit
       + resources
-        + https://docs.docker.com/engine/swarm/secrets/ - secrets in compose files (docker docs)
+        - https://docs.docker.com/engine/swarm/secrets/ - manage sensitive data with docker secrets (docker docs) (lots of good reading and example)
+***** using secrets with swarm stacks
+      + % cp material/udemy-docker-mastery/secrets-sample-2 work/. && cd work
+      + % scp -r secrets-sample-2 root@node1ip:.
+      + node1% cd secrets-sample-2
+      + node1% sudo docker stack deploy -c docker-compose.yml mydb; # run secrets via stack (compose)
+      + node1% sudo docker stack rm mydb; # removes secrets as well
+      + resources
+        + https://docs.docker.com/compose/compose-file/#secrets-configuration-reference - secrets in compose files (docker docs)
+***** using secrets with local docker compose
+      + % cd work/secrets-sample-2; # on local machine
+      + % sudo docker-compose up -d; # run docker-compose
+      + % sudo docker-compose exec psql cat /run/secrets/psql_user.txt; # run exec command on psql through docker-compose; compose not secure but works on local
+      + % sudo docker-compose exec psql cat /run/secrets/psql_password.txt; # run exec command on psql through docker-compose; usefully to test locally
+***** assignment answers: create a stack with secrets and deploy
+      + % cp compose-assignment-2 secrets-assignment-1
+      + stack and compose works on docker-compose.yml version '3.1'
+      + edit secrets-assignmet-1/docker-compose.yml
+      + % scp -r secrets-assignment-2 root@node1ip:.
+      + node1% echo "abcxyz" | docker secret create psql-pw -
+      + node1% sudo docker stack deploy -c docker-compose.yml drupal
+      + node1% sudo docker stack ps 
+      + in browser http://<node1ip>:8080
 ***** full app lifecycle: dev, build and deploy with a single compose design
+      + full app lifecycle with compose
+        + swarm+stacks+secrets are good features for production
+        + local 'docker-compose up' development environment
+        + remote 'docker-compose up' CI environment
+        + remote 'docker stack deploy' production environment
+      + % cp -rf materials/udemy-docker-mastery/swarm-sample-3 work %% cd work/swarm-sample-3
+      + 'Dockerfile' - build image
+      + 'docker-compose.yml' - called in all docker-compose.*.yml files
+      + 'docker-compose.override.yml' - local development, docker-compose automatically reads this and overrides docker-compose.yml; has bind-mount of themes
+        + file secret
+      + 'docker-compose.prod.yml' - production environment, need to specify file manually; no bind-mount; need to use docker config
+        + external secret
+      + 'docker-compose.test.yml' - test environment, need to specify file manually; docker-compose -f
+        + jenkin CI solution run on commit; no need to define volumes because no need to keep named volumes because as soon as the test passes or fails the data is removed
+        + sample_data scenario, in CI solution may be comes from custom data repository. instead of creating database every single time for testing we bind mount sample data 
+        + file secret
+      + % sudo docker-compose up -d; # deveopment environment: uses docker-compose.yml first then overlay docker-compose.override.yml
+      + % sudo docker inspect drupal; # all the mounts installed
+      + % sudo docker-compose down
+      + % sudo docker-compose -f docker-compose.yml -f docker-compose.test.yml up -d; # test environment; no bind mounts as we didn't specify
+      + % sudo docker-compose down
+      + % sudo docker-compose -f docker-compose.yml -f docker-compose.prod.yml config > output.yml; # prod environment; output.yml is used in production stack
+      + % scp -r output.yml root@<node1ip>:.
+      + node1% sudo docker stack deploy -c output.yml drupal
+      + Note: compose extends: another way to override file, doesn't work yet in stacks
       + resources
         + https://docs.docker.com/compose/extends/#multiple-compose-files - using multiple compose files (docker docs)
         + https://docs.docker.com/compose/production/ - using compose files in production (docker docs)
 **** container registries: image storage and distribution
 ***** docker hub: digging deeper
+      + container registries
+        + an image registry needs to be part of your container plan
+      + docker hub
+        + most popular public image registry
+        + docker registry+lightweight image building
+        + 'hub.docker.com' # docker hub link
+          + one private free
+          + "webhooks" - images are build and pushed to docker hub; send webhooks to jenkins CI for auto build for automation
+          + "collaborators" - permissions for other users
+          + can create organisations which is free
+          + if you are using github/bitbucket don't use hub.docker.com create repository
+            + use 'create automated build' - allows CI path to github/bitbucket to build images based on code commits (reverse webhooks)
+            + tags images with "automated build"
+            + go through 'build details' and 'build settings'
+            + in 'build settings' for FROM image; add Repository link to that image; so that any change in that image it builds image
+            + 'build triggers' - some other software not github to trigger build
       + resources
         + https://hub.docker.com - docker hub
 ***** docker store: what is it for ?
+      + store.docker.com
+        + download docker "editions"
+        + find certified docker/swarm plugins and commercial certified images
+        + no different versions of images
+        + 'dockerhub' is 'git hub' of images; 'docker store' is like app store for images
       + resources
         + https://store.docker.com - docker store
 ***** docker cloud: CI/CD and server ops
+      + docker cloud
+        + web based Docker Swarm creation/management
+        + uses popular cloud hosters (aws, do) and bring-your-own-server and don't want to use cli and manage
+        + you can pay for automated image building, testing and deployment - CI/CD platform
+        + includes a image security scanning service
+        + for official images in docker hub under tags you can see vunerabilities (which are inter run by docker cloud security ???)
       + resources
         + https://cloud.docker.com - docker cloud
-***** understanding docker register
+***** use docker cloud for easy remote swarm management
+      + resources
+        + https://www.youtube.com/watch?v=VJmbCioYKGg&feature=youtu.be - fleet management and collaboration
+***** understanding docker registry
+      + docker regitry
+        + image storage and distribution
+        + https://github.com/docker/distribution - docker source code
+        + https://hub.docker.com/_/registry/ - official docker repository
+        + at its core: a web API and storage system, written in Go
+        + storage supports local, S3/Azure/Alibaba/Google Cloud and OpenStack Swift
+        + look in section resources for links to:
+          + secure your registry with TLS
+          + storage cleanup via Garbage Collection
+          + enable hub caching via "--registry-mirror" - like a proxy to download image once and used by other machines
       + resources
         + https://docs.docker.com/registry/configuration/ - registry configuration docs
         + https://docs.docker.com/registry/garbage-collection/ - registry garbage collection
         + https://docs.docker.com/registry/recipes/mirror/ - use registry as a "mirror" of docker hub
+***** run a private docker registry
+      + using docker registry local
+      + registry and proper TLS
+        + "secure by default": docker won't talk to registry without HTTPS
+        + except, localhost (127.0.0.0/8)
+        + for remote self-signed TLS, enable "insecure-registry" in engine - not recommended
+      + % cp material/udemy-docker-mastery/registry-sample-1 work/. && cd work/registry-sample-1
+      + % sudo docker container run -d -p 5000:5000 --name registry registry
+      + % sudo docker container ls
+      + % sudo docker image ls
+      + % sudo docker pull hello-world
+      + % sudo docker run hello-world
+      + % sudo docker tag hello-world 127.0.0.1:5000/hello-world; # own official image at root local registry
+      + % sudo docker image ls
+      + % sudo docker push 127.0.0.1:5000/hello-world; # pushes to local registry
+      + % sudo docker image remove hello-world
+      + % sudo docker container rm <containername>
+      + % sudo docker remove 127.0.0.1:5000/hello-world; # image removed
+      + % sudo docker pull 127.0.0.1:5000/hello-world; # pull's from local registry
+      + % sudo docker container kill registry
+      + % sudo docker container rm registry
+      + % sudo docker container run -d -p 5000:5000 --name registry -v $(pwd)/registry-data:/var/lib/registry registry; # new registry with new database
+      + % sudo docker image ls
+      + % sudo docker push 127.0.0.1:5000/hello-world
+      + % ll registry-data
+      + % tree registry-data/ # shows registry
+        + "tree" show dirs and files visually
+          + linux: apt/yum install tree
+          + macOS: brew install tree
+          + windows: already installed
+        + show data, blob (binaries) and meta data
+      + summarize: run a private docker registry recap
+        + run the registry image
+          + 'docker container run -d -p 5000:5000 --name registry registry'
+        + re-tag an existing image and push it to your registry
+          + 'docker tag hello-world 127.0.0.1:5000/hello-world'
+          + 'docker push 127.0.0.1:5000/hello-world'
+        + remove that image from local cache and pull it from new registry
+          + 'docker image remove hello-world'
+          + 'docker image remove 127.0.0.1:5000/hello-world'
+          + 'docker pull 127.0.0.1:5000/hello-world'
+        + re-create registry using a bind mount and see how it stores data
+          + 'docker container run -d -p 5000:5000 --name registry -v $(pwd)/registry-data:/var/lib/registry registry'
+***** assignment: secure docker registry with TLS and authentication
+      + default registry installed is rather bare bones, and is open by default, meaning anyone can push and pull images
+      + we should at lesat add TLS to it so you can work with it easily via HTTPS and then also add some basic authentication
+      + try it on play-with-docker
+        + http://training.play-with-docker.com/linux-registry-part2/ - docker registry for linux parts 2 & 3
+        + http://training.play-with-docker.com/linux-registry-part1/ - docker registry for linux part 1
+        + http://training.play-with-docker.com/ - for more extra credit labs
+***** using docker registry with swarm
+      + private docker registry with swarm
+        + works the same way as localhost
+        + because of routing mesh, all nodes can see 127.0.0.1:5000
+        + remember to decide how to store images (volume driver)
+        + go to play-with-docker.com
+          + go to 'setings' and click 5 managers and no workers
+          + % docker node ls; # 5 nodes are running
+          + % docker service create --name registry --publish 5000:5000 registry
+          + % docker service ps regsitry; # registry is running; in browser click the port 5000 and add ....com/v2/_catalog returns a simple json array (as registry is empty)
+          + % docker pull hello-world
+          + % docker tag hello-world 127.0.0.1:5000/hello-world
+          + % docker push 127.0.0.1:5000/hello-world
+          + % docker image rm hello-world 127.0.0.1:5000/hello-world; # in browser click the port 5000 and add ....com/v2/_catalog returns a json array with one entry hello-world
+          + % docker pull nginx
+          + % docker tag nginx 127.0.0.1:5000/nginx
+          + % docker push 127.0.0.1:5000/nginx
+          + % docker service create --name nginx -p 80:80 --replicas 5 --detach=false 127.0.0.1:5000/nginx; # shows command running in real time
+            + because it's run as a service, all node able to push and pull images from local repository
+          + % docker service ps nginx; # 1 running one each node and with local image
+          + all nodes must be able to access image, routed mesh makes it easy
+          + ProTip: use a hosted SaaS registry if possible - try these first and then only local hosted platform because of utility
+***** third party image registry
+      + image registry
+        + docker hub
+        + docker enterprise edition DTR (docker trusted registry)
+        + docker registry
+        + Quay.io - popular choice and comparable to docker hub as cloud-based registry
+          + https://sysdig.com/blog/sysdig-docker-usage-report-2017/ - sysdig report on registry usage
+        + aws, azure and google cloud have their own registry options well integrated with their toolset
+        + self-hosted options
+          + Docker EE
+          + Quay Enterprise
+          + GitLab which comes with GitLab container registry
+            + https://about.gitlab.com/2016/05/23/gitlab-container-registry/
+        + more list of registries
+          + https://github.com/veggiemonk/awesome-docker#hosting-images-registries - list of docker resources
 **** bonus section
+     + bret's dockercon 2017 video: "Journey to Docker Production"
+       + https://www.youtube.com/watch?v=ZdUcKtg84T8
+       + https://dockercon.docker.com/watch/WdAeLaLuSCNQwEp61YVXUt
+     + swarm quorum and recovery (laura frank from dockercon 2017)
+       + https://www.youtube.com/watch?v=Qsv-q8WbIZY
+     + bret's docker and devoops newsletter
+       + https://www.getdrip.com/forms/54453022/submissions/new - register here
+     + using prune to keep your docker system clean
+       + https://www.youtube.com/watch?v=_4QzP7uwtvI&feature=youtu.be
+     + what's new in docker 17.06
+       + https://www.youtube.com/watch?v=-NeaXUGEK_g
+       + https://github.com/docker/docker-ce/releases - detailed list of changes
+     + Node.js Good defaults for docker
+       + https://github.com/BretFisher/node-docker-good-defaults - github repo, go through README.md; best setup a Node app in Docker for local development and production use
 ** kubernetes
