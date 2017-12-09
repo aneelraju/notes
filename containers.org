@@ -373,13 +373,31 @@
 ***** adding image building to compose files
       + % cp material/udemy-docker-mastery/compose-sample-3 work/. && cd work/compose-sample-3
       + % sudo docker-compose up
-      + % sudo docker-compose down -v -rmi local; # remove volumes and images as well
+      + % sudo docker-compose down -rmi local; # remove volumes and images as well
       + resources
         + https://docs.docker.com/compose/compose-file/#build - (docker docs) compose file build options
 ***** assignment answers: compose for run-time image building and multi-container dev
-      + 
+      + % cp work/compose-assignment-2 work/compose-assignment-3 && cd work/compose-assignment-3
+      + edit docker-compose.yml and Dockerfile according to README.md
+      + % docker-compose up -d
+      + configure drupal and install bootstrap theme
+      + % docker-compose down
+      + % docker-compose up; # website starts directly without installation process
 **** docker services and the power of swarm: built-in orchestration
 ***** swarm mode: built-in orchestration
+      + swarm mode is a clustering solution built inside docker
+      + swarm commands (docker swarm/node/service/stack/secret) aren't enabled by default
+      + docker service (replaces docker run command on swarm)
+        + manager node:
+          + RAFT
+            + API - Accepts command from client and creates service object
+            + Orchestrator - Reconcillation loop for service objects and creates tasks
+            + Allocator - Allocates IP addresses to tasks
+            + Scheduler - Assigns nodes to tasks
+            + Dispatcher - Checks in on workers
+        + Worker Node
+          + Worker - Connects to dispatcher to check on assigned tasks
+          + Executor - Executes the tasks assigned to worker node
       + resources
         + https://www.youtube.com/watch?v=dooPhkXT9yI - docker 1.12 swarm mode deep dive part 1: topology (YouTube)
         + https://www.youtube.com/watch?v=dooPhkXT9yI - docker 1.12 swarm mode deep dive part 2: topology (YouTube)
@@ -387,17 +405,153 @@
         + https://www.youtube.com/watch?v=EmePhjGnCXY - Heart of the SwarmKit: Store, Topology & Object Model (YouTube)
         + http://thesecretlivesofdata.com/raft/ - Raft Consensus Visualization (Our Swarm DB and how it stays in sync across nodes)
 ***** create your first service and scale it locally
+      + % sudo docker info; # Displays systemwide info; check for Swarm: inactive
+      + % sudo docker swarm init; # create a single node cluster on localhost and make current node as manager
+        + lots of PKI and security automation
+          + root signing certificate created for our swarm
+          + certificate is issued for first manager node
+          + join tokens are created
+        + raft database created to store root CA, configs and secrets
+          + encrypted by default on disk (1.13+)
+          + no need for another key/value system to hold orchestration/secrets
+          + replicates logs amongst managers via mutual TLS in "control plane"
+          + raft ensures consistency esp for cloud deployment
+      + % sudo docker node ls; # lists nodes
+      + % sudo docker node --help; # docker node help
+      + % sudo docker swarm --help; # docker swarm help
+      + % sudo docker service --help; # docker service help; # 'docker run' is designed for single cluster and 'docker service' is for multi-node clusters
+      + % sudo docker service create alpine ping 8.8.8.8; # gives service id not container id
+      + % sudo docker service ls; # lists services
+      + % sudo docker service ps <servicename>
+      + % sudo docker service update <serviceid> --replicas 3; # scaling up services
+      + % sudo docker service ls
+      + % sudo docker service ps; # 3 services are run
+      + % sudo docker update --help; # docker update help; update configuration of one or more containers
+      + % sudo docker service update --help; # update a service without taking service down
+      + % sudo docker container rm -f <containerid>; # container is removed but it is removed from behind, service will launch new service
+      + % sudo docker service rm <servicename>; # removes containers through service
+      + % sudo docker service ls; # service is removed
+      + % sudo docker container ls; # containers are removed
       + resources
         + https://docs.docker.com/engine/swarm/services/ - deploy services to a swarm (docker docs)
 ***** creating a 3-node swarm cluster
+      + 'play-with-docker.com'; # only needs a browser, but resets after 4 hours
+        + quickly create nodes (3 nodes) and each nodes can talk to each other
+        + useful if have slower machine and try quickly online
+        + runs docker inside docker and has latest tools installed
+      + docker-machine + virtualbox; # free and runs locally, but requires a machine with 8GB memory
+        + % sudo docker-machine --help; # docker-machine help
+        + % sudo docker-machine create node1; # create node through virtual busy box (light weight linux machine)
+        + % sudo docker-machine ssh node1; # ssh to node1
+          + or % sudo docker-machine env node1; # displays env
+          + % eval $(docker-machine env node1); # copy on command prompt
+          + docker terminal commands on node1
+      + roll you own
+        + docker-machine can provision machines for amazon, azure, do, google etc
+        + install docker anywhere with get.docker.com; # preferred method as docker-machine may not be used in production settings
+      + digital ocean + docker install
+        + cheapest and easiest to start digital service
+        + most like a production setup, but costs $5-10/node/month
+        + create 3 droplets (node1,node2,node3) on digital ocean with 1vCPU + 1GB standard machine ($10/node/month)
+        + % ssh root@<node1ip>
+        + node1% curl -sSL https://get.docker.com/ | sh; # install docker
+        + % ssh root@<node2ip>
+        + node2% curl -sSL https://get.docker.com/ | sh; # install docker
+        + % ssh root@<node3ip>
+        + node3% curl -sSL https://get.docker.com/ | sh; # install docker
+        + node1% sudo docker swarm init --advertise-addr <node1 ip>; # docker swarm init
+        + node2% sudo docker swarm join --token SWMTKN-1-2th56plepacrp8d8giiyqrtv86m803ia7kiecrzog9xhd9z26h-1mhl4b3x04l2vutj87olww5cn <node1ip>:2377
+        + node3% sudo docker swarm join --token SWMTKN-1-2th56plepacrp8d8giiyqrtv86m803ia7kiecrzog9xhd9z26h-1mhl4b3x04l2vutj87olww5cn <node1ip>:2377
+        + node1% sudo docker node ls; # lists 3 nodes where node1 is manager and node 2 and node3 are workers
+        + node2% sudo docker node ls; # errors out; node2 and node3 are workers so can't run swarm commands
+        + node1% sudo docker node update --role manager node2; # upgrading node2 to manager
+        + node2% sudo docker node ls
+        + node1% sudo docker swarm join-token manager; # get manager token
+        + node3% docker swarm join --token SWMTKN-1-2th56plepacrp8d8giiyqrtv86m803ia7kiecrzog9xhd9z26h-e9fhwpe6yhxb8boa2tix8nv6l <node1ip>:2377; # adding node3 directly as manager
+        + node1% sudo docker node ls
+        + node1% sudo docker service create --replicas 3 alpine ping 8.8.8.8
+        + node1% sudo docker service ls; # list of services
+        + node1% sudo docker node ps; # list container runs on node1
+        + node1% sudo docker node ps node2; # list container runs on node2
+        + node1% sudo docker service ps <service name>; # list of container runs, this is due to routing mesh
+        + node1% sudo docker service inspect drupal; # list only node1 ip overlay
+        + node1% sudo docker node ls
+        + node1% sudo docker node demote node3
+        + node3% sudo docker swarm leave
+        + node3% sudo docker node rm node3
+        + node1% sudo docker node ls
+        + node1% sudo docker node demote node2
+        + node2% sudo docker swarm leave
+        + node2% sudo docker node rm node2
+        + node1% sudo docker swarm leave --force; # use --force only on last manager node to leave
       + resources
         + https://www.digitalocean.com/?refcode=b813dfcad8d4&utm_campaign=Referral_Invite&utm_medium=Referral_Program&utm_source=CopyPaste - digital ocean coupon for $10
         + https://www.digitalocean.com/community/tutorials/how-to-use-ssh-keys-with-digitalocean-droplets - create and upload a SSH key to digital ocean
         + https://www.bretfisher.com/docker-swarm-firewall-ports/ - docker swarm firewall ports
         + https://www.digitalocean.com/community/tutorials/how-to-configure-custom-connection-options-for-your-ssh-client - configure SSH for saving options for specific connections
+***** scaling out with overlay networking
+      + '--driver overlay' - creates swarm wide bridge network
+      + only for container-to-container traffic inside a single swarm
+      + optional IPSec (AES) encryption on network creation
+      + each service can be connected to multiple networks (e.g. front-end, back-end)
+      + node1% sudo docker network create --driver overlay mydrupal
+      + node1% sudo docker network ls
+      + node1% sudo docker service create --name psql --network mydrupal -e POSTGRES_PASSWORD=mypasswd postgres; # service can be launched on either of node1, node2 or node3
+      + node1% sudo docker service ls
+      + node1% sudo docker service ps psql; # psql running on node2
+      + node2% sudo docker container logs <container name>
+      + node1% sudo docker service create --name drupal --network mydrupal -p 80:80 drupal
+      + node1% sudo docker service ls
+      + node1% sudo docker service ps drupal; # drupal running on node1
+      + node1% watch sudo docker service ls; # linux command watch, to watch services
+      + in browser https://<node1ip>; # drupal install; overlay acts like every thing on same sub net
+      + all 3 (node1ip, node2ip and node3ip) ip's display drupal website
 ***** scaling out with routing mesh
+      + routing mesh
+        + routes ingress (incoming) packets for a service to proper task
+        + spans all nodes in swarm
+        + uses IPVS from linux kernel
+        + load balances swarm services across thier tasks
+        + two way this works:
+          + container-to-container in a overlay network (uses VIP)
+          + external traffic incoming to published ports (all nodes listen)
+        + this is stateless load balancing
+        + this LB is at OSI layer 3 (TCP), not Layer 4 (DNS)
+        + both limitation can be overcome with
+          + Nginx or HAProxy LB proxy
+          + Docker EE, which comes with built-in L4 web proxy
+      + node1% sudo docker service create --name search --replicas 3 -p 9200:9200 elasticsearch:2
+      + node1% sudo docker service ps search; # list search ps
+      + node1% curl localhost:9200; # elasticsearch basic info
+      + node1% curl localhost:9200; # now on different node showing load balancing
       + resources
         + https://docs.docker.com/engine/swarm/ingress/ - use swarm mode routing mesh (docker docs)
+***** assignment answers: create a multi-service multi-node web app
+      + docker's distributed voting app
+      + % cp material/udemy-docker-mastery/swarm-app-13 work/. && cd work/swarm-app-13
+      + 1 volume, 2 networks and 5 services needed
+      + create the commands needed, spin up services and test app
+      + everything is using docker hub images, so no data needed on swarm; don't build on production swarms/cloud as they eat resources)
+      + like many computer things, this is 1/2 art and 1/2 science
+      + node1% sudo docker service ls; # no services
+      + node1% sudo node ls; # node1, node2 and node3 available as managers
+      + edit README.md and following instructions
+      + node1% sudo docker network create -d overlay backend; # create backend network
+      + node1% sudo docker network create -d overlay frontend; # create frontend network
+      + node1% sudo docker service create --name vote -p 80:80 --network frontend --replicas 2 dockersamples/examplevotingapp_vote:before
+      + node1% sudo docker service create --name redis --network frontend --replicas 1 redis:3.2
+      + node1% sudo docker service create --name worker --network frontend --network backend dockersamples/examplevotingapp_worker
+      + node1% sudo docker service create --name db --network backend --mount type=volume,source=db-data,target=/var/lib/postgresql/data postgres:9.4
+        + '-v' is not support in docker service, it's replaced with '--mount'
+      + node1% sudo docker service create --name result --network backend -p 5001:80 dockersamples/examplevotingapp_result:before
+      + node1% sudo docker service ls; # all five services are running
+      + node1% sudo docker service ps db; # runs on node3
+      + node1% sudo docker service ps redis; # runs on node3
+      + node1% sudo docker service ps result; # runs on node2
+      + node1% sudo docker service ps worker; # runs on node2 and node1
+      + node1% sudo docker service logs worker; # runs on node1; worker fails until db is up but service is re-started
+      + node1% sudo docker container logs <workercontainername>
+      + In browser <node1ip> to vote and <node2ip>:5001 to check result
 ***** swarm stacks and production grade compose
       + resources
         + https://docs.docker.com/compose/compose-file/#not-supported-for-docker-stack-deploy - features not supported in stack deploy
