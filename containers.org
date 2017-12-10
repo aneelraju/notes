@@ -816,3 +816,109 @@
      + Node.js Good defaults for docker
        + https://github.com/BretFisher/node-docker-good-defaults - github repo, go through README.md; best setup a Node app in Docker for local development and production use
 ** kubernetes
+*** udemy - learn devops: the complete kubernetes course - edward viaene
+**** course introduction
+     + course overview
+       + introduction
+         + what is kubernetes; cloud/on-premise setup; cluster setup; building containers; running your first app; building container images
+       + kubernetes basics
+         + node architecture; scaling pods; deployments; services; labels; healthchecks; secrets; WebUI
+       + advanced topics
+         + service auto-discovery; configmap; ingress; volumes; pet sets; daemon sets; monitoring; autoscaling
+       + administration
+         + master services; quotas and limits; namespace; user management; networking; node maintenance; high availability
+     + course repo
+       + https://github.com/wardviaene/kubernetes-course
+     + procedure document
+       + download kubectl
+         + linux - https://storage.googleapis.com/kubernetes-release/release/v1.6.1/bin/linux/amd64/kubectl
+         + macos - https://storage.googleapis.com/kubernetes-release/release/v1.6.1/bin/darwin/amd64/kubectl
+         + windows - https://github.com/eirslett/kubectl-windows/releases/download/v1.6.3/kubectl.exe
+       + minikube
+         + project url - https://github.com/kubernetes/minikube
+         + download instructions - https://github.com/kubernetes/minikube/releases
+         + virtual box - http://www.virtualbox.org
+         + windows
+           + download latest minikube-version.exe
+           + rename the file to minikube.exe and put it in C:\minikube
+           + open a cmd and run 'cd C:\minikube' and enter 'minikube start'
+           + test your commands
+             + 'minikube status'
+             + 'kubectl run hello-minikube -- image=gcr.io/google_containers/echoserver:1.4 --port=8080 kubectl expose deployment hello-minikube --type=NodePort'
+             + 'minikube service hello-minikube --url'
+       + kops
+         + project url: https://github.com/kubernetes/kops
+       + free dns service
+         + http://freedns.afraid.org/
+         + choose for subdomain hosting
+         + enter aws nameservers give to you in route53 as nameservers for the subdomain
+         + http://www.dot.tk/ - provides a free.tk domain name you can use and you can point it to the amazon aws nameservers
+         + namecheap.com often has promotions for tld's like .co for just a couple of bucks
+       + cluster commands
+         + 'kops create cluster --name=kubernetes.newtech.academy --state=s3://kops-state-b429b --zones=eu-west-1a --node-count=2 --node-size=t2.micro --master-size=t2.micro --dns-zone=kubernetes.newtech.academy'
+         + 'kops update cluster kubernetes.newtech.academy --yes --state=s3://kops-state-b429b'
+         + 'kops delete cluster --name kubernetes.newtech.academy --state=s3://kops-state-b429b'
+         + 'kops delete cluster --name kubernetes.newtech.academy --state=s3://kops-state-b429b --yes'
+       + kubernetes from scratch
+         + you can setup your cluster manually from scratch
+         + if you're planning to deploy on AWS/Google/Azure, use the tools that are fit for these platforms
+         + if you have an unsupported cloud platform, and you still want kubernets, you can install it manually
+         + coreOS + kubernetes
+           + https://coreos.com/kubernetes/docs/latest/getting-started.html
+       + docker
+         + download docker engine
+           + windows:  https://docs.docker.com/engine/installation/windows/
+           + macos: https://docs.docker.com/engine/installation/mac/
+           + linux: https://docs.docker.com/engine/installation/linux/
+       + devops box
+         + virtualbox: http://www.virtualbox.org
+         + vagrant: http://www.vagrantup.com
+         + devops box: https://github.com/wardviaene/devops-box
+           + vagrant project with an ubuntu box with the tools needed to do DevOps
+           + tools included: Terraform, aws cli, ansible
+         + launch commands (in terminal)
+           + 'cd devops-box && vagrant up'
+         + launch commands for a plain ubuntu
+           + 'mkdir ubuntu'
+           + 'vagrant init ubuntu/xenial64'
+           + 'vagrant up'
+       + docker commands
+         + 'docker build' - build image
+         + 'docker build -t wardviaene/k8s-demo:latest .' - build & tag
+         + 'docker tag imageid wardviaene/k8s-demo' - tag image
+         + 'docker push wardviaene/k8s-demo' - push image
+         + 'docker images' - list images
+         + 'docker ps -a' - list all containers
+       + kubernetes commands
+         + 'kubectl get pod' - get info about all running pods
+         + 'kubectl describe pod <pod>' - describe one pod
+         + 'kubectl expose pod <pod> --port=444 --name=frontend' - expose the port of a pod (creates a new service)
+         + 'kubectl port-forward <pod> 8080' - port forward the exposed pod port to your local machine
+         + 'kubectl attach <podname> -i' - attach to the pod
+         + 'kube exec <pod> --command' - execute a command on the pod
+         + 'kubectl label pods <pod> mylabel=awesome' - add a new label to a pod
+         + 'kubectl run -i --tty busybox --image=busybox --restart=Never -- sh' - run a shell in a pod - very useful for debugging
+         + 'kubectl get deployments' - get information on current deployments
+         + 'kubectl get rs' - get information about the replica sets
+         + 'kubectl get pods --show-labels' - get pods, and also show labels attached to those pods
+         + 'kubectl rollout status deployment/helloworld-deployment' - get info on current deployments
+         + 'kubectl get rs' - get info about the replica sets
+         + 'kubectl get pods --show-labels' - get pods, and also show labels attached to those pods
+         + 'kubectl rollout status deployment/helloworld-deployment' - get deployment status
+         + 'kubectl set image deployment/helloworld-deployment k8s-demo=k8s-demo-2' - run k8s-demo with the image label vesion 2
+         + 'kubectl edit deployment/helloworld-deployment' - edit the deployment object
+         + 'kubectl rollout history deployment/helloworld-deployment' - get the rollout history
+         + 'kubectl rollout undo deployment/helloworld-deployment' - rollback to previous version
+         + 'kubectl rollout undo deployment/helloworld-deployment --to-version=n' - rollback to any version
+       + aws commands
+         + 'aws ec2 create-volume --size 10 --region us-east-1 --availability-zone us-east-1a --volume-type gp2'
+       + certificates
+         + 'openssl genrsa -out myuser.pem 2048' - creating a new key for a new user
+         + 'openssl req -new -key myuser.pem -out myuser -csr.pem -subj "/CN=myuser/O=myteam/" - creating a certificate request
+         + 'openssl x509 -req -in myuser-csr.pem -CA /path/to/kubernetes/ca.crt -CAkey /path/to/kubernetes/ca.key - CAcreateserial -out myuser.crt -days 10000' - creating a certificate
+**** introduction to kubernetes
+**** kubernetes basics
+**** advanced topics
+**** kubernetes administration
+**** course completion
+    
