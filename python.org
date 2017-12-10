@@ -1,0 +1,74 @@
+* python programming language
+** udemy - complete python bootcamp: go from zero to hero in python - jose portilla
+*** course overview
+**** python 2 vs python 3
+     + python 2 vs python 3
+       + python 2 in 2000; python 2.7 in mid-2010; will lose support (security updates in 2020)
+       + python 3 in 2008; more and more libraries are beginning to support python 3 but not allp
+     + conda - virtual env for python
+       + https://conda.io/docs/ - conda docs
+       + https://www.anaconda.com - python data science platform
+       + https://conda.io/miniconda.html - miniconda
+       + quick instructions
+         + 'conda -V' - conda version
+         + 'conda update conda' - update conda
+         + 'conda create -n py2env python=2.7' - env with python 2.7 env
+         + 'source activate py2env' - activate py2env vm
+         + 'conda install -n py2env [package]' - install additional packages
+         + 'source deactivate' - deactivate py2env vm
+         + 'conda env remove -n py2env' - remove py2env vm
+     + resources
+       + http://sebastianraschka.com/Articles/2014_python_2_3_key_diff.html
+**** course FAQs
+     + http://nbviewer.jupyter.org/github/jmportilla/Complete-Python-Bootcamp/tree/master/ - jupyter noteboos for the course
+     + https://github.com/jmportilla/Complete-Python-Bootcamp - course material on github
+     + http://jupyter.readthedocs.io/en/latest/install.html - jupyter notebook installations
+       + 'jupyter notebook Map.ipynb' - to open Map.ipynb in jupyter notebook
+*** python setup
+**** installation notes
+     + https://www.anaconda.com/download/#macos - installing anaconda
+     + http://jupyter.readthedocs.io/en/latest/install.html - installing jupyter
+     + http://jupyter.readthedocs.io/en/latest/tryjupyter.html - jupyter docs
+**** jupyter notebook installation
+     + resources
+       + https://jupyter.org
+**** IDE selection
+     + Text editors: sublime text, notepad++
+     + IDE for pythons: Wingware python IDE, komodo ide (more like text editor), PyCharm, Spyder, Jupyter
+**** jupyter (iPython) notebooks
+     + resources       
+       + http://jupyter.brynmawr.edu/services/public/dblank/Jupyter%20Notebook%20Users%20Manual.ipynb - jupyter notebook users manual
+**** FAQ - notebooks
+     + resources
+       + http://nbviewer.jupyter.org/github/jmportilla/Complete-Python-Bootcamp/tree/master/ - course material to view in nbviewer
+**** additional resources
+     + https://nbviewer.ipython.org - a simple way to share jupyter notebooks
+       + search for 'jmportiall'
+       + click "Complete-Python-Bootcamp" for course notebooks
+     + https://stackoverflow.com - q&a sites
+       + search for questions like "python reverse string
+     + https://www.python.org/doc/ - python documentation
+**** git and github overview
+     + resources
+       + https://guides.github.com/activities/hello-world/ - git hello world tutorial
+       + https://help.github.com/articles/git-and-github-learning-resources/ - resources for learning github
+       + https://try.github.io/levels/1/challenges/1 - github code school
+       + https://gitimmersion.com - guided tour that walks through git fundamentals
+*** python object and data structure basics
+*** python comparison operators
+*** python statements
+*** methods and functions
+*** milestone project - 1
+*** object oriented programming
+*** errors and exceptions handling
+*** milestone project - 2
+*** modules and packages
+*** built-in functions
+*** python decorators
+*** python generators
+*** final capstone python project
+*** advanced python modules
+*** advanced python objects and data structures
+*** bonus material - introduction to GUIs
+*** bonus special offers
+
