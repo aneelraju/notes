@@ -917,6 +917,65 @@
          + 'openssl req -new -key myuser.pem -out myuser -csr.pem -subj "/CN=myuser/O=myteam/" - creating a certificate request
          + 'openssl x509 -req -in myuser-csr.pem -CA /path/to/kubernetes/ca.crt -CAkey /path/to/kubernetes/ca.key - CAcreateserial -out myuser.crt -days 10000' - creating a certificate
 **** introduction to kubernetes
+***** kubernetes introduction
+      + kubernetes is an open source orchestration system for docker containers
+        + schedules containers on a cluster of machines
+        + can run multiple containers on one machine
+        + can start the container on specific nodes
+        + can move containers from one node to another node
+        + clusters can start with one node until thousands of nodes
+        + other docker orchestrators: docker swarm (not as extensive as kubernetes), mesos
+        + can run on-premis (own datacenter), public (aws, gcp), hybrid (public & private)
+        + highly moduler
+        + open source and available on github
+        + originally developed by google called borg and released to open source
+***** containers introduction
+      + vm: has a guest OS on host OS with hypervisor (phy server->hostOS->Hypervisor->GuestOS->bins/libs->apps); need full boot cycle
+      + container: no guest OS; no boot cycle (phy server->hostOS->bins/libs->app with Docker Engine); no boot cycle and runs as process
+        + but container on cloud provider still has Hypervisor and GuestOS but still gets all benefits of containers
+        + Docker is most popular container software
+          + rkt - another container software works with kubernetes as well
+        + Docker Engine is Docker runtime to make run docker images
+        + Isolation: you ship a binary with all the dependencies
+        + You can run the same docker image, unchanged, on laptops, data center VMs and Cloud providers
+        + Docker uses Linux Containers (a kernel feature) for operating system-level isolation
+***** kubernetes setup
+      + things like volumes and external load balancers work only with supported cloud providers
+        + for aws, gcp and azure it's available
+      + 'minikube' to quickly spin up a local single machine with a kubernetes cluster
+      + 'kops' to spin up a highly available production cluster on aws (http://aws.amazon.com)
+      + https://github.com/kubernetes/minikube - minikube github
+      + can use digital ocean (https://www.digitalocean.com)
+***** local setup with minikube
+      + 'minikube' is a tool that makes it easy to run kubernetes locally
+        + runs a single-node kubernetes cluster inside a linux vm
+        + aimed on users to just test it out or use it for development
+        + cannot spin up a production cluster, it's one node machine with no high availability
+        + works on windows, linux and macos and need virtualization software
+          + virtualbox - www.virtualbox.org
+        + 'minikube start' - to start a cluster
+***** demo: minikube
+      + go to "https://github.com/kubernetes/minikube/releasese"
+        + macos:
+          + % brew cask install minikube 
+          + or % brew cask reinstall minikube; # to upgrade minikube
+          + or % curl -Lo minikube https://storage.googleapis.com/minikube/releases/v0.24.1/minikube-darwin-amd64 && chmod +x minikube && sudo mv minikube /usr/local/bin/
+        + linux:
+          % curl -Lo minikube https://storage.googleapis.com/minikube/releases/v0.24.1/minikube-linux-amd64 && chmod +x minikube && sudo mv minikube /usr/local/bin/
+      + % minikube start; # start minikube
+        + ~/.kube/config - kubectl config file created; kubectl will use this config
+      + % wget https://storage.googleapis.com/kubernetes-release/release/v1.4.3/bin/darwin/amd64/kubectl; # on macos
+      + % chmod +x kubectl && sudo mv kubectl /usr/local/bin/
+      + % kubectl; # help command
+      + % kubectl run hello-minikube --image=gcr.io/google_containers/echoserver:1.4 --port=8080; # name:hello-minikube image from google echo server
+        + % kubectl delete service,deployment hello-minikube; # to delete earlier service and deployment
+        + % kubectl get pods; # get pods list
+        + % kubectl get services; # get services list
+      + % kubectl expose deployment hello-minikube --type=NodePort; # expose port to host machine
+      + % minikube service hello-world --url; # download's image and gives url
+      + go to browser and checker 'url'
+
+          
 **** kubernetes basics
 **** advanced topics
 **** kubernetes administration
