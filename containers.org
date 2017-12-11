@@ -956,17 +956,36 @@
         + 'minikube start' - to start a cluster
 ***** demo: minikube
       + go to "https://github.com/kubernetes/minikube/releasese"
+      + minikube install
         + macos:
           + % brew cask install minikube 
           + or % brew cask reinstall minikube; # to upgrade minikube
           + or % curl -Lo minikube https://storage.googleapis.com/minikube/releases/v0.24.1/minikube-darwin-amd64 && chmod +x minikube && sudo mv minikube /usr/local/bin/
         + linux:
           % curl -Lo minikube https://storage.googleapis.com/minikube/releases/v0.24.1/minikube-linux-amd64 && chmod +x minikube && sudo mv minikube /usr/local/bin/
+        + % minikube; # lists commands
+      + kubectl install
+        + macos:
+          + % curl -LO https://storage.googleapis.com/kubernetes-release/release/`curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt`/bin/darwin/amd64/kubectl
+          + % chmod +x kubectl
+          + % mv kubectl /usr/local/bin/kubectl
+        + linux:
+          + % curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl
+          + % chmod +x kubectl
+          + % mv kubectl /usr/local/bin/kubectl
+          + % kubectl; # lists command
+      + virtual box install
+        + ubuntu xenial install
+          + add official virtualbox repository
+            + % echo "deb http://download.virtualbox.org/virtualbox/debian $(lsb_release -cs) contrib" | sudo tee /etc/apt/sources.list.d/oracle-virtualbox.list
+          + download and add keys
+            + % wget -q https://www.virtualbox.org/download/oracle_vbox_2016.asc -O- | sudo apt-key add -
+            + % wget -q https://www.virtualbox.org/download/oracle_vbox.asc -O- | sudo apt-key add -
+          + install virtualbox
+            + % sudo apt-get update
+            + % sudo apt-get install virtualbox-5.2
       + % minikube start; # start minikube
         + ~/.kube/config - kubectl config file created; kubectl will use this config
-      + % wget https://storage.googleapis.com/kubernetes-release/release/v1.4.3/bin/darwin/amd64/kubectl; # on macos
-      + % chmod +x kubectl && sudo mv kubectl /usr/local/bin/
-      + % kubectl; # help command
       + % kubectl run hello-minikube --image=gcr.io/google_containers/echoserver:1.4 --port=8080; # name:hello-minikube image from google echo server
         + % kubectl delete service,deployment hello-minikube; # to delete earlier service and deployment
         + % kubectl get pods; # get pods list
