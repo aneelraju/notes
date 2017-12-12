@@ -820,7 +820,7 @@
 **** course introduction
      + course overview
        + introduction
-         + what is kubernetes; cloud/on-premise setup; cluster setup; building containers; running your first app; building container images
+         + what is kubernetes - cloud/on-premise setup; cluster setup; building containers; running your first app; building container images
        + kubernetes basics
          + node architecture; scaling pods; deployments; services; labels; healthchecks; secrets; WebUI
        + advanced topics
@@ -925,7 +925,7 @@
         + can move containers from one node to another node
         + clusters can start with one node until thousands of nodes
         + other docker orchestrators: docker swarm (not as extensive as kubernetes), mesos
-        + can run on-premis (own datacenter), public (aws, gcp), hybrid (public & private)
+        + can run on-premise (own datacenter), public (aws, gcp), hybrid (public & private)
         + highly moduler
         + open source and available on github
         + originally developed by google called borg and released to open source
@@ -984,17 +984,135 @@
           + install virtualbox
             + % sudo apt-get update
             + % sudo apt-get install virtualbox-5.2
-      + % minikube start; # start minikube
-        + ~/.kube/config - kubectl config file created; kubectl will use this config
-      + % kubectl run hello-minikube --image=gcr.io/google_containers/echoserver:1.4 --port=8080; # name:hello-minikube image from google echo server
-        + % kubectl delete service,deployment hello-minikube; # to delete earlier service and deployment
-        + % kubectl get pods; # get pods list
-        + % kubectl get services; # get services list
-      + % kubectl expose deployment hello-minikube --type=NodePort; # expose port to host machine
-      + % minikube service hello-world --url; # download's image and gives url
-      + go to browser and checker 'url'
-
-          
+      + minikube demo
+        + % minikube start --cpus 1 --memory 1024; # start minikube with cpus=1 and memory=1024MB
+          + ~/.kube/config - kubectl config file created; kubectl will use this config
+        + % kubectl run nginx --image=nginx --port=80; # deployment "nginx" created
+          + https://cloud.google.com/container-registry/ - google container registry
+          + 'kubectl run hello-minikube --image=gcr.io/google_containers/echoserver:1.4 --port=8080' - another example run
+        + % kubectl expose deployment nginx --type=NodePort; # service "nginx" exposed to host
+        + % kubectl get pod; # to check whether the pod is up and running, check status
+          + go to browser and checker 'url'
+        + % minikube service nginx --url; # as pod is running, we can now be able to use curl
+          + % curl(minikube service nginx --url); # to get output in terminal
+        + open url in browser
+        + % minikube dashboard; # opens minikube dashboard in default browser
+        + % kubectl delete service nginx; # service "nginxd" deleted
+        + % kubectl delete deployment nginx; # deployment "nginx" deleted
+        + % minikube stop; # stopping local kubenetes cluster
+***** introduction to kops
+      + kops - kubernetes operations, to setup kubernetes on aws
+      + tool allows you to do production grade kubernetes installations, upgrades and management
+      + there is also a leagcy tool called kube-up.sh - it's now deprecated
+      + kops only works on mac/linux
+      + on windows
+        + need to a virtual machine first (www.virtualbox.org)
+        + use vagrant to boot linux box
+          + % mkdir ubuntu; # via cygwin
+          + % cd ubuntu
+          + % vagrant init ubuntu/xenial64
+          + % vagrant up
+          + % vagrant ssh
+        + and use kops
+***** demo: preparing aws for kops install
+      + https://github.com/kubernetes/kops - kops github link
+      + kops and awscli install
+        + mac
+          + % brew update && brew install kops
+          + % easy_install pip
+          + % pip install --upgrade pip
+          + % pip install awscli
+        + linux
+          + % curl -LO https://github.com/kubernetes/kops/releases/download/$(curl -s https://api.github.com/repos/kubernetes/kops/releases/latest | grep tag_name | cut -d '"' -f 4)/kops-linux-amd64
+          + % chmod +x kops-linux-amd64
+          + % sudo mv kops-linux-amd64 /usr/local/bin/kops
+          + % sudo apt-get install -y python-pip
+          + % sudo pip install awscli
+      + aws.amazon.com; # open free tier account
+        + create a user in IAM with admin access; copy 'AccessKeyID' and 'SecretAccessKey'; # need for awscli usage
+          + enable MFA and console access with custom passwd for the user
+        + % aws configure
+          + enter copied "AccessKeyID", "SecretAccessKey". Enter region as 'ap-south-1' and default output format as 'json'
+          + creates files in ~/.aws/
+        + create s3 bucket in region "ap-south-1" (Mumbai)
+          + cloudping.info to check latency
+        + setup dns
+          + kops will setup dns but we need to setup sub-domain 
+          + route53 allows us to do dns management
+          + kops expect to enter sub-domain which it manages
+          + route53 hosted zone is charged at 0.5$ per month
+            + namecheap.com, freenom.com - get domains
+            + create hosted zones
+            + add name servers to freenom/namecheap domain
+***** demo: cluster setup on aws using kops
+      + % ssh-keygen; # generate ssh-key; .ssh/id_rsa.pub is public key
+      + % kops create cluster --name=yar-aws.tk --state=s3://<s3bucket> --zones=ap-south-1a --node-count=2 --node-size=t2.micro --master-size=t2.micro --dns-zone=yar-aws.tk; # creates 1 master and 2 nodes; give name as default dns name
+        + % kops edit cluster yar-aws.tk --state=s3://<s3bucket>; # if need to edit further
+      + % kops update cluster yar-aws.tk --yes --state=s3://<s3bucket>; # to launch cluster
+        + certificate and passwd is updated in ~/.kube/config
+      + % kube get node; # list of nodes; 1 master and 2 nodes
+      + % kubectl run hello-minikube --image=gcr.io/google_containers/echoserver:1.4 --port=8080; # run earlier example
+      + % kubectl expose deployment hello-minikube --type=NodePort; # expose deployment
+      + % kubectl get service; # once image is up, it assigns a port
+        + if want to expose directly without load balancer we need to open this port in firewall
+        + in 'VPC' management console->securitygroups->click master node->inbound rules:'add custom tcp rule', 'add port' to accept all traffic '0.0.0.0/0'
+      + % kops delete cluster --name yar-aws.tk --state=s3://<s3bucket>; # display info about delete cluster
+      + % kops delete cluster --name yar-aws.tk --state=s3://<s3bucket> --yes; # to confirm
+***** demo: building docker containers
+      + to build containers, use Docker Engine
+      + download docker engine
+        + windows: https://docs.docker.com/engine/installation/windows/
+        + macos: https://docs.docker.com/engine/installation/mac/
+        + linux: https://docs.docker.com/engine/installation/linux/
+      + can use vagrant devops-box with comes with docker installed
+      + % git clone https://github.com/wardviaene/docker-demo
+      + % cd docker-demo
+      + % sudo docker build .
+      + % sudo docker container run -p 3000:3000 -it <image>
+      + % curl localhost:3000
+***** demo: pushing docker image
+      + docker can be run locally for development purposes
+      + to make an image available to kubernetes, you need to push the image to a docker registry, like docker hub
+      + you can build and deploy any application you want using docker and kubernetes
+      + but try to run one process in one container
+      + don't try to create one gaint docker image for you app, but split it up if necessary
+      + all the data in the container is not preserved, when a container stops, all the changes within a container are lost
+      + you can preserve data, using volumes
+      + for more tips, check out the 12-factor app methodology https://12factor.net
+      + few official images you might use for your app
+        + https://hub.docker.com/_/nginx/ - webserver
+        + https://hub.docker.com/_/php/ - php
+        + https://hub.docker.com/_/node/ - NodeJS
+        + https://hub.docker.com/_/ruby/ - ruby
+        + https://hub.docker.com/_/python/ - python
+        + https://hub.docker.com/_/openjdk/ - java
+      + % sudo docker login; # create docker login at hub.docker.com and use those credentials
+      + create a new repository <user>/docker-demo
+      + % sudo docker tag <imageid> <user>/docker-demo
+      + % sudo docker push <user>/docker-demo
+***** demo: running first app on kubernetes
+      + 'pod' describes an application running on kubernetes
+      + a 'pod' can contain one or more tightly coupled containers that make up the app
+      + those apps can easily communicate with each other using their local port numbers
+      + useful commands
+        + 'kubectl get pod' - get info about running pods
+        + 'kubectl describe pod <pod>' - describe one pod
+        + 'kubectl expose <pod> --port=444 --name=frontend' - expose the port of a pod (creates a new service)
+        + 'kubectl port-forward <pod> 8080' - port forward the exposed pod port to your local machine
+        + 'kubectl attach <podname> -i' - attach to the pod
+        + 'kubectl exec <pod> -- command' - execute a command on the pod
+        + 'kubectl label pods <pod> mylabel=awesome' - add a new label to a pod
+        + 'kubectl run -i -tty busybox --image=busybox --restart=Never -- sh' - run a shell in a pod - very useful for debugging
+      + % minikube start --cpus 1 --memory 1024; # start minikube cluster
+      + % kubectl create -f first-app/helloworld.yml; # pod created
+      + % kubectl get pod; # pod running
+      + % kubectl describe pod nodehelloworld.example.com; # pod details
+      + % kubectl port-forward nodehelloworld.example.com 8081:3000; # port forward 3000 to host 8081
+      + % curl localhost:8081
+        + another way to test is via service
+      + 
+***** demo: useful commands
+***** demo: service with aws elb loadbalancer
 **** kubernetes basics
 **** advanced topics
 **** kubernetes administration
