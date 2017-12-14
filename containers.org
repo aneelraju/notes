@@ -719,7 +719,7 @@
         + "secure by default": docker won't talk to registry without HTTPS
         + except, localhost (127.0.0.0/8)
         + for remote self-signed TLS, enable "insecure-registry" in engine - not recommended
-      + % cp material/udemy-docker-mastery/registry-sample-1 work/. && cd work/registry-sample-1
+      + % cp -rf material/udemy-docker-mastery/registry-sample-1 work/. && cd work/registry-sample-1
       + % sudo docker container run -d -p 5000:5000 --name registry registry
       + % sudo docker container ls
       + % sudo docker image ls
@@ -1050,7 +1050,7 @@
         + % kops edit cluster yar-aws.tk --state=s3://<s3bucket>; # if need to edit further
       + % kops update cluster yar-aws.tk --yes --state=s3://<s3bucket>; # to launch cluster
         + certificate and passwd is updated in ~/.kube/config
-      + % kube get node; # list of nodes; 1 master and 2 nodes
+      + % kubectl get node; # list of nodes; 1 master and 2 nodes
       + % kubectl run hello-minikube --image=gcr.io/google_containers/echoserver:1.4 --port=8080; # run earlier example
       + % kubectl expose deployment hello-minikube --type=NodePort; # expose deployment
       + % kubectl get service; # once image is up, it assigns a port
@@ -1104,17 +1104,299 @@
         + 'kubectl label pods <pod> mylabel=awesome' - add a new label to a pod
         + 'kubectl run -i -tty busybox --image=busybox --restart=Never -- sh' - run a shell in a pod - very useful for debugging
       + % minikube start --cpus 1 --memory 1024; # start minikube cluster
+      + % cp -rf material/material/kubernetes-course/first-app work/ && cd work
+      + % kubectl get node; # minikube running
       + % kubectl create -f first-app/helloworld.yml; # pod created
       + % kubectl get pod; # pod running
-      + % kubectl describe pod nodehelloworld.example.com; # pod details
-      + % kubectl port-forward nodehelloworld.example.com 8081:3000; # port forward 3000 to host 8081
-      + % curl localhost:8081
-        + another way to test is via service
-      + 
+      + % kubectl describe pod nodehelloworld.example.com; # pod details, events and status
+      + % kubectl port-forward nodehelloworld.example.com 8081:3000; # port forward host 8081 to pod container 3000
+      + % curl localhost:8081; # to quickly test
+        + another way to test is to create service
+        + if running minikube, you can expose the port and connect directly, on aws we use loadbalancer which is always better
+      + % kubectl expose pod nodehelloworld.example.com --type=NodePort --name nodehelloworld-service; # we can access port 3000 directly; service expose
+        + we need to know ip address of kubernetes we need to connect to, on aws we just use master node but we need to security group
+      + % minikube service nodehelloworld-service --url; # to know ip in minikube
+      + % kubectl get service; # we see new service is created and running that expose port
 ***** demo: useful commands
+      + % kubectl attach nodehelloworld.example.com; # attach to the pod
+      + % kubectl exec nodehelloworld.example.com -- ls /app; # execute a command in the pod
+      + % kubectl exec nodehelloworld.example.com -- touch /app/test.txt; # creates test.txt, but will be lost if container is killed
+      + % kubectl exec nodehelloworld.example.com -- ls /app; # execute a command in the pod
+      + % kubectl get service; # get service
+      + % kubectl describe serivce nodehelloworld-service; # describe service, displays Endpoints
+      + % kubectl run -i --tty busybox --image=busybox --restart=N; # create a new pod and container, gives a shell
+      + p% telnet 172.17.0.5 3000; # telnet to Endpoint
+      + p% GET /; # we get response, this is another way of connecting to another pod within same cluster; we can use service discovery (dns) and avoid this manual end points
 ***** demo: service with aws elb loadbalancer
+      + in real world, you need to be able to access the app from outside
+      + on aws, you can easily add an external load balancer; the aws load balancer will route the traffic to the correct pod in kubernetes
+      + other solution (without load balancer) is your own haproxy/nginx load balancer in front of your cluster
+      + or expose ports directly
+      + in route53, create hosted zone; 
+      + % kops create cluster --name=yar-aws.tk --state=s3://<s3bucket> --zones=ap-south-1a --node-count=2 --node-size=t2.micro --master-size=t2.micro --dns-zone=yar-aws.tk; # create aws cluster
+      + % kops update cluster yar-aws.tk --state=s3://<s3bucket> --yes
+      + % kubectl get node; # get nodes, wait until nodes are ready
+      + % kubectl create -f first-app/helloworld.yml; # helloworld app to create pod and container
+      + % kubectl create -f first-app/helloworld-service.yml; # loadbalancer service yml file
+      + % kubectl get pod; # wait for the pod to running
+      + % kubectl get service; # lists service with load balancer
+      + in aws console, you see one load balancer; then create record set for the hosted zone and alias to load balancer in aws console
+      + % kops get cluster --state=s3://<s3bucket>; # get clusters
+      + % kops delete cluster --name yar-aws.tk --state=s3://<s3bucket>; # display info about delete cluster
+      + % kops delete cluster --name yar-aws.tk --state=s3://<s3bucket> --yes; # to confirm
+        + delete record set as load balancer is not available
 **** kubernetes basics
+***** demo: replication controller
+      + if your application is stateless you can horizontally scale it; stateless, it doesn't write any local files/keeps local sessions
+        + all traditional databases (mysql, postgres) are stateful, they have database files that can't be split over multiple instances
+      + most web applications can be made stateless; session management needs to be done outside the container (you can use memcache, redis or database to store your sessions)
+        + any files that need to be saved can't be saved locally on the container; can be saved on shared storage (s3)
+      + for best practices, look at https://12factor.net
+        + look for courses
+          + learn devops: continously delivering better software
+          + learn devops: scaling apps on-premise and in the cloud
+      + use volumes to still run stateful apps; stateful apps can't horizontally scale, but can run them in a single container and vertically scale (allocate more cpu/memory/disk)
+      + scaling in kubernetes can be done using the replication controller
+        + the replication controller will ensure a specified number of pod replicas will run at all time
+        + pods created with the replica controller will automatically be replaced if they fail, get deleted or are terminated
+        + using replication controller is also recommended if you just want to make sure 1 pod is always running, even after reboots
+      + % minikube start --cpus 1 --memory 1024
+      + % kubectl get node; # minikube is ready
+      + % cp -rf /material/kubernetes-course/replication-controller work/ && cd work
+      + % kubectl create -f replication-controller/helloworld-repl-controller.yml; # replicationcontroller created
+      + % kubectl get pods; # 2 pods created
+      + % kubectl describe pod <podname>; # pod info
+      + % kubectl delete pod <podname1>; # delete pod podname1
+      + % kubectl get pods; # deleted pod restarts
+      + % kubectl scale --replicas=4 -f replication-controller/helloworld-repl-controller.yml; # replicationcontroller scaled
+      + % kubectl get pods; # 4 pods created
+      + % kubectl get rc; # lists replication controller (rc=shortform for replication controller)
+      + % kubectl scale --replicas=1 rc/helloworld-controller # replicationcontroller scaled to 1
+      + % kubectl get rc; # show replicationcontroller scaled back
+      + % kubectl get pods; # 3 are terminated
+      + % kubectl delete rc/helloworld-controller; # replicationcontroller deleted
+      + % kubectl get pods; # pods terminated
+        + these kubectl scaling operations are saved in backend in etcd
+***** demo: deployments
+      + replication set is the next-generation replication controller
+        + supports new selector that can do selection based on filtering according a set of values, eg:= "environment" either "dev" or "qa"
+        + not only based on equality like the replication controller, eg:= "environment" == "dev"
+        + this replica set, rather than the replication controller is used by the deployment object
+      + deployment declaration in kubernetes allows you to do app deployments and updates
+        + when using the deployment object, you define the state of your application
+        + kubernetes will make sure the clusters matches your desired state
+        + using replication controller or replication set might be cumbersome to deploy apps
+        + deployment object is easier to use and gives you more possibilities
+        + with deployment object
+          + 'create' - create a deployment (e.g. deploying an app)
+          + 'update' - update a deployment (e.g. deployting a new version)
+          + do 'rolling updates' (zero downtime deployments)
+          + 'roll back' to a previous version
+          + 'pause' / 'resume' a deployment (e.g. to roll-out to only a certain percentage)
+      + useful commands
+        + 'kubectl get deployments' - get info on current deployments
+        + 'kubectl get rs' - get info about the replica sets
+        + 'kubectl get pods --show-labels' - get pods, and also show labels attached to those pods
+        + 'kubectl rollout status deployment/helloworld-deployment' - get deployment status
+        + 'kubectl set image deployment/helloworld-deployment k8s-demo=k9s-demo:2'  - run k8s-demo with the image label version 2
+        + 'kubectl edit deployment/helloworld-deployment' - edit the deployment object
+        + 'kubectl rollout status deployment/helloworld-deployment' - get the status to the rollout
+        + 'kubectl rollout history deployment/helloworld-deployment' - get the rollout history
+        + 'kubectl rollout undo deployment/helloworld-deployment' - rollback to previous version
+        + 'kubectl rollout undo deployment/helloworld-deployment --to-revision=n' - rollback to any version
+      + % minikube start --cpus 1 --memory 1024
+      + % cp -rf /material/kubernetes-course/deployment work/ && cd work
+      + % kubectl create -f deployment/helloworld.yml; # deployment created
+      + % kubectl get deployments; # list deployments
+      + % kubectl get rs; # get resplica sets
+      + % kubectl get pods; # list pods
+      + % kubectl get pods --show-labels; # list pods with labels
+      + % kubectl rollout status deployment/helloworld-deployment; # rollout status
+      + % kubectl expose deployment helloworld-deployment --type=NodePort; # expose deployment, creates service
+      + % kubectl get service; # list services
+      + % kubectl describe service helloworld-deployment; # descrive service
+      + % minikube service helloworld-deployment --url; # gives url
+      + % curl <ip>:port; # test url
+      + % kubectl set image deployment/helloworld-deployment k8s-demo=wardviaene/k8s-demo:2; # deployment image update
+      + % kubectl rollout status deployment/helloworld-deployment; # deployment successfully rolled out
+      + % curl <ip>:port; # test url
+      + % kubectl get pods; # 3 terminated and 3 started with new image
+      + % kubectl rollout history deployment/helloworld-deployment; # deployments history
+      + % kubectl rollout undo deployment/helloworld-deployment; # deployment rolled back
+      + % kubectl rollout status deployment/helloworld-deployment; # deployment rolled out
+      + % kubectl get pods; # 3 terminated and 3 started with old image
+      + % kubectl rollout history deployment/helloworld-deployment; # default show 2 history
+      + % kubectl edit deployment/helloworld-deployment; # edit deployment object
+        + add in "spec:" section 'revisionHistoryLimit: 100'
+      + % kubectl set image deployment/helloworld-deployment k8s-demo=wardviaene/k8s-demo:2; # image updated
+      + % kubectl rollout history deployment/helloworld-deployment; # shows more history items
+      + % kubectl rollout undo deployment/helloworld-deployment --to-revision=3; # rolls back to revision '3' (see rollback history)
+        + deployment is wayforward compared to replica sets and replicas
+      + delete kubectl deployment,service and stop minikube
+***** demo: services
+      + service:
+        + pods are very dynamic, they come and go on the kubernetes cluster
+        + when using a replication controller, pods are terminated and created during scaling operations
+        + when using deployments, when updating the image version, pods are terminated and new pods take the place of older pods
+        + that's why pods should never be accessed directly, but always through a service
+        + a 'service' is the logical bridge between the 'mortal' pods and other services or end-users
+        + when using the 'kubectl expose' command earlier, you created a new service for your pod, so it could be accessed externally
+        + creating a service will create an endpoint for your pods
+          + a 'clusterIP': a virtual IP address only reachable from within the cluster (this is default)
+          + a 'NodePort': a port that is the same on each node that is also reachable externally
+          + a 'LoadBalancer': a LoadBalancer created by the cloud provider that will route external traffic to every node on the NodePort (ELB on AWS)
+          + the options just shown only allow you to create virtual IPs or ports
+        + there is also a possibility to use DNS names
+          + 'ExternalName' can provide a DNS name for the service
+            + e.g. for service discovery using DNS
+            + this only works when the DNS add-on is enabled in service discovery
+        + by default service can only run between ports 30000-32767, but you could change this behavior by adding the --service-node-port-range= argument to the kube-apiserver (in the init scripts)
+      + % minikube start --cpus 1 --memory 1024
+      + % kubectl create -f first-app/helloworld.yml; # create app
+      + % kubectl get pods
+      + % kubectl describe pod nodehelloworld.example.com
+      + % kubectl create -f first-app/helloworld=nodeport-service.yml; # create service
+      + % minkube service helloworld-service --url
+        + on aws, we need to go to master node and change security groups
+      + % curl <ip>:31001
+      + % kubectl describe svc helloworld-service; # 'svc' short form of service
+      + % kubectl get svc; # list of services
+        +  shown cluster-ip (or virtual ip) can be accessed within cluster and nodeport from external
+      + % kubectl delete svc helloworld-service; # delete service
+      + % kubectl create -f first-app/helloworld-nodeport-service.yml
+      + % kubectl describe svc helloworld-service; # cluster-ip (or virtual ip) changed but nodeport is static port
+      + stop kubectl deployment, services and minikube
+***** demo: nodeselector using labels
+      + labels
+        + labels are key/value pairs that can be attached to objects like tags in AWS used to tag resources
+        + can label your objects, for instance your pod following an organizational structure 
+          + key: environment - value: dev/staging/qa/prod
+          + key: department - value: engineering/finance/marketing
+        + labels are not unique and multiple labels can be added to one object
+        + once labels are attached to an object, you can use filters to narrow down results (using 'Label Selectors')
+        + using 'label selectors', you can use matching expressions to match labels
+          + for instance, a particulare pod can only run on a node labeled with "environment" equals "development"
+          + more complex matching: "environment" in "development" or "qa"
+        + you can use labels to tag nodes, you can use label selectors to let pods only run on specific nodes
+        + 2 steps required to run a pod on a specific set of nodes
+          + first you tag the node; then you add a nodeSelector to your pod configuration
+          + first step, add a label or multiple labels to your nodes
+            + 'kubectl label nodes node1 harware=high-spec'
+            + 'kubectl label nodes node2 hardware=low-spec'
+          + secondly, add a pod that uses those labels
+      + % minikube start --cpus 1 --memory 1024
+      + % kubectl get nodes; # minikube running
+      + % kubectl get nodes --show-lables; # see labels
+      + % kubectl create -f deployment/helloworld-nodeselector.yml
+      + % kubectl get pods
+      + % kubectl get pod <podname>; # shows failed to fit in any node, not matching NodeSelector
+      + % kubectl label nodes minikube hardware=high-spec; # node "minikube" labeled
+      + % kubectl get nodes --show-labels
+      + % kubectl get pods; # pods are running
+      + % kubectl describe pod <podname>; # pod runs now
+        + very useful to seggregate workload
+***** demo: healthchecks
+      + healthchecks
+        + if application malfunctions, the pod and container can still be running, but the application might not work anymore
+        + to detect and resolve problem with your application, you can run health checks
+        + you can run 2 different type of health checks
+          + running a command in the container periodically
+          + periodic checks on a URL (HTTP) - used most of the times
+        + typical production application behind a load balancer should always have health checks implemented in some way to ensure availability and resiliency of the app
+        + add health check under 'livenessProbe' in yml file
+      + % minikube start --cpus 1 --memory 1024
+      + % kubectl create -f deployment/helloworld-healthcheck.yml; # deployment with healthchecks
+      + % kubectl get pods; # get status
+      + % kubectl describe pod <podname>; # show under Liveness that healthcheck are running and status
+      + % kubectl get pods; # pods are killed and relaunched by kubernetes
+      + % kubectl edit deployment/helloworld-deployment; # to edit deployment to change settings in yml file
+***** demo: credentials (secrets) using volumes
+      + secrets
+        + secrets provides a way in kubernetes to distribute credentials, keys, passwords or "secret" data to the pods
+        + kubernetes itself uses this secrets mechanism to provide the credentials to access the internal API, you can also use the same mechanism for your application
+        + secrets is one way to provide secrets, native to kubernets
+        + there are still other ways your conatainer can get its secrets if you don't want to use secrets (e.g. using an external vault services in your app)
+        + can be used in following ways
+          + use secrets as environment variables
+          + use secrets as a file in a pod
+            + this setup uses volumes to be mounted in a container, in this volume you have files
+            + can be used for instance for dotenv files or your app can just read this file
+        + use an external image to pull secrets (from a private image registry)
+          + like pull another image and you app reads from that image
+        + to generate secrets using files
+          + 'echo -n "root" > ./username.txt'
+          + 'echo -n "password" > ./password.txt'
+          + 'kubectl create secret generic db-user-pass --from-file=./username.txt --from-file=./password.txt'
+        + a secret can also be an SSH key or an SSL certificate
+          + 'kubectl create secret generic ssl-certificate --from-file=ssh-privatekey=~/.ssh/id_rsa --ssl-cert-=ssl-cert=mysslcert.crt'
+        + to generate secrets using yaml definitions, look at 'secrets-db-secret.yml' example (check for kind:Secret)
+          + use 'echo -n "root" | base64' and 'echo -n "password" | base64' and feed values to 'secrets-db-secret.yml'
+          + after creating yml file, you can use kubectl 
+            + 'kubectl create -f secrets-db-secret.yml'
+        + you can create a pod that exposes the secrets as environment variables
+        + alternatively, you can provide the secrets in a file via volume mount
+          + secrets will be stores in <volumemountpath>/db-secrets/username; <volumemountpath>/db-secrets/password
+      + % minikube start --cpus 1 --memory 1024
+      + % kubectl create -f deployment/helloworld-secrets.yml
+      + % kubectl create -f deployment/helloworld-secrets-volumes.yml
+      + % kubectl get pods
+      + % kubectl describe pod <podname>; # kubernetes specific volume mounts are visible; app secret volume mounts are also populated 
+      + % kubectl exec <podname> -i -t -- /bin/bash; # gives bash shell
+      + p% cat /etc/creds/username; # username and password are available
+      + p% cat /etc/creds/password
+      + p% mount; # see all the mount points
+      + p% exit
+***** demo: running wordpress on kubernetes
+      + % cp -rf material/kubernetes-course/wordpress work && cd work
+      + https://hub.docker.com/_/wordpress/ - wordpress repository, check info; it's rich content management system
+      + % minikube start --cpus 1 --memory 1024
+      + % kubectl create -f wordpress/wordpress-secrets.yml; # secrets created
+      + % kubectl create -f wordpress/wordpress-single-deployment-no-volumes.yml; wordpress depolyment created
+      + % kubectl get pods; # get pods
+      + % kubectl describe pod <podname>; # pod description
+      + % kubectl create -f wordpress/wordpress-service.yml; # create service to expose ports
+      + % minikube service wordpress-service --url
+      + go to browser,enter url and do setup
+        + it's not totally functional as the app is still stateless and data will be lost as there are no data mounts
+      + % kubectl delete pod/<podname>; # pod is deleted
+      + % kubectl get pods; # pod is re-launched and data is lost
+***** demo: webui
+      + webui
+        + kubernetes comes with a Web UI you can use instead of kubectl commands
+        + gives an overview of running applications on your cluster
+        + you can create and modify invidual kubernetes resources and workloads (kubectl create/delete)
+        + retrieve info on the state of resources (kubectl describe pod)
+        + https://<kubernetes=master>/ui - to access kubernetes Web UI
+          + if cannot acces it (not enabled on your deploy type) you can install it manually
+            + 'kubectl create -f https://rawgit.com/kubernetes/dashboard/master/src/deploy/kubernetes-dashboard.yaml'
+            + if a passwor is asked, retrieve password 'kubectl config view'
+          + if minikube
+            + 'minikube dashboard'
+            + 'minikube dashboard --url' - to get dashboard url
+      + % minikube start --cpus 1 --memory 1024
+      + % minikube dashboard --url; # shows dashboard
+        + open the url in browser and explore the app
+      + % kubectl create -f first-app/helloworld.yml
 **** advanced topics
+***** demo: service discovery
+***** demo: configmap
+***** demo: ingress controller
+***** demo: volumes
+***** volumes autoprovisioning
+***** demo: wordpress with volumes
+***** pet sets
+***** daemon sets
+***** demo: resource usage monitoring
+***** demo: autoscaling
 **** kubernetes administration
+***** the kubernetes master services
+***** resource quotas
+***** demo: namespace quotas
+***** user management
+***** demo: adding users
+***** networking
+***** demo: node maintenance
+***** demo: high availability
 **** course completion
+***** bonus lecture: advanced kubernetes usage course
     
