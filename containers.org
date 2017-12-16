@@ -1636,14 +1636,207 @@
       + % kubectl get hpa; # after sometime hpa autoscale down
       + % kubectl get pod; # less pods are running
 **** kubernetes administration
-***** the kubernetes master services
 ***** resource quotas
+      + when a kubernetes cluster is used by multiple people or teams, resource management becomes more important
+        + you want to be able to manage the resources you give to a person or a team
+        + you don't want one person or team taking up all the resources (e.g. CPU/Memory) of the cluster
+      + you can divide your cluster in namespaces and enable resource quotas on it, using ResourceQuota and ObjectQuota objects
+      + each container can specify 'request capacity' and capacity limits; request capacity is an explicit request for resources
+        + the scheduler can use the request capacity to make decisions on where to put the pod on; you can see it as a minimum amount of resources the pod needs
+      + 'resource limit' is a limit imposed to the container; the container will not be able to utilize more resources than sepcified
+      + example of resource quotas: you run a deployment with a pod with a CPU resource request of 200m; memory quotas are defined by MiB or GiB
+      + if a capacity quota (e.g. mem/cpu) has been specified by the administrator, then each pod needs to specify capacity quota during create
+        + the administrator can specify default request values for pods that don't specify any values for capacity
+        + same is valid for limit quotas
+      + if a resource is requested more than the allowed capacity, the server API will give error 403 FORBIDDEN - and kubectl will show an error
+      + administrator can set the following resource limits within a namespace
+        + requests.cpu - the sum of CPU requests of all pods cannot exceed this value
+        + requests.mem - the sum of MEM requests of all pods cannot exceed this value
+        + requests.storage - the sum of storage requests of all persistent volume claims cannot exceed this value
+        + limits.cpu - the sum of CPU limits of all pods cannot exceed this value
+        + limits.memory - the sum of MEM limits of all pods cannot exceed this value
+      + administrator can set the following object limits
+        + configmaps - total number of configmaps that can exist in a namespace
+        + persistentvolumeclaims - total number of persistent volume claims that can exist in a namespace
+        + pods - total number of pods that can exist in a namespace
+        + replicationcontrollers - total number of replicationcontrollers that can exist in a namespace
+        + resourcequotas - total number of resource quotas that can exist in a namespace
+        + services - total number of services that can exist in a namespace
+        + services.loadbalancer - total number of load balancers that can exist in a namespace
+        + services.nodeports - total number of nodeports that can exist in a namespace
+        + secrets - total number of secrets that can exist in a namespace
 ***** demo: namespace quotas
+      + namespaces
+        + namespaces allow you to create virtual clusters within the same physical cluster, namespaces logically separates your cluster
+        + the standard namespace is called "default" and that's where all resources are launched in by default
+        + there is also namespace for kubernetes specific resources, called kube-system
+        + namespaces are intended when you have multiple teams/projects using the kubernetes cluster
+        + the name of resources need to be unique within a namespace, but not across namespaces (e.g deployment "helloworld" multiple times in different namespace, but not twice in one namespace
+        + you can divide resources of a kubernetes cluster using namespaces, you can limit resources on a per namespace basis
+          + for e.g. the marketing team can only use a maximum of 10GiB of memory, 2 loadbalancers, 2 CPU cores
+        + first you need to create a new namespace - 'kubectl create namespace myspace'
+        + 'kubectl get namespaces' - list namespaces
+        + to set a default namespace to launch resources
+          + 'export CONTEXT=$(kubectl config view | awk '/current-context/ {print $2}')'
+          + 'kubectl config set-context $CONTEXT --namespace=myspace''
+        + you can create resource limits and object limits within that namespace via kind:ResourceQuota
+      + % cp -rf material/kubernetes-course/resourcequotas work/. && work
+      + start minikube/kops
+      + % kubectl create -f resourcequota/resourcequota.yml; # resourcequota created
+      + % kubectl create -f resourcequota/helloworld-no-quotas.yml; # deployment created with no quotas
+      + % kubectl get deploy --namespace=myspace; # helloworld deployment but not running
+      + % kubectl get rs/<pod's rsname> --namespace=myspace; # is forbidden due to not specifying of quota
+      + % kubectl delete deploy/helloworld-deployment --namespace=myspace; # deployment deleted
+      + % kubectl create -f resourcequotas/helloworld-with-quotas.yml; # deployment with quotas specification
+      + % kubectl get pod --namespace=myspace; # asked for 3 replicas but got 2 as it schedules 2 out of 3
+      + % kubectl get rs --namespace=myspace
+      + % kubectl describe rs <rsname> --namespace=myspace; # say 2 lauched, 3rd exceeded quota
+      + % kubectl get quota --namespace=myspace; # overall quota
+      + % kubectl describe quota/compute-quota --namespace=myspace; # memory limit/request is exceeded
+      + % kubectl delete deploy/helloworld-deployment --namespace=myspace; # deployment deleted
+      + % kubectl create -f resourcequotas/defaults.yml; # limitrange created
+      + % kubectl describe limits limits --namespace=myspace; # show default limits
+      + % kubectl create -f resourcequotas/helloworld-no-quotas.yml; # now can deploy without mentioning quotas
+      + % kubectl get pods --namespace=myspace; # now pods are created and running
 ***** user management
+      + user management
+        + there are 2 types of users you can create
+          + a 'normal user', which is used to access the user externally (e.g. through kubectl), this user is not managed using objects
+          + a 'service user', which is managed by an object in kubernetes, this type of user is used to authenticate within the cluster (e.g from inside a pod, or from kubelet)
+            + these credentials are managed by secrets
+        + there are multiple authentication strategies for normal users:
+          + client certificates
+          + bearer tokens
+          + authentication proxy
+          + HTTP based authentication
+          + openID
+          + webhooks
+        + service users are using service account tokens
+          + they are stored as credentials using secrets
+          + those secrets are also mounted in pods to allow communication between the services
+          + service users are specific to a namespace
+          + they are created automatically by the API or manually using objects
+          + any API call not authenticated is considered as an anonymous user
+        + independently from the authentication mechanism, normal users have the following attributes
+          + a username
+          + a UID
+          + Groups
+          + extra fields to store extra information
+        + after a normal users authenticates, it will have access to everything
+        + to limit access, you need to configure authorization
+        + there are again multiple offerings to choose from
+          + alwaysallow/always deny, ABAC (attribute-based access control), RBAC (role based access control), webhook (authorization by remote services)
+        + authorization is till work in progress 
+          + ABAC needs to be configured manually 
+          + RBAC uses 'rbac.authorization.k8s.io' API group, this allows admins to dynamically configure permissions through the API
+            + In kubernetes 1.3 RBAC is still alpha and experimental, 
+          + For current state about ABAC/RBAD see http://kubernetes.io/docs/admin/authorization/
 ***** demo: adding users
+      + run minikube
+      + % minikube ssh; # ssh to cluster
+        + m% openssl genrsa -out edward.pem 2048; # new key
+        + m% openssl req -new -key edward.pem -out edward-csr.pem -subj "/CN=edward/O=myteam/"; # new certificate request with login:edward group=myteam
+        + m% sudo openssl x509 -req -in edward-csr.pem -CA /var/lib/localkube/certs/ca.crt -CAkey /var/lib/localkube/certs/ca.key -CAcreateserial -out edward.crt -days 10000; # new certification with ca.crt and ca.key that is signed by authority; you can use edward.crt to authenticate
+        + m% cat edward.crt; # copy and paste to ~/.minikube/edward.crt
+        + m% cat edward.pem; # copy and paste to ~/.minikube/edward.key
+      + % emacs ~/.kube/config; # update user::client-certificate,client-key path with ~/.minikube/edward.crt and ~/.minkube/edward.key
+      + % kubectl get node
+      + % kubectl config view; # check crt and key
+      + for every user you want add, you can create new key and certificate
+      + if you are in corporate environment you will your own authentication using active directory, look at documentation to implement proxy to implement authentication and to use corporate gateway to authotentication is handled          
 ***** networking
+      + networking
+        + approache to networking is quite different than in a default Docker setup
+        + already covered
+          + container to container communication within a pod, through localhost and port number
+          + pod-to-service communication, using NodePort using DNS
+          + external-to-service using LoadBalancer, NodePort
+        + in kubernetes, the pod itself should always be routable, this is pod-to-pod communications
+        + kubernetes assumes that pods should be able to communicate to other pods, regardless of which node they are running
+          + every pod has its own IP address
+          + pods on different nodes need to be able to communicate to each other using those IP addresses
+            + this is implemented differently depending on your networking setup
+        + on aws: kubenet networking (kops default)
+          + every pod can get an IP that is routable using the aws virtual private network (VPC)
+          + kubernetes master allocates a /24 subnet to each node (254 IP addresses)
+          + this subnet is added to the VPCs route table using sdk
+          + there is a limit of 50 entries, which means you can't have more than 50 nodes in a single AWS cluster
+            + although, aws can raise this limit to 100, but it might have performance impact
+        + not every cloud provider has VPC-technology (although GCE, Azure does as well)
+        + there are alternatives available
+          + container network interface (CNI)
+            + software that provides libraries/plugins for network interfaces within containers
+            + popular solutions are 'calico', 'weave' (standalone or with CNI)
+          + an overlay network
+            + 'flannel' is an easy and popular way
+          + look at kubernetes networking page for full list
+        + 'flannel' acts as network gateway between nodes, we are go'g to have overlay network and assign each pod with unique ip address that is not known by real network
+          + if you are go'g to deploy kubernetes cluster on-premise or on cloud but not on aws/azure/google cloud then you might need flannel
+          + if you are just working on digital ocean you need overlay network like flannel, you can also use CNI calico
+          + launch scripts to deploy kubernetes cluster will have configuration that include  flannel
 ***** demo: node maintenance
+      + node maintenance
+        + it's the node controller that is responsible for managing the Node Objects
+        + it assigns IP space to the node when a new node is launched
+        + it keeps the node list up to date with the available machines
+        + the node controller is also monitoring the health of the node
+        + if a node is unhealthy it gets deleted
+        + pods running on the unhealthy node will then get re-scheduled
+        + when adding a new node, the kubelet will attempt to register itself, called self-registration which is default behavior
+        + it allows you to easily add more nodes to the cluster without making API changes yourself
+        + a new node object is automatically created with: the metadata (with a name: IP or hostname), labels (e.g. cloud region/availability zone/instance size)
+        + a node also has a node condition (e.g. Ready, OutOfDisk)
+        + when you want to decommision a node, you want to do it gracefully
+          + you drain a node before you shut it down or take is out of the cluster - 'kubectl drain nodename --grace-period=600
+          + if the node runs pods not managed by a controller, but is just a single pod - 'kubectl drain nodename --force'
+      + start minikube
+      + % kubectl get node
+      + % kubectl create -f deployment/helloworld.yml; # deployment created
+      + % kubectl get pod; # pod list
+      + % kubectl drain minikube --force; # node minikube drained
+      + % kubectl get node; # scheduleing disabled
+      + % kubectl get pod; # no pods running
 ***** demo: high availability
+      + high availability
+        + if you're going to run your cluster in production, you're going to want to have all your master services in a high availability (HA) setup
+        + the setup looks like:
+          + 'clustering etcd' - at least run 3 etcd nodes (5 etcd for big clusters)
+          + 'replicated API servers' with a loadbalancer
+          + running multiple instances of the scheduler and the controllers
+            + only one of them will be the leader, the other ones are on stand-by
+        + a cluster like minikube doesn't need HA - it's only a one node cluster
+        + if you're going to use a production cluster on AWS, kops can do the heavy lifting for you
+        + if you're runnning on an other cloud platform, have a look at the kube deployment tools for that platform
+          + 'kubeadm' is a tool is in alpha that can setup a cluster for you
+        + if you're on a platform without any tooling, have a look at http://kubernetes.io/docs/admin/high-availability/ to implement it yourself
+      + % kops create cluster --name=yar-aws.tk --state=s3://<s3bucket> --zones=ap-south-1a,ap-south-1b,ap-south-1c --node-count=2 --node-size=t2.micro --master-siz=t2.micro --dns= yar-aws.tk --master-zones=ap-south-1a,ap-south-1b,ap-south-1c; 
+        + can specify multiple zones, but will be complicated if using volumes 
+        + but kubernetes labels your nodes you can easily use node seletor when running pods
+        + 3 masters running on each zone
+      + % kops edit ig --name=yar-aws.tk nodes --state=s3://<s3bucket>; # instance groups for nodes
+        + shows 3 zones, if you want 2 zones you can delete 1 zone
+      + % kops edit ig --name=yar-aws.tk master-ap-south-1a --state=s3://<s3bucket>; # instance groups for first master
+      + % kops edit ig --name=yar-aws.tk master-ap-south-1b --state=s3://<s3bucket>; # instance groups for second master
+      + % kops edit ig --name=yar-aws.tk master-ap-south-1c --state=s3://<s3bucket>; # instance groups for third master
+        + even full zone fails, master will still be working. if cluster spans across multiple zones, cluster will still be working
 **** course completion
 ***** bonus lecture: advanced kubernetes usage course
-    
+      + my other courses: http://www.udemy.com/user/ward-viaene
+        + advanced kubernetes usage
+          + builts upon kubernetes course
+          + 'logging' - ElasticSearch (as statefulset), fluentd, Kibana, LogTrail
+          + 'authentication' - OpenID Connect (OIDC), Auth0
+          + 'authorization' - Kubernetes RBAC
+          + 'packaging' -  Helm
+          + 'the job resource' - Job
+          + 'scheduling' - CronJob
+          + 'deploying on kubernetes' - Spinnaker
+          + 'Microservices on kubernetes' - Linkerd
+          + 'Federation' - kubefed
+          + 'Monitoring' - Prometheus
+      + learn devops: continously deliver better software
+      + learn devops: scale applications on-premise and in the cloud
+      + learn devops: infrastructure automation with terraform
+      + learn devops: the hadoop ecosystem masterclass
+** advanced kubernetes
+*** udemy - learn devops: advanced kubernetes usage - edward viaene
