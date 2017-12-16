@@ -1379,15 +1379,262 @@
       + % kubectl create -f first-app/helloworld.yml
 **** advanced topics
 ***** demo: service discovery
+      + service discovery using DNS
+        + from kubernetes 1.3, DNS is built-in service launched automatically using addon manager
+        + addons are in /etc/kubernetes/addons on master node
+        + DNS service can be used within pods to find other services running on the same cluster
+        + multiple containers within 1 pod don't need this service, as they can contact each other directly using localhost:port
+        + to make DNS work, a pod will need a service definition
+        + p1% 'host app1-service' - same pod app1-service ip
+        + p1% 'host app2-service' - app2-service ip of another pod p2
+        + p1% 'host app2-service.default' - default stands for the default namespace pods and services can be launched in different namespaces (to logically separate your cluster)
+        + p1% 'host app2-serivce.default.svc.cluster.local' - lookup on full local hostname
+        + 'kubectl run -i --tty busybox --image=busybox --restart=Never -- sh'
+        + 'cat /etc/resolv.conf' - gives nameserver (dns server) and options ndots
+        + service discovery is important when we run cluster with lots of services
+      + % minikube start --cpus 1 --memory 1024
+      + % cp -rf material/kubernetes-course/service-discovery work/. && cd work
+      + % kubectl create -f service-discovery/secrets.yml
+      + % kubectl create -f service-discovery/database.yml
+      + % kubectl create -f service-discovery/database-service.yml
+      + % kubectl create -f service-discovery/helloworld-db.yml
+      + % kubectl create -f service-discovery/helloworld-db-service.yml
+      + % minikube service helloworld-db-service --url
+      + % kubectl get pod; # 1 database and 3 pod for deployment
+      + % kubectl logs <pod1name>; # check whether connected to database
+      + % curl <ip>:30518; # visitor no. 1
+      + % curl <ip>:30518; # visitor no. 2
+      + % kubectl exec database -i -t -- mysql -u root -p ; # enter passwd
+        + p%mysql% show databases;
+        + p%mysql% use helloworld;
+        + p%mysql% show tables;
+        + p%mysql% select * from visits; # see records created by app, app is able to discover the service and connected to database
+        + p%mysql% \q
+      + % kubectl get svc
+      + % kubectl run -i --tty busybox --image=busybox --restart=N -- sh
+        + p% nslookup helloworld-db-service; # shows nslookup
+        + p% nslookup database-service
+        + p% nslookup helloworld-db-service
+        + p% telnet helloworld-db-service 3000
+          +p%t% GET /; # visitor no. 5
+      + % kubectl delete pod busybox 
 ***** demo: configmap
+      + configmap
+        + configuration parameters that are not secret, can be put in a configmap in key-value pairs
+        + can be read by app using: environment variables, container commandline arguments in pod configuration, using volumes
+        + can also contain full configuration files: e.g an webserver config file, this file can be mounted using volumes where the application expects its config file
+          + this way you can "inject" configuration settings into containers without changing the container itself
+        + to generate configmap using files
+          + 'cat <<EOF > app.properties
+            drive=jdbc
+            database=postgres
+            lookandfeel=1
+            otherparams=xyz
+            param.with.hierarchy=xyz
+            EOF'
+          + 'kubectl create configmap app-config --from-file=app.properties'
+        + using configmap
+          + you can create a pod that exposes the ConfigMap using a volume
+          + you can create a pod that exposes the ConfigMap as environment variables
+        + the config values will be stored in files: /etc/config/drive; /etc/config/param/with/hierarchy
+      + % minikube start --cpus 1 --memory 1024
+      + % cp -rf material/kubernetes-course/configmap work/. && cd work
+      + % kubectl create configmap nginx-config --from-file=configmap/reserveproxy.conf; # configmap created
+      + % kubectl get configmap; # lists configmap
+      + % kubectl get configmap nginx-config -o yaml; # nginx-config configmap info in yaml output format
+      + % kubectl create -f configmap/nginx.yml; # uses configmap via volume mounts
+      + % kubectl create -f configmap/nginx-service.yml; # run service to expose port
+      + % minikube service hellowrold-nginx-service --url
+      + % kubectl get pod
+      + % curl https://<ip>:31264 -vvvv ; # with verbose, nginx forward to helloworld via configmap. This shows how to use nginx as a proxy
+      + % kubectl exec -i -t helloworld-nginx -c nginx -- bash
+        + p% ps x
+        + p% cat /etc/nginx/conf.d/reverseproxy.conf
 ***** demo: ingress controller
+      + ingress controller
+        + ingress is a solution that allows inbound connections to the cluster
+        + it's an alternative to the external Loadbalancer and nodePorts
+        + ingress allows you to easily expose services that need to be accessible from outside to the cluster
+        + with ingress you can run your own ingress controller (basically a loadbalancer) within the kubernetes cluster
+        + there are default ingress controllers available, or you can write your own ingress controller
+        + port 80: http; port 443: https
+        + ingress rules
+          + using ingress object
+        + viable alternative if you don't want to run external load balancer from cloud providers as it cost money and you can add your controllers
+      + % minikube start --cpus 1 --memory 1024
+      + % cp -rf material/kubernetes-course/ingress work/. && cd work/
+      + % kubectl create -f ingress/ingress.yml; # ingress created
+      + % kubectl create -f ingress/nginx-ingress-controller.yml; # replicationcontroller created
+      + % kubectl create -f ingress/echoservice.yml; # replicationcontroller created
+      + % kubectl create -f ingress/helloworld-v1.yml; # deployment, service created
+      + % kubectl create -f ingress/helloworld-v2.yml; # deplloyment, service created
+      + % kubectl get pod
+      + % minikube ip; # gives ip of the cluster
+      + % curl <clusterip>; # hits default service
+      + % curl <clusterip> -H 'Host: helloworld-v1.example.com'; # ingress controller forwards to helloworld
+      + % curl <clusterip> -H 'Host: helloworld-v2.example.com'; # ingress controller forwards to helloworld v2
+      + % kubectl get svc
 ***** demo: volumes
-***** volumes autoprovisioning
+      + volumes
+        + running apps with state
+        + volumes in kubernetes allow you to store data outside the container
+        + when container stops, all data on the container itself is lost
+        + apps don't keep a local state, but store their state in an external service like database, caching server (e.g. mysql, aws s3). No need of volumes and run as service
+        + persistent volumes in kubernetes allow you attach a volume to a container that will exists even when the container stops
+        + volumes can be attached using different volume plugins: aws cloud (ebs storage), google cloud (google disk), network storage (nfs, cephfs), microsoft cloud (azure disk)
+        + using volumes, you could deploy applications with state on your cluster, that need to read/write to files on the local filesystem that need to be persistent in time
+        + you could run a mysql database using persistent volumes, although this might not be ready for production (yet)
+        + volumes are new since june 2016 in kubernetes, will become stable at some point of time
+        + to use volumes, you need to create the volume first
+          + 'aws ec2 create-volume --size 10 --region ap-south-1 --availability-zone ap-south-1a --volume-type gp2'; # to create a volume, note the volume ID
+          + then you need to create a pod with a volume definition
+      + % cp -rf material/kubernetes-course/volumes work/. && cd work
+      + % kops create cluster --name=yar-aws.tk --state=s3://<s3bucket> --zones=ap-south-1a --node-count=2 --node-size=t2.micro --master-size=t2.micro --dns-zone=yar-aws.tk; # create cluster
+      + % kops update cluster yar-aws.tk --state=s3://<s3bucket> --yes; # launch the cluster
+      + % kops get cluster --state=s3://<s3bucket>; # list of clusters on aws
+      + % kubectl get node; # wait till nodes are up
+      + % aws ec2 create-volume --size 10 --region ap-south-1 --availability-zone ap-south-1a --volume-type gp2; # create volume on aws, gp2 is ssd volume
+      + copy volume id and add it in volumeID in volumes/helloworld-with-volume.yml
+      + % kubectl create -f volumes/helloworld-with-volume.yml; # deployment created
+      + % kubectl get pod; # wait till pod running
+      + % kubectl describe pod <podname>; # volume is pointing to aws persistent disk ebs
+      + % kubectl exec <podname> -i -t -- bash; # bash inside container
+        + p% ls -ahl /myvol/
+        + p% echo 'test' > /myvol/myvol.txt
+        + p% echo 'test2' > /test.txt
+        + p% exit
+      + % kubectl get node
+      + % kubectl drain <podname> --force; # drain the pod
+      + % kubectl get pod; # new pod is being created
+      + % kubectl describe pod <podname>; # volume is attached
+      + % kubectl exec <podname> -i -t -- bash; # bash inside container
+        + p% cat /myvol/myvol.txt; # myvol.txt exists
+        + p% cat /test.txt; # file not found
+        + p% exit
+      + % kubectl delete -f volumes/helloworld-with-volume.yml; # delete deployment
+      + % aws ec2 delete-volume --volume-id <volumeid>; # delete volume
+      + % kops delete cluster <clustername> --state=s3://<s3bucket>; # info on delete cluster
+      + % kops delete cluster <clustername> --state=s3://<s3bucket> --yes; # delete cluster
 ***** demo: wordpress with volumes
-***** pet sets
+      + volumes
+        + kubernetes plugins have the capability to provision storage to you
+        + aws plugin can for instance provision storage for you by creating the volumes in aws before attaching them to a node
+        + done using StorageClass object, in beta will be stable soon
+        + http://kubernetes.io/docs/user-guide/persistent-volumes/ - check documentation
+        + you can do auto provisioned volumes via yaml file (e.g wordpress-volumes/storage.yml)
+        + next, you can crate a volume claim and specify the size (e.g. wordpress-volumes/pv-claim.yml)
+        + and launch pod using volume (e.g. wordpress-db.yml)
+      + Important example
+        + % cp -rf material/kubernetes-course/wordpress-volumes work/. && cd work
+        + % kops create cluster --name=yar-aws.tk --state=s3://<s3bucket> --zones=ap-south-1a --node-count=2 --node-size=t2.micro --master-size=t2.micro --dns-zone=yar-aws.tk; # create
+        + % kops update cluster yar-aws.tk --state=s3://<s3bucket> --yes; # launch the cluster
+        + % aws efs create-file-system --creation-token 1; # token number should be unique; copy FileSystemId, this storage is for web to upload any photos; ebs for database and efs (shared storage) for sharing files; efs is still not available on ap-south-1; try example on EU(Ireland) - eu-west-1(region)/eu-west1a(zone)
+        + % aws ec2 describe-instances; # get SubnetId and SecurityGroups.GroupId
+        + % aws efs create-mount-target --file-system-id <FileSystemId> --subnet-id <SubnetId> --security-groups <SecurityGroups.GroupId>; # Copy FileSystemId and replace it in wordpress.yml volumes::nfs::server 'ap-south-1a.<FileSystemId>.ap-south-1.amazonaws.com'
+        + % kubectl create -f wordpress-volumes/storage.yml; # storageclass created
+        + % kubectl create -f wordpress-volumes/pv-claim.yml; # persistentvolumeclaim created
+        + % kubectl create -f wordpress-volumes/wordpress-db.yml; # replicationcontroller created
+        + % kubectl create -f wordpress-volumes/wordpress-db-service.yml; # service created
+        + % kubectl get pvc; # volume is bound; persistent volume claim
+        + % kubectl get pod; # wait until pod is running
+        + % kubectl describe pod <podname>; # info about pod, check persistent volume claim
+        + % kubectl create -f wordpress-volumes/wordpress-web.yml; # deployment created
+        + % kubectl create -f wordpress-volumes/wordpress-web-service.yml; # service created
+        + create a new record set "wordpress".<dns volume>, alias to elb classic load balancer
+        + in browser wordpress.<dns volume> and complete installation; not data is on persistent volume; also has efs to upload media
+        + % kubectl get pod; # 2 pods running web requests and 1 pod running db
+        + default media doesn't get upload to efs, there is bug. To overcome follow below instructions
+        + % kubectl edit deploy/wordpress-deployment
+          + under container spec add commands (refer video lecture)
+          + ' - command:
+                -bash
+                - -c
+                - chown www-data:www-data /var/www/html/wp-content/uploads && docker-entrypoint.sh apache2-foreground '
+        + upload sample image under media, it should work now
+        + % kubectl get pod
+        + % kubectl delete pod <pod1name>; # pod deleted all pods
+        + % kubectl delete pod <pod2name>; # pod deleted all pods
+        + % kubectl delete pod <pod3name>; # pod deleted all pods
+        + % kubectl get pod; # pod relaunched
+        + % kubectl exec <webpod> -i -t -- bash; # ls wp-content/uploads ; # we still have image which is uploaded earlier
+        + % kubectl logs <dbpod>; # db started
+        + open browser again and check, data should remain
+        + when you delete kubectl deployment, services, kops cluster delete efs volume as well
+***** pet sets, daemon sets
+      + pet sets
+        + stateful distributed apps on a kubernetes cluster
+        + new feature starting from kubernetes 1.3
+        + to be able to run stateful application that need a stable pod hostname (instead of podname-randomstring)
+        + your podname will have an index when having multiple instances of a pod (e.g. podname-0 podname-1 and podname-2)
+        + a stateful app that requires multiple pods with volumes based on their ordinal number (podname-x) or hostname
+        + currently deleting and/or scaling a petset down will not delete the volumes associated with the petset
+        + a pet set will allow your stateful app to use DNS to find other peers
+          + Cassandra clusters, ElasticSearch clusters, use DNS to find other members of the cluster
+          + one running node of your PetSet is called a Pet (e.g. 1 node in cassandra)
+          + using petsets you can run for instance 5 cassandra nodes on kubernetes named cassandra-1 until cassandra-5
+          + if you don't use PetSets, you would get a dynamic hostname, which you wouldn't be able to use in your configuration files, as the name can always change
+          + a pet set will also allow you stateful app to order your startup and teardown of the pets. Instead of randomly terminating one pet (one instance of your app) you'll know which one that will go
+          + this is useful if you first need to drain the data from a node before it can be shut down
+          + pet sets are still in alpha so will add demo later
 ***** daemon sets
+      + daemon sets
+        + daemon sets ensure that every single node in the kubernetes cluster runs the same pod resource, it's useful if you want to ensure that a certain pod is running on every single kubernetes node
+        + when a node is added to the cluster, a new pod will be started automatically, when a node is removed the pod will not be rescheduled on another node
+        + typical use cases: logging aggregators, monitoring, load balancers/reverse proxies/API gateways, running a daemon that only needs one instance per physical instance
+        + take a look at example daemonsets-not-working/daemonset.yml - example is not working/tested (demo not available)
 ***** demo: resource usage monitoring
+      + resource usage monitoring
+        + heapster enables container cluster monitoring and performance analysis, it's providing a monitoring platform for kubernetes
+        + it's a prerequisite if you want to do pod auto-scaling in kubernetes
+        + heapster exports clusters metrics via REST endpoints, you can use different backends with Heapster
+        + we will use InfluxDB, but others like Google Cloud Monitoring/Logging and Kafka are also possible
+        + visualization (graphs) can be shown using Grafana
+        + kubernetes dashboard will also show graphs once monitoring is enabled
+        + all these technologies (Heapster, InfluxDB and Grafana) can be started in pods
+        + the yaml files can be found on the github repository of heapster
+          + https://github.com/kubernetes/heapster/tree/master/deploy/kube-config/influxdb
+          + after downloading the repository the whole platform can be deployed using the addon system or by using 'kubectl create -f directory-with-yaml-files/'
+      + % git clone https://github.com/kubernetes/heapster.git - heapster repo
+      + % ls heapster/deploy/kube-config/influxdb; # kubernetes add on
+      + edit 'heapster/deploy/kube-config/influxdb/grafana.yaml' to comment "kubernetes.io/cluster-service: 'true'"; 
+      + edit 'heapster/deploy/kube-config/influxdb/heapster.yaml' to comment "kubernetes.io/cluster-service: 'true'"; 
+      + edit 'heapster/deploy/kube-config/influxdb/influxdb.yaml' to comment "kubernetes.io/cluster-service: 'true'"; 
+      + % minikube start --cpus 1 --memory 1024
+      + % kubectl create -f heapster/deploy/kube-config/influxdb/ ; # can do create on directory; deployment and service monitoring-grafana/heapster/monitoring-influxdb created
+      + % kubectl create -f deployment/helloworld.yml; # run deployment example
+      + % minikube service monitoring-grafana --namespace=kube-system --url
+        + open url in browser with login/passwd 'admin'
+        + you can cpu/memory and network usage
+      + % minikube dashboard --url
+        + you can also see cpu/memory usage
 ***** demo: autoscaling
+      + autoscaling
+        + horizontal pod autoscaling
+        + kubernetes has the possibility to automatically scale pods based on metrics
+        + kubernetes can automatically scale a Deployment, Replication Controller or ReplicaSet
+        + In kubernetes 1.3 scaling based on CPU usage is possible out of the box; with alpha support, application based metrics are also available (like queries per second or average rquest latency)
+        + to enable, the cluster has to be started with the env var ENABLE_CUSTOM_METRICS to true
+        + autoscaling will periodically query the utilization for the targeted pods, by default 30sec can be changed with "--horizontal-pod-autoscaler-sync-period" when launching the controller-manager
+        + autoscaling will use heapster, the monitoring tool to gather its metrics and make scaling decisions; heapster must be installed and running before autoscaling will work
+        + eg:
+          + you run a deployment with a pod with a CPU resource request of 200m (200millicpu or 200millicores; 20% of a CPU core of the running node; if the node has 2 cores, it's still 20% of a single core)
+          + you introduce auto-scaling at 50% of the CPU usage (which is 100m)
+          + horizontal pod autoscaling will increase/decrease pods to maintain a target CPU utilization of 50% (or 100m/10% of a core within this pod)
+      + % cp -rf material/kubernetes-course/autoscaling work/. && cd work
+      + run minikube and heapster 
+      + % kubectl create -f autoscaling/hpa-example.yml; # deployment, service, horizontalpodautoscaler created
+      + % kubectl get hpa; # list of hotizontal pod autoscaler
+      + % kubectl run -i --tty load-generator --image=busybox /bin/sh
+        + p% wget http://hpa-example.default.svc.cluster.local:31001
+        + p% cat index.html
+        + p% rm index.html
+        + p% while true; do wget -q -O- https://hpa-example.default.svc.cluster.local:31001; done; # to run cpu intensive tasks and wait for sometime for autoscale to see
+      + % kubectl get pod
+      + % kubectl get hpa; # hpa is active
+      + % kubectl get pod; # more pods are running due to autoscaling
+        + p% ctrl-c after 1 minute
+      + % kubectl get hpa; # after sometime hpa autoscale down
+      + % kubectl get pod; # less pods are running
 **** kubernetes administration
 ***** the kubernetes master services
 ***** resource quotas
