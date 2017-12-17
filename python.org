@@ -55,20 +55,92 @@
        + https://try.github.io/levels/1/challenges/1 - github code school
        + https://gitimmersion.com - guided tour that walks through git fundamentals
 *** python object and data structure basics
+**** Numbers
+     + 'Numbers.ipynb'
+**** Strings
+     + 'Strings.ipynb'
+**** Print Formatting
+**** Lists
+**** Dictionaries
+**** Tuples
+**** Files
+**** Sets and Booleans
+**** Objects and Data Structures Assessment Test
 *** python comparison operators
+**** Comparison Operators
+**** Chained Comparison Operators
 *** python statements
+**** if, elfif and else Statements
+**** for loops
+**** while loops
+**** range()
+**** list comprehensions
+**** statements assessment test
 *** methods and functions
+**** methods
+**** functions
+**** lambda expressions
+**** nested statements and scope
+**** functions and methods - homework assignment
 *** milestone project - 1
+**** milestone project 1
 *** object oriented programming
+**** objects
+**** classes
+**** methods
+**** inheritance
+**** special methods
+**** homework assignment
 *** errors and exceptions handling
+**** errors and exceptions
+**** exception handling: try, except, finally
+**** errors and exceptions homework
 *** milestone project - 2
+**** milestone project 2
 *** modules and packages
+**** modules, packages and imports
+**** modules and packages assignment
 *** built-in functions
+**** map
+**** reduce
+**** filter
+**** zip
+**** enumerate
+**** all() and any()
+**** complex
+**** built-in functions assessment test
 *** python decorators
+**** decorators
+**** decorators assignment
 *** python generators
+**** iteration vs generation
+**** iterators and generators homework
 *** final capstone python project
+**** final capstone project
 *** advanced python modules
+**** collections module - counter
+**** collections module - defaultdict
+**** collections module - ordereddict
+**** collections module - namedtuple
+**** datetime
+**** python debugger - pdb
+**** timing your code - timeit
+**** regular expressions - re
+**** stringIO
 *** advanced python objects and data structures
+**** advanced numbers
+**** advanced strings
+**** advanced sets
+**** advanced dictionaries
+**** advanced lists
+**** advanced python objects assessment test
 *** bonus material - introduction to GUIs
+**** introduction to GUIs
+**** quick note about ipywidgets
+**** interact
+**** widget basics
+**** widget events
+**** widget list
+**** widget styling
+**** custom widget example
 *** bonus special offers
-

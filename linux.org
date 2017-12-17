@@ -1,0 +1,84 @@
+* linux
+** udemy - fundamentals of unix and linux system administration - eduonix
+*** where to start
+**** linux unix administration
+     + an administrator is not expected to be a "walking book". linux has a huge number of commands, with a lot of different options and arguments. effectively using the man pages, and figuring out how a specific command works is an indispensable skill
+     + https://en.wikipedia.org/wiki/List_of_Linux_distributions - Linux Distributions
+     + most common linux - redhat (centos, oracle linux, fedora), debian (ubuntu), suse
+**** getting help on linux
+     + MAN pages - manual pages
+       + 'man command' - e.g.
+       + several sections 
+         + commands and applications (man 1)
+           + 'man passwd' - modify a user's password - PASSWD(1)
+           + 'man 5 smb.conf' - samba configuration file
+           + 'man 1 smblclient' - various options of smbclient command 
+         + system calls (man 2)
+         + library calls (man 3)
+         + drivers (man 4)
+         + files (man 5)
+           + 'ls -l /etc/passwd' - passwd of users and other info
+             + 'man 5 passwd' - this give section 5 passwd man page
+         + and more
+       + you can use (similar to) 'more' or 'less' command shortcuts for navigation
+         + '<space>' - moving forward
+         + 'ctrl+b' - moving backword
+         + 'ctrl+f' - moving forward
+         + ':q' - quit
+         + '/<keyword>' - search keyword
+       + 'man -k keyword' - search for (inside description or title) a specific man page 
+         + 'man -k update' 
+         + 'man -k printf'
+       + 'man -a keyword' - search in the title only and display multiple man pages
+         + 'man -a printf' - gives first man page occurance then next and next
+**** advance man command
+     + 'man -af keyword' - to search only in the title
+       + 'man -af passwd'
+     + '<command> -h' or '<command>' or '<command> --help' - provide help, sometimes useful as man's are lenghty
+       + 'find' - gives option, check 'man find'
+     + 'whatis <command>' - to know whether a command is installed on not or want to know it's path
+     + to update man page
+       + redhat: 'makewhatis'
+       + ubuntu, suse: 'mandb'
+     + 'which <command>'  - find the path of a command
+       + 'java' - gives java command options
+       + 'which java' - java path
+     + 'history' - list the commands that you have issued
+       + 'export HISTTIMEFORAMT="%d/%m/%y %T "' - set env variable to show time stamp
+     + 'du:' - find amount of space taken by a file or directory
+       + 'du -h -max-depth=1 *' - find the file and directory sizes in the current location in a human readable format
+         + 'du -h -d=1 *' - in mac
+     + 'echo > file' - empty a file without deleting it
+     + other online documentation
+       + linux.com
+       + kernel.org - related to kernel, sourcecode is available
+       + serverfault.com - important one, q&a site
+*** package management
+**** introduction to package management
+     + 
+**** installing from RPM
+**** making a local apt-get repo
+**** making local yum repo
+**** tips and tricks
+*** shell scripting guide
+*** booting and shutting down
+*** user access control
+*** controlling processes
+*** the file system
+*** adding new users
+*** storage
+*** periodic processes
+*** backups
+*** syslog and log files
+*** tcp/ip networking
+*** netfilter and ip tables
+*** dns: the domain name system
+*** the network file system
+*** sharing files with windows
+*** email services
+*** network management and debugging
+*** security
+*** ssh tips and tricks
+*** web hosting
+*** performance analysis
+
