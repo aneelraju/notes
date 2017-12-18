@@ -197,6 +197,17 @@
          + % yum clean all
          + % yum update; # it's re-downloading packages
 *** shell scripting guide
+**** introduction to shell scripting
+**** using variables
+**** the sort command
+**** basics of bash script
+**** shell functions
+**** looping
+**** perl
+**** perl arrays
+**** perl script arguments
+**** python scripting - part A
+**** python scripting - part B
 *** booting and shutting down
 *** user access control
 *** controlling processes
