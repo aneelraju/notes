@@ -55,11 +55,147 @@
        + serverfault.com - important one, q&a site
 *** package management
 **** introduction to package management
-     + 
+     + traditional way
+       + download .tar.gz files
+       + './configure' and 'make install'
+       + doesn't handle dependencies, may overwrite customized configuration files, hard to uninstall
+       + centos:
+         + % ls -ltr; # download htop-1.0.3.tar.gz
+         + % tar -xvf htop-1.0.3.tar.gz; # famous package to monitor cpu and memory performance
+         + % ./configure; # check for the system, we don't have gcc compiler
+         + % ls -l /etc/ntp.conf; # network time server to sync with your own time; this file can get overwritten during installation and older config can be deleted
+     + packages
+       + preserves configuration files
+         + e.g. if new version of httpd is installed, the httpd.conf is created as httpd.conf.rpmnew
+       + dependencies are considered
+       + pre and post install scripts can be deployed with the application
+       + multiple packages can be wrapped in same package
+         + https://www.libreoffice.org - famous office suite for linux, it's a multiple package
+       + can easily uninstall or exclude their dependencies
+       + linux package types
+         + rpm - red hat package (.rpm), used by red hat, suse; to install use 'rpm' command
+           + % rpm; # gives options
+           + % rpm -i; # install command
+           + % rpm -U; # update command
+         + debian - ubuntu and other debian systems (.deb); to install use 'dpkg' command
+         + both of these commands don't handle dependencies, cannot be used to search for packages and do not offer metadata about package
+           + centos:
+             + % ls -l vim-enhanced-7.4.629-5.el16.x86_64.rpm; # download vim enhanced package
+             + % rpm -i vim-enhanced-7.4.629-5.el16.x86_64.rpm; # rpm install, it fails because of dependencies
+         + yum (yellowdog updater modified), apt (advanced package tool) and zypper are introduced to overcome shortcoming
 **** installing from RPM
+     + redhat rpm:
+       + -i : install; -U : upgrade; -e : erase; -q : query (used with other options)
+       + % rpm -qa; # displays all packages installed on the system
+       + % rpm -qa | grep <package>; # to determine whether package is installed or not
+     + debian's dpkg:
+       + --install; --remove; -l - to display installed packages
+       + % dpkg -l | grep <package>; # to determine whether or not a package is installed
+     + package managers
+       + it needs repository, a repository is like a container containing packages, with their respective metadata
+       + each vendor offers it's own repository (repo). packages are offered for download in HTTP or FTP
+       + 'yum install' (red hat)/ 'apt-get install' (ubuntu)
+       + redhat yum:         
+         + % yum install lsof; # centos: package gives vast info about system, processes, network sockets, users using directories etc
+         + '/etc/yum.repo.d/public-yum-o16.repo' - yum repo
+       + ubuntu apt-get
+         + % apt-get update; # update the local cache data sources (repositories) to reflect the latest changes, do update before any installation
+           + '/etc/apt/sources.list' - file contains the source URLs for the packages, you needn't change this file unless you want to use your own apt repository
+             + file contains types of packages those fully supported by ubuntu (main), unsupported open source packages (universe) and paid unsupported packages (multiverse)
 **** making a local apt-get repo
+     + used if you are managing a large number of ubuntu machines, and you need all of them share one local repo to save bandwidth
+       + % apt-get install apt-mirror ; # install apt-mirror
+     + /etc/apt/mirror.list - configuration file
+       + % apt-mirror ; # starts mirroring process, first time takes lot of time. subsequent runs will consume much less time and can be automated by using cron jobs
+     + /var/spool/apt-mirror - directory where packages are download, need atleast 50GB (path can be change in configuration file)
+       + % ls -l /var/spool/apt-mirror/skel/archive.ubuntu.com/ubuntu
+     + '/var/spool/apt-mirror/var/clean.sh' - delete obsolete packages
+     + make it web reachable via HTTP or FTP (like symbolic link from your web directory to the packages directory)
+       + % cd /var/www/html/
+       + % ln -s /var/spool/apt-mirror ubuntu
+       + % ls -ltr
+     + all clients have to change their sources.list files to point to the local repo
+     + you can automate system upgrades by using cron jobs, run 'apt-get update' before upgrade to ensure that you have the latest data
+     + 'apt-get upgrade' or 'apt-get dist-upgrade' - upgrade command, later may delete packages that are not compatible so use it with care
+     + '--yes' - use it for full automation, this will confirm all dialogs, use it with care
+     + some updates require system reboot to be reflected like kernel upgrades
+     + '--download-only' - to download the packages only and install them later after reviewing it
+       + /var/cache/apt - packages directory
+       + 'apt-get install /var/cache/apt/<package>' - to install/update specific package
+       + 'apt-get autoclean' - to remove files that are no longer used
 **** making local yum repo
+     + /etc/yum.conf - configuration files
+       + by adding 'proxy=http://proxy:8080' to /etc/yum.conf you can instruct yum to download and install through proxy
+     + /etc/yum.conf.d - repositories themselves, you can add repo info to the same config file, but this is a bad practice
+     + 'yum update' - to make system-wide upgrade, 'yum upgrade' does the same task, different meaning to 'apt-get update'
+     + 'yum install' - install packages
+     + 'yum update' - upgrade
+     + 'yum remove' - uninstall packages
+     + '-y' - auto-confirmation, discretion is advised
+     + 'yum install http*' - will install httpd, asterisk before and after partial package name works
+     + 'file:///' url points to the mounted filesystem of the DVD (not the live CD)
+       + if needed, this can be further extended to serve other systems on the same network form the same DVD
+       + use symbolic link in the web directory that points to the mounted DVD filesystem and update the appropriate client repo configuration to point to it
+     + % ls -l /dev/sr0' - cdrom location (redhat dvd)
+     + % mount /dev/sr0 /mnt/ - mount cdrom
+     + % cd /mnt/
+     + % ls -l
+     + % cd packages; # lot of rpm packages
+     + % cd /etc/yum.repos.d; # update repo
+     + % vi media.repo; # new file
+       + add '[DVD]
+              name="DVD repository"
+              baseurl=file:///mnt
+              enabled=1
+              gpgcheck=0
+             '
+     + % yum repolist; # check repo list
+     + % yum --disablerepo=public_* install httpd; # temporarily disable public repo, install from DVD
+     + % cd /var/www/html; # defaul web directory of httpd
+     + % ln -s /mnt/ RedHatRepo; # make symbolic link
+     + % service httpd start; # start httpd service
+     + % iptables -vnL; # ensure firewall didn't disable http traffic
+     + % iptables -F; # temporarily disable firewall
+       + in browser https://<ip>/RedHatRepo - packages are visible
+       + all m/c in network can use http service to install packages
+     + local mirror
+       + done using 'reposync' command, it's part of 'yum-utils' package
+       + % yum -y yum-utils
+       + % mkdir /repository; # should have sufficient space 50GB
+       + % cd /repository
+       + % reposync -r public_o16_latest -p /repository/; # to get repo rame vi /etc/yum.repos.d/public-yum-o16.repo, downloads packages locally
+       + % cd /repository/public_o16_latest
+       + % ls -l; # list of packages
+       + % yum -y install createrepo; # install createrepo
+       + % createrepo .; # create repo on directory; creates metadata 'repodata' directory
+       + make a symbolic link from your web directory to the packages directory to make it web reachable
+       + make appropriate changes to the clients repo configuration files to point to the new mirrored repo
 **** tips and tricks
+     + yum plugins
+       + add extra features to yum and they are powerful
+       + 'yum-fastestmirror' - makes yum auto choose the fastest connection to mirro
+         + /var/cache/yum/timeshosts.txt - data is stored, you can force yum to recheck the fastest connection by removing this file
+         + % yum -y install yum-fastestmirror
+         + % yum update
+       + 'yum-security' - enables yum to use the '--security' command line argument which makes yum ignores any packages other than the security related
+         + % yum -y install yum-security
+         + % yum --security update; only security related update
+       + 'yum-presto' - decreases the download size when updating a package by downloading only the change between the installed and the new one (delta rpms)
+         + % yum -y install yum-presto
+         + % yum update
+       + 'yum search <package>' - to search package
+         + % yum search ssh; # list of packages that contains
+       + 'yum whatprovides *command*' - some commands are part of packages that have different names, to search for them
+         + % yum -y install scp; # scp not found because scp is not a package
+         + % yum whatprovides *scp*; # look for openssh-client-*, this is the package that needs to be installed
+         + % yum -y install openssh-clients
+       + 'yum info <package>' - info about package
+         + % yum info openssh-clients; # info about openssh
+       + 'yum groupinstall group' - to install groups of packages like a desktop environment
+         + % yum -y groupinstall "Desktop" "Desktop Platform" "X Window System" "Fonts"; # install group of packages
+       + 'yum clean all' - to recreate cache (useful if you are behind proxy)
+         + % yum clean all
+         + % yum update; # it's re-downloading packages
 *** shell scripting guide
 *** booting and shutting down
 *** user access control
