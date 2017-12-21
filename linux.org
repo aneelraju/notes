@@ -198,16 +198,408 @@
          + % yum update; # it's re-downloading packages
 *** shell scripting guide
 **** introduction to shell scripting
+     + saves time and effort. can be scheduled if use in Cron job
+     + sh (bourne shell) is dominant one before bash (bourne again shell). other shells include ksh (korn shell) and csh (c-shell). default shell on centos and ubuntu is bash
+     + csh used to make c programmers feel at home
+     + % ksh; # starts ksh
+     + if the task at hand is much more complex than to be solved by a bunch of shell commands, you can opt to use a fully fledged language like python or perl
+     + if you are an emacs user, you can use following shortcuts to communicate with the shell
+       + ctrl-e - jump to the end of the current line
+       + ctrl-a - move to the line beginning
+       + ctrl-p - brings the last used command
+       + ctrl-n - brings the next used command
+       + ctrl-r - lets you search for commands in history of the last used ones
+     + 'set -o vi' - to enter vi mode at cli
+     + 'set -o emacs' - to enter emacs mode at cli
+     + process file descriptors (fd)
+       + a process communicates with the system using channels called file descriptors (fd)
+       + atleast 3 channels are available to a given process
+         + stdin - standard input, for which the process accepts input, it is numbered as 0
+         + stdout - standard output, to which the process directs any output produced, it is numbered as 1
+         + stderr - standard error, to which any error messages are directed, it is numbered as 2
+       + % ps -ef; # processes running in the system
+       + % ls -l /proc/45163/fd; # to examine the current fd's used by a process by listing the files under the virtual directory /proc, where 45163 is process number
+         + /proc - not real directory, it provides you important info about running processes
+       + redirect standard output and standard error to a file using '>' and '>>'
+         + % useradd user1; # add user1
+         + % su - user1; # su user1
+         + % find / -name core > output.txt 2>error.txt; # output to output.txt and error to error.txt
+       + direct both error and output to the same destination using '&>'
+         + % find / -name core &> output.txt; # both output and error to output.txt
+       + instruct the process to take it's standard input from a file using '<'
+         + % mail -s "output" root < output.txt; # write mail with output.txt as input
+         + % mail; # check mail
+       + inject the STDOUT of a command to the STDIN of another using the '|' (pipe)
+         + % ls -l | grep install; # '|' is pipe
 **** using variables
+     + 'USER=joe' - example to assign a variable USER with value jeo, no space between '=' sign
+       + % newvar="This variable contains text"
+     + '$USER' - to call a variable or ${USER}, useful when using variable with literal text like ${ORACLE_HOME}/oraInventory
+     + ''$HOME'' - will print $HOME
+     + '"$HOME"' - will print home directory path of current user
+     + you can add your environment variables in ~/.bash_profile or ~/.profile
+       + % env; # lists env
+     + 'cut' command
+       + take STDIN, preform some processing on it before returning result as STDOUT
+       + used to display parts of the input text, often used with delimited files like cs, and /etc/passwd
+       + default delimiter is TAB character, but this can be changed using the -d command line argument
+       + % cut -d , -f 1,3 < sample.csv; # to select the fields you want to display, use -f option followed by a comma separated list of numbers
+       + % echo "This,Is,Cut,Example" | cut -d , -f 1,3; # prints This,Cut
 **** the sort command
+     + 'sort' command
+       + sorts the lines of text give to it, type of sort: numerical or dictionary based
+       + % sort -t , -k1,1 -n < sample.csv; # wll sort the lines of sample.csv in an integer based way, regarding the comma as a column delimiter and the key column is 1
+         + '-d' - sort by dictionary
+         + the key column can be more than one so we must specify that it will take only one column by inserting a comma and providing an end value k1,1
+         + '-r' - to reverse order
+         + '-u' - to print unique values only
+         + '-b' - to ignore leading spaces
+       + sort is usually combined with another filter command like 'cut' or 'uniq'
+     + 'uniq' command
+       + it returns the unique lines of a given text input
+       + '-d' - to print duplicated lines
+       + '-c' - to count the number of duplicated/non-duplicated lines
+         + % uniq -u < sample.csv; # doesn't change anything, it has be sorted first
+       + to use 'uniq' lines must be sorted first
+         + % sort -t , -k1,1 sample.csv | uniq -u; # shows unique values
+         + % sort -t , -k1,1 sample.csv | uniq -d; # shows duplicated values
+         + % sort -t , -k1,1 sample.csv | uniq -dc; # shows duplicated values and no. of occurance
+         + % sort -t , -k1,1 sample.csv | uniq -c; # will print the number of times a line has been entered in the sample .csv file
+     + 'wc' command
+       + word count to count words, lines and characters
+         + % wc sample.csv # gives all in words(space as delimiter) lines and characters
+       + '-l' - for lines
+         + % wc -l sample.csv # gives lines
+       + '-w' - for words
+         + % wc -w sample.csv # gives words
+       + '-c' - for characters
+         + % wc -c sample.csv # gives characters
+       + to start and stop service
+         + % service httpd start; # starts httpd service
+         + % service httpd stop; # stops httpd service
+     + 'tee' command
+       + to view the standard output of command while it's being written to a file
+       + it's like a monitoring command
+         + % find / -name *.log | tee output.txt; # will print the output to the screen and to output.txt file at same time
+     + 'head' command
+       + prints the first 10 lines of a file
+       + '--lines=n' - will print only the specified number of lines, can be used as head -n
+         + % head -5 sample.csv; # prints first 5 lines
+       + '--lines=-n' - will print all lines in the file except the last n lines
+     + 'tail' command
+       + prints last 10 lines of a file
+       + '--lines=n' - prints the last n number of lines in a file, can be used as tail -n
+         + % tail -5 sample.csv; # prints last 5 lines
+       + '--lines=+n' - prints all lines in a file starting with line number n
+       + '-f' - will keep the file open, displaing any new lines added to it. This is typically used with log files
+         + % logger "Hello"; # logger logs message to a main file in the server
+         + % logger "This is a log message"
+         + % tail -f /var/log/messages; # displays logs
+       + '--pid=PID' - makes the command exit after the process which is writing to the file you're tailing exits.
+         + useful so that you know if the process has exited or it's just not writing any output at the current moment
+     + 'grep' command
+       + searches for text in it's standard input and outputs
+       + you can use regular expressions in pattern matching
+       + '-c' - get the number of matches instead of printing them
+         + % ps -ef | grep -c ssh
+       + '-i' - ignore case when searching
+       + '-v' text - matches if the text is not present
+         + % ps -ef | grep ssh | grep -v grep; # removes grep ps from output
+       + '-R' - perform a recursive search in current directory and all subdirectories
+         + % grep -l root .; # it will output files that contain the text, searches in current directory
+         + % grep -Rl root .; # it will search sub directories
 **** basics of bash script
+     + % bash script.sh; # to run bash script
+     + '#' - comment
+     + ';' - mutiples commands are separated in the same line
+     + add '#!/bin/bash' as first line to make script self executable
+     + 'echo'  - to print text to screen
+       + '-e' - make it work like printf (interpret special characters like \t and \n)
+       + '-n' - do not add newline character to the end of the line
+       + % echo "Hello\n"
+       + % echo -e "Hello\n"
+       + % echo -n "Please enter your name: " # doesn't add new line
+     + 'printf' - also prints text, allows to output special characters like tabs (\t) and add newline character (\n)
+       + % printf "Hello\n"
+     + 'read' - accept input from user followed by a variable
+       + % echo -n "Please enter your name: "
+       + % read user_input; # input to variable user_input
+       + % echo "Hello " $user_input
+     + arguments
+       + arguments are interpreted by bash as $1, $2, $3 and so on
+       + '$0' - holds the name of the script file
+       + '$#' - contains the number of arguments passed to the script
+       + '$*' - contains all the arguments passed at one
+       + command line argument variables with special ones can be used to test whether or not the user has supplied the correct input if at all
+         + and print a friendly usage message accordingly
+         + sample usage code
+           '#!/bin/bash
+           if [ [ $# -eq 0 ] ]; then
+             echo "Usage: " $0 "your name"
+             exit 1 # failed exit
+           fi
+           echo "Hello " $1
+           exit 0 # success exit' 
 **** shell functions
+     + shell functions
+       + 'function function_name { code }' - syntax
+       + sample code
+         '#!/bin/bash
+         function usage {
+           echo "Usage: " $0 "your name"
+         }
+         if [ [ $# -eq 0 ] ]; then
+           usage
+           exit 1
+         fi
+         echo "Hello " $1
+         exit 0'
+       + usage is not restricted to shell scripting, you can also use them as an alias to your shell commands
+         + you can add a function to your .bash_profile and use it as a command
+         + 'function grepv {
+            grep -v grep
+           }'; # in ./bash_profile
+         + % ps -ef | grepv | wc -l; # grepv is shell function
+         + % 'alias ls="ls -ltr"'; # this is fine, but function can have more complex code
+     + variable visibility
+       + variables are global by default, but a function can make variable accessiblity limited to their own scope by using keyword 'local'
+         + the variable retains its original value as soon as code execution leaves the function where the variable was created as local
+     + decision making
+       + sample code
+         'id=`id -u`
+          if [ $id -eq 0 ]; then # spaces needed before and after the square brackes
+            echo "This script cannot be run as root"
+          else # you can use 'elif' for else if condition
+            echo "Welcome to our script"
+          fi'
+     + test command
+       + '[ ]' in if condition is shortcut to /bin/test command
+       + 'man test' - check for full list 
+       + equal to 
+         + '=' - string like '$user = 'Sam''
+         + '-eq' - number like '$id -eq 1'
+       + note equal to
+         + '!=' - string like '$user != 'John''
+         + '-ne' - number like '$id -ne 5000'
+       + greater than
+         + '-gt' - number like '$count -gt 0'
+       + less than
+         + '-lt' - number like '$limit -lt 100'
+       + greater than or equal
+         + '-gte' - number like '$count -gte 0'
+       + less than or equal
+         + '-lte' - number like '$limit -lte 100
+       + file attributes
+         + '-d directory' - directory exists
+         + '-e file' - file exists
+         + '-f file' - file exists and is a regular file (not a block device for example)
+         + '-r file' - file is readable
+         + '-s file' - file is not empty
+         + '-w file' - file is writable
 **** looping
+     + 'for..in' - loop to iterate over a group of values and perform some commands on each one
+     + sample code
+       'for f in *.log; do # can accept a group of files by using globing through asterisk * or a question mark ?
+          echo gzip $f # always good idea to add echo to print operations on screen
+        done'
+     + sample code
+       'for i in user1 user2 user3; do
+          echo $i
+        done'
+     + classic for loop is available in bash
+       + sampel code
+         'for (( i=0; i<$count; i++)); do # i is not preceded by a $ in the loop definition
+            echo $i
+          done'
+     + while loop
+       + continue to iterate as long as a specific condition is met, often used in reading strings such as user input or a text file
+       + syntax
+         'while [ [ condition ] ]; do
+            code
+          done'
+       + sample code
+         '#!/bin/bash
+         input=""
+         while [ [ $input != 'Y' ] ] do
+           echo -n "Please enter Y to continue"
+           read input
+         done'
+       + syntax for infinite loops, this is typically done in daemons that work in the background, listening fo ran event and acting accordingly
+         'while true; do
+            code
+            sleep n seconds # needed so that you don't exhaust your machine resources
+          done'
+       + sample code
+         '#!/bin/bash
+          while true; do # 'true' is to continue infinitely
+            echo 'date' >> timestamps.text
+            sleep 1
+          done'
+       + ./<shellscript> & # '&' is to run the script in background
+       + 'jobs' - lists running job
+       + 'fg %1' - run job 1 in foreground; 'ctrl+z' to stop foreground
+       + 'bg %1' - run job 1 in background
+       + % tail -f timestamps.text; # file is updating
 **** perl
+     + fully fledged programming language that is must more powerful than bash
+     + perl or python are designed for shell scripting
+     + % yum install perl; # centos perl install
+     + % apt-get install perl; # ubuntu perl install
+     + sample code
+       '#!/usr/bin/perl
+        # this is comment
+        $myvar = "Eduonix";
+        print "$myvar\n";'
 **** perl arrays
+     + sample code
+       '#!/usr/bin/perl
+        @users = ("user1","user2","user3"); # array assignment
+        print "$users[1]\n"; # scalar print
+        $count = $#users;
+        print "This array has $count number of users";'
+     + sample code
+       '#!/usr/bin/perl
+        @users = ("user1","user2","user3", "user4"); # array assignment
+        @admins = @users[1,2];
+        print "The admins are $admins[0] and $admins[1]\n";'
+     + sample code
+       '#!/usr/bin/perl
+        %user = ("username" => "johndoes", "password" => "changeme", "name" => "John Doe"); # hash assignment
+        print $user{"name"}."\n"; # '.' is concatenation operation
+        @slice = @user{"username", "password"}; # slice operation
+        print "Username is".$slice[0]." and password is ".$slice[1]."\n";
 **** perl script arguments
+     + sample code
+       '#!/usr/bin/perl
+        print "What is your name? ";
+        $input = <STDIN>; # input from user or other process via pipe '|'
+        chomp ($input); # chop trailing spaces
+        print "Hello ".$input."\n";'
+     + sample code 
+       + % ./perlinput username password
+         '#!/usr/bin/perl
+          $count = $#ARGV + 1;
+          print $ARGV[0]."\n"; # print arguments
+          if ($#ARGV == -1) {
+            print "Usage $0 username\n";
+          }
+          if ($count < 2) {
+            print "Usage $0 username password\n";
+          }'
+     + 'if' syntax
+       + 'if (condition) {
+            code if condition is true
+          }
+          elseif (condition) {
+            code if above condition is false
+          }
+          else {
+            code if all conditions are false
+          }'
+     + perl operators
+       + equal to - string - 'eq' - $user eq 'Sam'
+       + equal to - number - '==' - $id == 1
+       + not equal to - string - 'ne' - $user ne 'John'
+       + not equal to - number - '!=' - $id != 5000
+       + greater than - number - 'gt' - $count gt 0
+       + less than - number - 'lt' - $limit lt 100
+       + greater than or equal - number - gte - $count gte 0
+       + less than or equal - number - lte - $limit lte 100
+     + perl loops
+       + for syntax
+         'for ($i=0;$i<10;$++) {
+          }'
+       + foreach loop syntax, works best with arrays
+         'foreach $var($variables) {
+            $var holds the current array item value
+          }'
+       + while loop syntax
+         'while (condition) {
+            code
+          }'
+       + infinite loop syntx
+         'while (true) {
+            code
+            sleep n seconds
+          }'         
+     + sample code
+       + % ./pse -ef | ./perforeach.pl ssh # this is like grep function
+         '#!/usr/bin/perl
+          @input = <STDIN>;
+          foreach $line(@input) {
+            if (index($line,ARGV[0]") != -1 && index($line,"perl") == -1) { # index is string search function
+              print $line;
+            }
+          }'
 **** python scripting - part A
+     + python is generally more readalbe than perl, language is maintained in two streams: 2 (latest 2.7) and 3 (latest 3.5). Both are considerably different
+     + it has it's own interactive shell, which is useful to test your commands before putting them in a script
+     + python is said to have batteries included, means that it has got a lot of built-in functionality that make it independently robust enough to handle most tasks
+     + it uses modules to encapsulate different types of tasks like 'os' module, 'time' module
+     + 'sys' and 'os' modules are working with shell scripting and operating system in general
+     + sample code
+       + % python -v # python version
+       + % python # interactive shell
+       + p% print "username"
+       + p% ctrl+d # exit python
+     + sample code
+       + % ./mypython.py username
+         '#!/usr/bin/python
+          print ("Please enter your name ")
+          input = raw_input()
+          print ("Hello " +  input)
+         '
+     + if condition syntax
+       'if condition:
+          code if true
+        elsif condition:
+          code if previous condition is false and this one is true
+        else:
+          code if all conditions are false
+     + sample code
+       + ./mypython.py username
+         '#!/usr/bin/python
+          import sys # importing sys module
+          if (len(sys.argv) == 1): # len is length python function
+            print "Usage " + sys.argv[0] + " username"
+         '
 **** python scripting - part B
+     + lists are like arrays, a group of values saved assigned to one variable
+       + 'listname = [val1, val2, val3]
+     + tuples are the same as lists, but they cannot be modified
+       + 'tuplename = (val1,val2,val3)'
+     + dictionaries can be thought as associative arrays, they contain key value pairs
+       + 'mydict = {key1:value1,key2:value2,key3:value3}'
+     + python loops
+       + for loop syntax
+         'for item in item_sequence: # item_sequence could be any variable that can be iterated over, a list or a tuple
+            code'
+         + sample code
+           + % ./mypython.py username password
+             '#!/usr/bin/python
+              import sys
+              i = 1
+              for c in sys.argv:
+                print ("Command argument " + str(i) + " is "+ c)
+                i = i + 1
+             '
+       + while loop syntax
+         'while (condition):
+           code'
+       + infinite loop syntax
+         'while (True):
+            code
+            time.sleep(n seconds) # import time module'
+     + you can make python execute shell commands by using the subprocess module, provides call function which will execute the command you pass to it as parameter
+       + sample code
+         + % ./mypython.py
+           '#!/usr/bin/python
+            import sys
+            import subprocess
+            output = subprocess.call(["ls","-l"]); # subprocess takes inputs as lists
+            print output
+           '
+     + shell scripting is a robust way to automate repetitive tasks
 *** booting and shutting down
 *** user access control
 *** controlling processes
