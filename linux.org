@@ -601,6 +601,173 @@
            '
      + shell scripting is a robust way to automate repetitive tasks
 *** booting and shutting down
+**** starting up and shutting down machines
+     + bootstrap
+       + bootstrapping is the process by which the system initializes until it is available to users
+       + kernel is loaded into memory and starts execution, any startup script is executed 
+       + bootstrapping process fails sometimes due to error in one of configuration (like /etc/fstab), damaged hardware, filesystem corruption
+         + /etc/fstab - file responsible to mount files during startup
+       + bootstrap process
+         + code (firmware) saved in the ROM gets executed, it determines where and how to start the system's kernel
+         + when the kernel loads, it checks for the system's hardware and starts the first and most important process, the init. The init process has always PID of 1 ('ps -ef')
+         + filesystems are checked for any corruption, the system attempts to fix any recoverable errors it may find
+         + after filesystems are checked and mounted, the system's startup scripts get executed by the init process
+         + finally the login prompt/gui interface appears and the system becomes ready for users
+     + kernel loading
+       + is a program that gets loaded into the system's memory, it's loaded by a program called Boot Loader that executed from ROM
+       + while loading, the kernel probes the attached hardware, and assigns an amount of RAM for itself, this part of memory will not be available to the user side
+       + on linux systems, kernel can be found under '/boot'  (e.g. /boot/vmlinuz-3.8.13-118.e16uek.x86_64)
+       + when kernel is loaded, it creates number of startup processes, most important one is 'init', having pid 1
+       + other processes are created after that can be identified by having square brackets around them (like [kworker/0:1], / represents the processor number on which the process is running), these can't be treated as normal processes and should never kill it
+         + 'ps -ef | grep "\[.*\]"'
+**** startup daemons
+     + startup daemons
+       + after kernel is loaded, the startup daemons start to get executed by the init process, they are normal shell scripts that loads important system services like sshd, ntpd, httpd, dns, nfs ... etc
+     + stage 1 - the bios
+       + on proprietary systems (aix, hp-ux and sparc), the boot code is not stored in bios, it's stored in a much more powerful firmware, which has enough info about the attached hardware and can talk to the network on a simple level
+       + on pc's the bios is responsible for executing the boot code, it's much simpler than proprietary m/c firmware
+         + several types of bios, one for m/c another for video card and for scsi
+       + bios config lets you choose the media from which you want the system to start and order by which it'll search for alternate media (or network) if first one fails
+       + the boot media has it's first 512bytes checked to determine which partition contains the boot loader, the boot loader is responsible for loading the kernel
+     + stage 2 - grub
+       + grub is Grand Unified Boot Loader, it is the default boot loader in linux and unix systems running on intel processors
+       + it reads configuration options from '/boot/grub/menu.lst' (on ubuntu and suse) and '/boot/grub/grub.conf' on red hat
+       + configuration file options are
+         + 'default=number' - which os/kernel to boot the system to. the list starts at 0. when new kernel is installed like through system upgrades, the old ones stay available for booting in the menu, so that you can choose to boot from them if the new one breaks the system
+         + 'timeout=number' - sets the number of seconds the system would wait for a keyboard interruption before it loads the configured options
+         + 'root (hd0,0)' - where to find the partition from which to load the system. the first disk and the first partition on the mc are defined as 0 and 0 respectivelly
+         + 'kernel' loads the kernel from the specified path
+       + grub command line interface
+         + in can be invoked by typing 'c' in the GRUB boot screen
+         + it provides a basic command line interface that has some useful grub commands, you can have a list of possible commands by typing <TAB> twice
+         + one of the most useful cases of using GRUB cli is to boot OS that is not configured in grub.conf file, assuming OS is installed on the first partition of the second disk on the m/c this can be done as
+           + 'root (hd1,0)'
+           + 'kernel /vmlinuz-[select the kernel image you want] root=/dev/sdb2 [root specifies where the root(/) filesystem is located. sdb2 is disk 2, partition 2]'
+           + 'boot'
+           + example
+             + type 'c' on grub boot screen
+             + g% <TAB><TAB> # lists commands
+             + g% root (hd0,0) # harddisk 1 and partition 1
+             + g% chainloader +1 # to load bootloader on 1 sector of 1 disk
+             + g% rootnoverify # prevent to mount file system
+             + g% boot # boot command
+         + other useful commands include 'find', it will search the system for regular files only (no directories)
+         + on failing system you can find, for e.g. which partition the kernel is installed (vmlinuz), or where the root partition is ('/sbin/init')
+**** booting a second OS
+     + booting a second OS
+       + with grub, you have option to install more than one os on the same m/c and select which one to use on startup
+       + if second os you wnat is microsoft windows, it's wise to install it before linux, because window deletes grub after installation
+       + some changes have to be made to grub to enable the system to boot into windows
+         + 'rootnoverify(hd0,0)' - this forces grub not to try to mount the root partition
+         + 'chainloader +1' - make grub load the boot loader from the first sector of the selected disk (disk 1 partition)
+     + kernel command switches
+       + you can interrupt grub loading, while in the timeout period, by pressing any key. you can then select the kernel you wish to boot from, and press 'a' to start adding command switches
+       + '1' or 'single' - to enter single user mode
+       + 'n' - the run level to where you want the system to boot
+       + 'init=/bin/bash' - will let the kernel load '/bin/bash' instead of '/sbin/init' process. both of these options will allow you to access system as root without password. it will run only bash instead of init
+       + 'root=/dev/sdxx' - lets the system boot to a different root partition e.g. 'root=/dev/sdb1'
+       + 'ro' - boots the system in read only mode, strongly recommened when you want to perform 'fsck' on the disks before booting, 'fsck' should never be done on a read/write system, fsck is file system check
+       + 'debug' - prints a more verbose output of the kernel loading status, useful when you want to troubleshoot a booting issue
+       + 'selinux 0 or 1' - disables/enables selinux module, selinux is security module that is installed in linux by default
+       + after selecting kernel on grub screen type 'a'
+         + k% 1 # login's as single user
+         + k% passwd # reset passwd, can be used when you forgot root passwd
+         + k% init=/bin/bash # give bash prompt
+         + k% passwd # to change root passwd
+     + single user mode
+       + used to give the administrator the most basic functionality of a systme, when it fails to boot, multiple logins are disabled only administrator (root) can login
+       + this login done physically on the machine and not through the network because networking is disabled in this mode
+       + an administrator can choose to enter single user mode by editing the GRUB boot arguments, by using the shutdown command or by using the 'telinit' command
+       + you are allowed, in this mode, to open a shell as root without being prompted for a password. this is one way to reset the root password if lost or forgotten
+     + startup scripts
+       + these scripts are run by the init process, they are normal scripts that do some "housekeeping" to the system like cleaning '/tmp' files, they also prepare the m/c for use by doing tasks like setting the hostname, starting SSH daemon and configuring the network interfaces
+       + they are place in '/etc/init.d' and symbolic links are made to them from respective, numbered directories like /etc/rc0.d
+         + % cd /etc/init.d # traditional init scripts
+         + % ls -ltr # see lot of scripts
+         + % vim network # bash script executing network related operations
+         + % cd ../rc0.d # rc0 is run level 0 and contains symbolic linked scripts to /etc/init.d, these is where scripts run, exists for each run level 0,1,2...
+       + native systemd services files instead of traditional init scripts
+         + % systemctl # list of current running services
+         + % systemctl list-unit-files # list of all services (running, disabled, stopped and masked)
+         + % systemctl start <service> # start service
+         + % systemctl stop <service> # stop service
+       + the init (or upstart) process ensures that the correct scripts are executed depending on the requested run level to which the system till boot
+**** system run levels
+     + system run levels
+       + a run level is a specific state of a unix/linux system, they vary from one system to another but following are generally common
+         + 0: halt, the system is shutdown
+         + 1: single user mode
+         + 2,3,4,5: networking is enabled
+         + 6: system is rebooting
+       + in linux, runlevel 3 is used for a non-gui session, while runlevel 5 is used for a gui-desktop session
+       + default run level of the system can be configured in '/etc/inittab' file
+       + you can move from on runlevel to another including shutdown and reboot, by using the 'telinit' command followed by the desired run level
+       + 'telinit -q' - will force the system to re-read the '/etc/inittab' file
+         + % vim /etc/inittab # change runlevel id:5 to id:3
+         + % reboot # booted to text interface
+         + % root # login and enter password
+         + % ping 8.8.8.8 # ping dns server
+         + % telinit 5 # boots into runlevel 5 (gui-desktop)
+     + init process
+       + startup scripts are used to both start,stop and restart daemons (e.g /etc/init.d/httpd start)
+         + % cd /etc/init.d
+         + % ./sshd stop # stop service
+         + % ps -ef | grep ssh
+         + % ./sshd start # start service
+         + % ps -ef | grep ssh
+         + % ./sshd restart # restart service
+       + scripts are placed in '/etc/init.d' and symbolic links are located in '/etc/rc.*.d' where * indicates the run level at which the script should run
+         + % cd /etc/rc5.d
+         + % ls -ltr
+       + init process looks at rc.d directories to deterine which scripts to run, depending on the configured run level
+       + in an rc.d directory, the script name (symbolic link) starts with an S (start) or K (kill) followed by a number. e.g. K35smb. numbers ensure dependency between different services (if 'httpd' daemon started before the network service does, it will fail)
+       + when transitionling from run level 3 to run level 5, init runs all the scripts that start with S in '/etc/rc5.d' in an ascending order passing 'start' as a command line argument to them
+       + red hat implementation
+         + init uses '/etc/rc.d/rc' script passing the run level as an argument
+         + the scripts place an empty lock file in '/var/lock/subsys' with the same name as the daemon. presence of this file means that the service is up and running, this file is deleted when the script is called with the stop argument
+         + 'chkconfig' - command is used to install, remove and manage startup scripts
+           + 'chkconfig --add <script_name>' - will add the script to the configuration
+           + 'chkconfig --level <script_name> on | off'  - will enable/disable an added script in the specified run level
+           + 'chkconfig --del <script_name>' - will remove the script from the configuration
+           + 'chkconfig --list' - will print all the configured startup scripts, works best with grep
+         + '/etc/rc.d/rc.local' - which is run after all other boot scripts have finished execution, you can use it to add custom startup scripts
+         + % ls -l /etc/rc.d/rc
+         + % vim /etc/rc.d/rc  # go through init script
+         + % ls -l /var/lock/subsys/ # lists of lock daemons
+         + % chkconfig --list  # lists of scripts
+         + % vim /etc/rc.local # custom local rc script runs after rc script
+**** lab exercise: creating a custom daemon
+     + lab exercie
+       + % vim /opt/timed # convention to end name with d for daemon; /work/booting-and-shutting-dowm/timed
+       + % chmod +x /opt/timed
+       + % /opt/timed # test script before adding it to init script
+       + % ctrl-c
+       + % tail /tmp/timed.log
+       + % vim /etc/init.d/time # script time; /work/booting-and-shutting-dowm/time
+       + % chmod +x /etc/init.d/time
+       + % /etc/init.d/time # test script time
+       + % /etc/init.d/time start # runs in backgroup
+       + % ps -ef | grep timed
+       + % /etc/init.d/time stop # stop timed script
+       + % ps -ef | grep timed
+       + % chkconfig --add time
+       + % chkconfig --list | grep time # check time script is added and config to run on 3,4,5
+       + % ls -l /etc/rc0.d/ | grep time
+       + % ls -l /etc/rc3.d/ | grep time # check symbolic link
+       + % vim /etc/inittab # change reboot to run level 3
+       + % reboot
+       + enter login and password
+       + % ps -ef | grep time # timed is running and parent process is 1 which is init process
+       + % vim /etc/rc.local # to add script in the rc local file
+     + ubuntu deprecated 'upstart' method of running scripts and follows same as red hat now
+     + shutting down and rebooting the system
+       + 'shutdown' - command is the safest way to halt a systme or make it enter single user mode
+         + % shutdown --help # shutdown help
+         + % shutdown -h 22:00 "This system is coming down shortly" # shutdown at 22:00
+       + 'shutdom -h time "message"' - shutdown the system at specified time, sending the passed on message to the logged in users
+         + 'shutdown +10 "message"' - shutdown the system after 10 minutes from now
+         + '-h' - forces the system to sync filesystems, write any buffers in memory to the disk, '-n' ignores this step, its primarily used by the fsck command after repairing the root partition to ensure that the kernel does not overwrite the repaired superblocks with cached data
+       + 'shutdown -r' - rebooting the system
 *** user access control
 *** controlling processes
 *** the file system
