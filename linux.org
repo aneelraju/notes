@@ -769,6 +769,142 @@
          + '-h' - forces the system to sync filesystems, write any buffers in memory to the disk, '-n' ignores this step, its primarily used by the fsck command after repairing the root partition to ensure that the kernel does not overwrite the repaired superblocks with cached data
        + 'shutdown -r' - rebooting the system
 *** user access control
+**** user access control fundamentals
+     + the ownershop concept
+       + linux regards files and processes as objects, objects have owners and owners have almost unrestricted control over their own objects
+       + the root account is the system administrator's, it can take ownership of any object
+       + processes control the access to themselves internally, e.g. passwd command with a non-root user change his own account, but it won't let him reset another user's passwd
+         + % cat /etc/passwd
+         + % su - user1
+         + % passwd # user1 can change his passwd
+         + % passwd user2 # can't change user2 passwd, only root can specify a user name
+       + filesystems control access to files and directories. filesystems are the only object type that implements the concept of "groups"
+       + groups can contain a number of users, if the group has some permission on a file or directory, all group members have this same privilege
+         + % ls -l /opt/sample.txt
+         + % su - user2
+         + % echo "sample" > /opt/sample.txt # permission denied
+         + % logout
+         + % usermod -aG user1 user2
+         + % su - user2
+         + % id
+         + % echo "sample" > /opt/sample.txt # it will write to the file
+         + % cat /opt/sample.txt
+         + % ls -l /opt/sample.txt
+     + filesystem security model overview
+       + users and groups own files and directories, only owner user can change the permissions of his own file or directory
+       + the filesystem views users and groups as number rather than textual names, e.g. root is identified by UID of '0' and wheel group as GID '10'
+       + when an access attempt occurs from a user or a group, the filesystem will use the UID and/or the GID to grant or deny access
+       + UID's and GID's are stored in '/etc/passwd' and '/etc/group' respectively, when a command like 'ls -l' is used to display ownership info, those files will be consulted to display the human-friendly name rather than the id
+       + 'id' - command to display your own UID
+       + 'id -g' - command to display the group
+     + process security model overview
+       + any process owner can send signals to it (e.g. 'kill -9'), he can also increase it's 'nice' value or decrease it's priority on cpu using 'renice' command
+         + % vim proc.sh
+           '#!/bin/sh
+           while true; do
+             sleep 1
+           done
+         + % nohup bash proc.sh &; # runs in background
+         + % ps -ef | grep proc;
+         + % renice +5 <process id>; # values ranges from -20 to +20
+         + % renice -5 <process id>; # permission denied, only root can increase the priority
+         + % kill <procee id>;
+       + process or command when it runs, has following user and group id's
+         + real - the account of the owner of this process
+         + effective - this is same as real id's, but sometimes it is changed to enable a non-privileged user to access files that can be only accessed by root. e.g 'passwd' when run by a normal user to change this own password, the effective id becomes 0 to enable the user to make changes to '/etc/shadow' file. the process will check the real id of the user to grant or deny access accordingly
+           + % ls -l /etc/shadow; # nobody can change this file, but will happend through effective id's
+         + saved - it's used when a process is running with a elevated privileges needs to do some work temporarily, as a non-priviledged account. it saves the priviledge id to the 'suid' so that it can use it back as its effect id
+**** the power of root
+     + the power of root
+       + the root account has id of '0', id '0' can do any operations on any other file or process
+       + some tasks can only be performed by root account
+         + setting the m/c hostname or ip address
+         + changing the system's date and time
+         + open network sockets on privileged ports (below port 1024)
+       + the uid '0' process can even change it's own uid and gid, this happens when a normal user logs into the system, login process changes it's uid and gid to those of the user, this change cannot be rolled back
+       + passwd should be atleast 8 characters long
+       + using mix of numbers, special characters, small and capital letters is good but hard to remember and need to store it somewhere or type slowly, so it posses security risk
+       + best approach is to use passphrases like "IhateSUSELinux10!", it's long has special characters contains numbers and easy to rember by you only
+       + root passwd should be changed every 3 months, it's advisable to store root passwords, and maximum security measures should be applied to the place/software they're stored in
+       + its not good idea to login as root
+         + you lose the user accountability: who did what and when
+         + most admin's do not apply password locking on root passwords, because this may completely lock the system with no direct solution to unlock the root account
+       + recommended approach is to give administrators normal, unpriviledged accounts, when the root power is needed, they either 'su' to root or use the 'sudo' command
+       + 'su' command
+         + short for 'substitute' user
+         + you can use it to change your current login session to a different user session or to root
+         + root can su to any user without specifying the password
+         + 'su user' - does not load the user's environment
+         + 'su - user' - loads the user's environment
+         + type 'exit' or 'ctrl+d' to exit from su
+       + to disable root login, add in '/etc/ssh/sshd_config' (ssh config file) and add 'PermitRootLogin no'
+         + % vim /etc/ssh/sshd_config; # add 'PermitRootLogin no'
+         + % service sshd restart; # restart sshd service
+         + disable only ssh login but never disable console login for root
+**** delegating root powers with sudo
+     + 'sudo' is used to specify specific commands to be run as another user or typically as root
+     + 'sudo <command>' - for root
+     + 'sudo -u' - command as user
+     + 'sudo -g' - command as group
+     + for it to work, the user has to be in the '/etc/sudoers' edited using command 'visudo', it ensures that the file contains no errors, and that no one else is editing the file at the same time
+       + if 'visudo' shows error type 'e' when prompts 'what now?' to edit and fix error
+     + user with sudo can continue running commands without being prompted for password for 5m
+     + all 'sudo' commands are logged into a log file. you can use 'syslog' to forward the logs to a central log host
+     + working with '/etc/sudoers'
+       + the line that adds privileges to a user has the following format
+         + 'user HOSTS=(USERS:GROUPS) COMMAND1,COMMAND2...'
+       + you can also use command aliases, many of them are already defined in '/etc/sudoers' file
+       + the 'HOSTS' part is used so that the 'sudouers' file can be shared across multiple machines
+       + a user's groups can be denoted by %, e.g. %wheel is the wheel
+       + optionally, you can add 'NOPASSWD : ALL || commands' to instruct sudo not to ask for passwords for specific commands or for all commands
+       + if the commands you are delegating for users include those which can spawn other processes (like vi, vim and less) you should add 'NOEXEC:command' to avoid letting the use open a complete shell with the sudoed account
+       + go through '/etc/sudoers' file
+       + % su - user1
+       + % sudo service ntpd restart; # ntpd - network time server
+       + % sudo -k ; # mode where it asks for password every time
+       + % logout
+       + % visudo
+         'user1 ALL=(root) /usr/bin/vim' # only vim exec privilege is provided
+       + % su - user1
+       + % vim
+         ':! bash' # entering bash 
+         b% id # still as user
+       + % sudo vim
+         ':! bash'
+         b% id # now as root
+       + % logout
+       + visudo
+         'user1 ALL=(root) NOEXEC:/usr/bin/vim' # doesn't run shell now
+       + % su - user1
+       + % sudo vim
+         ':! bash' # bash shell denied
+       + % logout
+       + % visudo
+         'user1 ALL=(root) NOPASSWD:/usr/bin/vim'
+       + % su - user1
+       + % sudo -k
+       + % sudo vim # doesn't ask passwd anymore
+       + % logout
+       + % visudo
+         'user1 ALL=(root) ALL' # access to all command with root permissions
+       + % su - user1
+       + % sudo -i # enter passwd, gives new shell
+       + % whoami # is root
+       + % logout
+       + % logout
+       + % tail /var/log/secure # log file, prints very verbose logs
+       + % sudo tail /var/log/auto.log # log file in ubuntu
+**** system access
+     + system access
+       + they are user accounts used to execute system services, idea is to use them instead of using the root account for such tasks
+       + they are protected from being used for login, by placing an asterisk instead of password hash in the shadow file, also by settings the default shell to '/bin/false' or '/bin/nologin'
+         + they donot have home directory
+       + their uid's are generally under 100
+       + % sudo vi /etc/passwd # you can see service account like daemon, bin, sys, sync, games, man, lp, mail ...
+       + % sudo adduser --system --no-create-home --uid 99 time; # adding system user 'time'
+       + % vi /etc/passwd # user time is created as system account
+       + % ls /home/time # not time home directory
+       + system account are exempted from passwd aging policy as they aren't used for login
 *** controlling processes
 *** the file system
 *** adding new users
