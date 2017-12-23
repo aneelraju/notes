@@ -906,6 +906,11 @@
        + % ls /home/time # not time home directory
        + system account are exempted from passwd aging policy as they aren't used for login
 *** controlling processes
+**** process control fundamentals
+**** ownership
+**** process spawing and termination
+**** terminating a process
+**** using the /proc filesystem
 *** the file system
 *** adding new users
 *** storage
