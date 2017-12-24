@@ -907,10 +907,142 @@
        + system account are exempted from passwd aging policy as they aren't used for login
 *** controlling processes
 **** process control fundamentals
+     + process
+       + representation of running program
+       + used to monitor and control the program's access to system resources like cpu, memory and i/o
+       + the kernel allocates memory for each process, typically measured in "pages", the location of this address space (memory or swap) cannot be determined as unix combines both in virtual memory (memory + swamp)
+       + important info about process recorded by kernel - owner, the state (running, sleeping ... etc), execution priority (nice value), the resources usage (files, network sockets ... etc)
+     + identification
+       + the kernel assigns a unique identifier to each process call PID
+       + when the process demands a new program (process) to be started, it clones itself first, then the clone replaces the initial program with the desired one. the original process here is called parent and it's id is referred to as parent ID or PPID
+       + the ppid can be used to trace the source of a running process, it can also be used to track the behavior of a given process (how many and what processes it is spawning)
+       + % ps aux | head # you can see PID
+       + % ps -ef | head # you can see PID spawning from PPID
 **** ownership
+     + ownership
+       + the real UID (RUID) is the user id of the process owner
+       + the effective UID (EUID) is the id of the user that the process is using temporarily to do some tasks. this is often the root id (0), this behavior can be found in programs that have setuid like passwd
+       + the group id 'gid' is treated the same as the 'UID', with 'GID' and 'EGID'
+       + the gid is not used most of the time, instead 'EGID' and the supplementary group list determine the process access permissions, because a given process may need to use one of the supplementary groups to be granted the required access level
+       + % su - user1
+       + % id; # uid, gid, groups - supplementary group
+       + % groupadd admin; # creating group admin
+       + % usermod -aG admin user2; # add user2 to group admin
+       + % su - user2
+       + % id; # you can group 'admin' in groups
+     + cpu priority
+       + the kernel internally determines how much cpu time a process is allowed to consume
+       + the admin can set this value manfully, it is called the nice value, it ranges from -20 (highest priority) to 19 (lowest priority)
+         + % top; # see pid, NI-Nice value
+       + default, child process inherits its parent's nice value
+       + a normal user can use the renice command to lower the priority of his own process (positive value), but he cannot use it to increase it's priority even to it's original value, the superuser can place any nice value on any process on the system
+         + 'renice value pid'
+         + infiniteloop.sh
+           '#!/bin/bash
+            while true; do
+            sleep 1
+            done'
+         + % ./infiniteloop.sh &
+         + % top; # NI=0 (nice value)
+         + % renice 5 <pid>; # NI=5
+         + % renice 0 <pid>; # permission denied
+         + r% renice 0 <pid>; # renice to lower value as root is allowed
+       + the nice value only controls the cpu time assigned to the process and not the utilization of memory or i/o
+       + the nice command is used to start a process in the specified nice value
+       + the most common use of the nice command is when the system is under high load and you want to start a shell to investigate the issue. starting a normal shell will cause a lot of logging
+         + 'nice -n value /path/to/command'
+         + % nice -n -10 bash; # will start a bash shell in a higher priority than other processes
 **** process spawing and termination
+     + process spawning and termination
+       + a running process can launch a new child process by using the 'fork' system call, this creates an identical clone of the running process, but has some differences
+         + a different and unique pid, zero cpu and memory consumption (initially) and empty list of pending signals
+       + the child process 'exec' command (system call) to execute the new program
+       + when the child process dies first, the parent process issue the 'wait' system call to notify the kernel that the child process is ready to vanish, it also receives the exit code that indicates why and how the termination occurred (0 means normal)
+       + if the parent process dies first, the child process becomes orphaned, in this case, the 'init' process becomes the parent
+       + % cd /opt/
+       + % nohup ./infiniteloop.sh &; # infinite loop program, nohup - not kill the process on logout
+       + % ps -ef | grep infini; # parent pid (ppid) is 10876
+       + % logout
+       + r% ps -ef | grep infini; # login as root, ppid is transferred to init (ppid)
+     + communicating with a process
+       + a running process can receive signals from the kernel, the user or other processes as a means of communication
+       + the process may respond to the signal (if programmed to) or the kernel will act on behalf of the process and respond to the signal
+       + most familiar signals
+         + num:name:shortfor:sentwhen
+           1:SIGHUP:Hang-Up:The controlling terminal has been closed
+           2:SIGINT:Interrupt:Break key is pressed (like ctrl-c)
+           3:SIGQUIT:Quit:The user wants the process to terminate and provide a core dump file. Sent by ctrl-y or ctrl-\
+           9:SIGKILL:Kill:Terminate immediately. This signal cannot be ignored and the process does not perform any clean up before exiting
+             + SIGKILL (kill -9) is not recommended, as it need to kill immediately programms will not be able to catch this signal and do cleanup before terminating
+           11:SEGV:Segmentationfault:The process tries to access virtual memory that does not belong it to. The process is terminated and core dump is provided
+           15:SIGTERM:Termination:The process is asked to terminate. The signal can be caught and ignored, allowing the process to perform a clean shutdown
+       + in shells like csh, the HUP signals are ignored automatically, that is, you can run a program in the background and it will continue to run after you logout of the shell. in shells like BASH, this has to be done by placing 'nohup' before the command
 **** terminating a process
+     + terminating a process
+       + use the kill command to terminate a process, 'kill' command sends a TERM signal by default, but it can be used to send any other signal as an argument to the command
+       + the 'TERM' signal does not necessarily kill a process because it can be intercepted by the program and ignored
+       + the 'SIGKILL' signal is often enough to terminate a process, in some cases a reboot is required to kill a process which is waiting for a response that will never come from a disk or network device
+       + you can use 'killall process_name' to kill all the processes associated with a program, beware that in unix the same command will kill all the processes initialized by the current user. if it's root, the system will halt immediately
+       + the 'pkill' command can be used to kill a process by it's name
+     + process modes
+       + S - the process is sleeping, it's waiting for something or a resource
+       + R - the process is running or runnable, it is being executed or can be executed whenever the CPU time is available
+       + Z (defunct) - the process is supposed to be dead but it's not (zombie), normally it wil die shortly, it not a reboot may be required
+       + T - the process is suspended (traced), this can be obvious if you pressed ctrl-z to pause a running command
+       + % top; # "S" - process state
+       + % cd /opt
+       + % ./infiniteloop.sh
+       + % ctrl-z; process stopped
+       + % top -pid <processid>>; # "S" is T (suspended)
+     + ps command
+       + is the defacto command of process monitoring
+         + 'a' - show all processes not just the current user's
+         + 'u' - user oriented output
+         + 'x' - show also processes that were not started from the terminal
+         + % ps aux; # RSS - total virtual memory the process is using
+         + 'l' - instead of 'u' to print the long version of the output, this prints the uid as a number rather than the username
+         + % ps lax; # longer output
+         + 'ef' - similar output can be obtained by using this switch
+         + % ps -ef; # shorter output
+     + real time process monitoring
+       + 'top' - command offers a real time view of the processes running on the system with many useful information like the amount of CPU and memory used, output is sorted by the cpu, but you can choose another sort field
+         + % top
+       + you can use top command to dynamically renice processes
+       + another command that extends 'top' (third party) is 'htop'
+         + http://hisham.hm/htop/index.php?page=downloads
+       + 'top' is not a priviledged command, it can be run by other users than root
+       + the default refresh interval is 3 sec, this can be modified by using the '-d' option
 **** using the /proc filesystem
+     + using the /proc filesystem
+       + it's virtual filesystem that is created on the fly when the system boots
+         + % ls -l /proc
+       + completly destroyed when system shutdown's
+       + contains useful info about the processes currently running
+       + you can use 'ls' to list the files and directories. 'cat' to show file conctents just as you deal with any other filesystem
+       + given a process pid, you can access it's properties in '/proc' like this 'ls -l /proc/<pid>'
+       + some useful directories
+         + 'fd' - for the file descriptors used by the process (STDIN, STDOUT, STDERR and any files currently being written too, like log files for example)
+         + 'cmdline' - command line that the process was started with
+         + 'cwd' - a symbolic link to the process working directory
+         + % ps -ef | grep http
+         + % cd /proc/<httpps>
+         + % ls -l
+         + % ls -l fd; # file descriptor; 2->stderr is redirected, process can have any no. of descriptor and can be redirected
+         + % ls -l cmdline
+         + % cat cmdline
+         + % cat cmdline && echo; # echo prints new line
+         + % cd cwd; # working directory of the daemon
+         + % ls -ld cwd; # symbolic link
+     + tracing a process
+       + 'strace' - command to monitor the system calls that a process makes on a very level
+       + 'strace' is useful when you want to troubleshoot a hanging or a frequently crashing process, because you will know exactly what was the last thing the process was trying to do before it crashed or kept on waiting for
+       + '-f' - to trace child processes (forked) as well
+       + '-e' - can be used to direct the output to a file, this is useful when you want to monitor a process that will take a very long time and you want to analyze it's behavior over that long period
+         + % strace -p <httppid>; # tracing httpd daemon
+         + % ctrl-c
+         + % ps -ef | grep ntp; # ntp - time server, get pid
+         + % strace -p <ntppid>
+         + % strace -f -e strace.out -p <ntppid>; # traces all the child processes and write output to strace.out
 *** the file system
 *** adding new users
 *** storage
