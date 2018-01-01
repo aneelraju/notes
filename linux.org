@@ -1044,6 +1044,239 @@
          + % strace -p <ntppid>
          + % strace -f -e strace.out -p <ntppid>; # traces all the child processes and write output to strace.out
 *** the file system
+**** the file system fundamentals
+     + filesystem
+       + a representation of storage and other objects on the system
+       + in linux, everything is a file: regular file, devices, drivers and even processes
+       + the kernel provides an abstract layer for dealing with different filesystems consistently, e.g you work with files on the local m/c as well cifs (samba share) and nfs the same way
+       + popular filesystems: 
+         + ext3 and ext4 for linux
+         + zfs for solaris
+         + jfs for aix
+         + iso9660 for dvd-roms (also used when mouting iso files)
+         + ntfs or fat for windows
+       + file names and paths
+         + any linux filesytem starts at the slash '/' also called root
+           + % ls -l /; # root file system
+         + '/etc/sysconfig/network-scripts/ifcfg-eth0' - example path
+         + linux kernel limitations on pathnames
+           + each segment in the path should not be more than 255 characters 
+           + whole path length cannot exceed 4095 bytes
+         + filenames that contain spaces can be represented either quoted with double quotes or have the space escaped by backslash
+           + % cd My\ Documents; # backslash
+           + % cd "My Documents"; # within quotes
+     + mount points
+       + a device must be mounted in order to be accessed by the system
+       + 'mount /path/to/device /mountpoint' - mount syntax
+         + % fdisk -l; # 
+         + % mount /dev/sbd1 /mnt;
+         + % cd /mnt
+         + % ls -l
+         + % df -h; # check disk space
+         + but disk is not persistent on reboot, to be persistent edit fstab file
+         + % vim /etc/fstab
+           '/dev/sdb1  /mnt  ext4  default 0 0' # 0 0 - not to check fsck
+         + % mount -a; # mount fstab, also point out errors on mount, good to check before reboot           
+       + mounts points are stored in '/etc/fstab', this allows the system to run 'fsck' on the filesystems when booting and to mount devices found in this file automatically on startup
+       + 'unmount' - to detach a filesystem, there must not be any processes that use the filesystem to be successfully unmounted
+         + % fuser -c /mnt/; # gives pid that still accesses the mount
+         + % ps -ef | grep <pid>; # give process command that using the mount
+         + % yum -y install lsof
+         + % lsof /mnt/; # gives processes that using the mount file system
+         + % kill <pid>; # kill any pid's that access /mnt, if other user, you will request him to kill, using 'kill' without arguments first then 'kill -9'
+         + % unmount /mnt; or
+         + % unmount /dev/sdb1; 
+       + '-l' - argument can be added to unmount to perform a lazy unmount, remove the mount point the directory tree, device is not completely unmounted until all processes using the device have exited
+         + % unmount -l /mnt; # use it only when there is no other option
+       + '-f' - natively available, but it cannot be used on modern filesystems like ext3 and ext4 because they are journaled filesystems       
+**** important directories
+     + most important system directories that you should be cautious when dealing with them
+       + '/etc' - contains sensitive configuration files
+       + '/bin' - system utilities and commands like 'ls','cat' ... etc
+       + '/sbin' - commands that are intended to be run by the superuser like 'mount' and 'mkfs'
+       + '/dev' - device files like disks
+       + '/lib' and '/usr/lib' - shared libraries, often '/lib' has symbolic links to '/usr/lib' to facilitate updating a library without breaking dependent applications
+       + '/usr' - contains various programs and libraries, it also contains the manual (man) pages
+       + '/var' - contains variable files, that is files that change a lot, like log files and spool directories, it is advised to place the /var on separate filesystem
+       + '/home' - it is not strictly a system directory, it is the location where user's home directories are placed, it is also advised to be placed on a separate filesystem
+       + 'man hier' - displays a much more detailed filesystem list
+     + linux can recognize only seven types of file, no matter if it's real physical file, a device or a virtual file
+       + regular
+         + most common file type in linux, contain streams of bytes with no special order
+         + text files, binary executables, images and audio files are all examples of regular files
+         + they can be accessed sequentially and randomly
+           + sequential access - the file is being accessed a certain group of bytes at a time, in sequence e.g 'cat' command on a text file
+           + random (direct) access - you can jump to any point in the file and start reading from this point forward or backward e.g. 'vi' to jump to a specific line number in a text file
+       + directory - directories and hard links
+         + directories contain pointers to the files inside them
+         + files info are stored in their directory and not in the files themselves, you must have write permission on a given directory to be able to delete files underneath it, otherwise you can't delete a file even if you have full permissions on it
+         + a directory can have more than one reference to the same file, these are called 'hard links'. a hard link is a file is treated just the same as the original file, it cannot be created on other filesystme
+           + 'ln <src> <dst>' - to create hard link
+           + 'ls -l' - displays the current number of hard links a given file has
+           + deleting hard link will not delete original file
+         + hard links can be deleted using the 'rm' command
+         + directories can be deleted using 'rm -r' or 'rmdir' for empty directories
+       + device files
+         + in linux everything is a file, including devices
+         + device files are used as a means of communication b/w the system (kernel) and the physical hardware device
+         + device files receive requests from the kernel and redirects it to the device driver which in turn sends it to the physical device and vice versa
+         + if the device file is a charactor one, buffering is done by the device driver. 'character device files' are used with devices that do not need to transfer large amounts of data. e.g. tty(terminal), pseudo-devices like '/dev/null/' and '/dev/zero'
+         + character device files are denoted by 'c' in the 'ls -l' output
+         + 'block device files' rely on the kernel to do the buffering, they deal with data in large chunks. e.g disks. 
+         + block devices are denoted by 'b' in 'ls -l' output
+       + unix domain sockets
+       + named pipes
+       + symbolic links
+**** device file numbers
+     + device file numbers
+       + device files have a major and minor numbers
+         + the major number informs the kernel about the physical location of the device on the system, e.g 8 as a major number represents a disk device
+         + the minor number is totally interpreted by the device driver itself, e.g 1 in '/dev/sda1' represents disk partition 1
+         + % ls -ltr /dev/sda1; # major number 8 and minor number 1 (partition 1)
+         + % ls -ltr /dev/sr0; # major number 11 and minor number 0
+         + % ls -ltr /dev/sda; # whole disk, major number 8 and minor number 0
+       + 'udevd' - daemon is responsible for discovering new devices and assigning device numbers to their files, it also deletes them according to kernel notifications of hardware changes
+         + % cd /dev
+         + % ps -ef | grep udevd
+     + unix domain sockets
+       + they represent ways to allow proceses to connect to each other on the same system
+       + don't confuse them with network sockets, these inter-process connections on the same m/c that don't involve networking
+       + they appear like files but they cannot be accessed except from the connected processes
+       + 'syslogd' - daemon which collects system logs, e.g of a process using unix sockets
+       + '/proc/PID/fd' - you can view a socket file by naviagting to a process directory that uses a socket
+       + % cd /dev
+       + % ps -ef | grep *syslog; # gives PID
+       + % cd /proc/PID/fd
+       + % ls -l; # flashing filename is socket (num 0), reading from socket
+     + named pipes
+       + they serve the same purpose of unix sockets, connecting processes
+       + named pipe are like shell pipe (|) but it's bidirectional
+       + they are also referred to as FIFO pipes
+       + 'mkfifo' or 'mknod' - command to create named pipe, once created you can view it on the filesystem like any other file
+       + e.g of named pipes is to share terminal windows
+         + in first terminal create a pipe using 'mkfifo pipe'
+         + then instruct the terminal to redirect the output to the pipe using the script command - 'script -f pipe'
+         + one the second terminal cat the pipe 'cat pipe'
+         + now everything you type or see on the first terminal is automatically in the second one
+         + % mkfifo pipe
+         + % ls -l; # name pipe is created; file type is 'p'
+         + % script -f pipe
+         + t2% cat pipe # on terminal 2
+     + symbolic links
+       + you regard them as shortcuts to files and directories
+       + they are also called as soft links to differentiate them for hard links, in contrast to those, soft links are not direct references to the files
+       + 'ln -s <src> <dst>' - creates a symbolic link
+         + soft link we use '-s' and for hard link we don't use '-s'
+       + they can cross filesystem boundaries (unlike hard links)
+       + one of the prominent uses of symbolic links is in the '/lib' and '/usr/lib' directories, they contain symbolic links with general library names (without the version). this way, library files can be updated with new ones without breaking the applications that are currently using them as those applications point to the general library name (the link)
+       + they can be deleted with rm
+**** file deletion with rm
+     + file deletion with rm
+       + 'rm' - to delete all types of files, asks for user confirmation
+       + 'rm -f' - can be overridden
+       + 'rmdir' - to delete an empty directory
+       + 'rm -r' - to delete a directory that contains files
+       + '--' - switch to delete files/directories that contain special characters
+         + % rm -- -f; # -f is file here
+       + '-i' - if you use globing, use this switch to avoid deleting files by mistake
+     + file aspects
+       + in linux a file has 9 bits controlling who can read, write or execute it. in addition, it has another three bits that control how the file will get executed called "mode" bits
+       + a file also contains 4 bits which define its type that cannot be changed
+       + 'chmod' - command to change the 12 bits of permissions, when used by the file owner or superuser
+       + 'ls -l' - command to see file permissions
+       + 'ls -ld' - command to see directory permissions'
+       + file permissions are controlled by 9 bits that control read, write and execute rights for the owner user, owner group and everyone else respectively (3 bits per each)
+         + % ls -l data.txt; # -rw-r--r--, first '-' is type, can't be changed, next 3 bits (rwx) for owner, next 3 bits (rwx) for owner group and last 3 bits (rwx) for everyone else
+         + % chmod 755 data.txt; # user('u')=rwx; group('g')=r-x; others('o')=rwx
+         + % chmod u+x data.txt; # add 'x' permissions to users
+         + % chmod +r data.txt; # add 'r' permissions to all
+         + % chomod o-x data.txt; # remove 'x' permissions to others
+         + % chmod -x data.txt; # remove 'x' for all
+         + % chmod g+rx data.txt; # add 'rx' for group
+         + '-R' - switch to make chmod work recursively on all files and directories
+       + coderstoolbox.net - online utilities
+**** what do permissions offer ?
+     + what do permissions offer
+       + read permissions - file can be read and copied
+       + write permissions - file can be modified
+       + execute permissions - file to be self executed either directly (binary file) or by an interpreter like script files (bash, perl and python)
+       + read permissions on directory - allows it to be listed for its files, but alone it does not allow directory access
+       + write permission on directory - allows directory to be modifed, like file creation, deletion and renaming
+       + execute permission on directory - allows directory to be accessed, but you cannot list files. for this reason, directories are often set with read and execute permissions
+     + other file attribute bites
+       + we covered nine of twelve bits of file attributes, the remaining 3 bits are
+         + 4000 and 2000 represent the 'setuid' and 'setgid' bits
+           + when set on executable files, they are run in the account id of the owner user or group rather than the context of the user who executed them
+           + when 'setgid' bits added to a directory, all new files created under it become owned by the owner group of the directory instead of the owner group of the user who created it, this is useful in directories that are used by multiple users
+             + % touch sample.txt
+             + % chmod g+s sample.txt
+             + % ls -l sample.txt
+             + % chmod 4755 sample.txt; # change via octal
+         + 1000 represent the 'sticky bit', when set on a directory you cannot delete or rename a file inside it unless you are the owner of the directory, the file or you are the superuser. this is typically the case with '/tmp' directory, where anyone should be allowed to create files, but only the owner of the file can change or delete it
+         + setting the remaining 3 bits using chmod is done the same way as standard permissions. e.g. 'chmod 1777 /tmp' will set sticky bit on '/tmp'. similarly 'chmod g+s /mydir' will set 'setgid' bit on 'mydir' (s for setuid/gid and t for the sticky bit)
+     + listing file attributes (ls)
+       + '-l' - list the file attributes, add '-d' to view directory attribute instead of listing their files. the output is as follows
+         + file type (regular, device ... etc) on the first field
+         + file permissions on the next nine fields. they are represented as 'rwx' for read, write and execute. if the setuid is set, the 'x' in the owner part is replaced with an 's', if the setgid is set, the 'x' for the group will be replaed with an 's'. if the sticky bit is set, the 'x' in the "others" part is replaced with a 't'
+         + a number representing the link count of the file, it counts only the hard links of the file and not the symbolic links. directories always have two hard links: the link from the parent directory (..) and the link from the current directory (.)
+         + the owner user and owner group of the file respectively. the filesystem views those as numbers, but consult the appropriate database (/etc/passwd, LDAD...etc) to resolve it to a name, it will print them as numbers if the names could not be found
+         + size of file in bytes
+         + last modification date
+         + filename
+         + useful command switches for 'ls'
+           + 'a' - list hidden files/directories
+           + '-t' - sort by the last modification date and time
+           + '-r' - reverse the sorted list (-tr will make the newest files at the bottom)
+           + '-h' - print the file sizes in human readable format
+           + '-R' - lists files recursively
+**** changing file ownership    
+     + changing file ownership
+       + 'chown' and 'chgrp' - commands to change ownership for owner user and owner group, user must be the owner of file or group member to change ownership
+       + '-R' - to make it recursively
+       + 'chown user /path/to/file' - syntax
+       + 'chown user:group /path/to/file' - to change the user and group ownership in one go
+       + using globing with 'chown' is not recommended because it may match undesired files, e.g 'chown johndoe .*' to change all hidden files owner in the current directory will also match the '.' and '..' effectively changing the ownership of current and parent directoreis
+         + 'find . -type f -name ".*" | xargs chown johndoe' - use this syntax
+     + setting default permissions (umask)
+       + 'umask' - used to set the default permissions that files and directories are granted when they are created
+       + every process has it's own 'umask' value to control the permissions of the files it creates throughout it's lifecycle
+       + since the shell is a process, it has it's own 'umask' value that influences the file permissions that the user creates in his session
+       + the 'umask' works by subtracting permissions
+         + umask 000 is 777-000 = 777
+         + umask 022 is 777-022 = 755
+       + the umask for files is '666-umask' while directories have '777-umask'
+       + 'umask octet' - syntax
+       + it can be put in '.bash_profile' to make it the default value for each session
+         + % umaks; # shows default permissions
+    + access control lists (acl)
+      + traditional permissions model for linux has some shortcomings, e.g. if i want a user that is not in my group to read a file that i created, yet i don't want the file to be word readable just to let that user have the required access? that's why acl was introduced
+      + they are supported by the filesystem so they must be turned on while mounting by using '-o acl' as a mount option
+        + % df -h; # list mounts
+        + % umount /mnt/; # unmount
+        + % mount -o acl /dev/sdb /mnt/; # mount with acl enabled
+        + % useradd user2
+        + % su - user1
+        + % touch /opt/securefile
+        + % ls -l /opt/securefile; # owner is user1
+        + % chmod 660 /opt/securefile
+        + % setfacl -m u:user2:r /opt/securefile
+        + % logout
+        + % su - user2
+        + % cd /opt/
+        + % ls -l
+        + % cat securefile; # can read file
+        + % su - user1
+        + % chmod 600 /opt/securefile; # removed read permissions
+        + % getfacl /opt/securefile; # get acl info
+        + % su - user2
+        + % cat /opt/securefile; # can't read file now as chmod overtakes acl
+        
+      + acl deals only with the nine permission bits of files setuid, setgid and the sticky bit are not implemented here
+      + 'setfacl user:username:permissions' - syntax of setting acl
+      + 'setfacl -m u:johndoe:r /path/to/file'
+      + 'setfacl -m g:admin:rx /path/to/file'
+      + '-R' - to make recursive permission changes
+      + 'getfacl /path/to/file' - to view the acl of a file or directory
 *** adding new users
 *** storage
 *** periodic processes
