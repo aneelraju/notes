@@ -1288,6 +1288,104 @@
 *** the network file system
 *** sharing files with windows
 *** email services
+**** email services
+     + why host your own e-mail services
+       + gmail, yahoo, hotmail are targeted towards personal accounts
+       + sometimes you can never store your important corporate email messages offsite, for this reason you have to learn how to host your own email server on your own infrastructure
+     + a typical email system consists of
+       + components involved in this operation
+         + mail user agent (MUA) - your email client application (thunderbird, ms outlook or /bin/mail)
+         + mail submission agent (MSA) - receives the mail message from the MUA and delivers it to the MTA (mail transport agent)
+         + mail transport agent (MTA) - also called message transfer agent on mail relay. is reposible for delivering the message to the destination machine. it is also responsible for receiving the message on the recipient machine. a server that oeprates the MTA part of the main system is called mail exchange server. it is the machine that is designated the mx record in a dns server. postfix, sendmail and microsoft exhange server are examples
+         + mail delivery agent - is responsible for delivering the message to the client's mailbox, it's incorporated inside mail systems like postfix and sendmail
+         + access agent (AA) - optional component that may be used to connect MUA to the message store
+     + message user agent (MUA)
+       + also called email client, it's s/w that reads and creates mail messages
+       + earlier days email message contains only plain text, later MIME (multipurpose internet mail extension) was introduced to enable rich text format as well as attaching images and files
+       + mua's include modern email clients like thunderbird and microsoft outlook and also the plain old text based clients like /bin/mail
+       + native linux mail client is indispensable when running cron jobs: as cron sends an email to the user with the output of cron job commands
+     + mail submission agents (MSA)
+       + ealier days, msa was part of of mta (mail transport agent) but they were later split into two separate components
+       + it listens on port 587 in contrast to mta which by default listens on port 25, because both mta and msa use the same protocol, they are transparent to the user agent, specially if the msa was configured to listen on port 25
+       + one of the important tasks handled by msa is spam filtering
+       + it does lots of processing on mail messages before delivering to mta
+     + mail transport agent (mta)
+       + used for sending and receiving mail messages
+       + it accepts messages either from user agent or submission agent
+       + uses simple mail transfer protocol (SMTP)
+       + mta understands the recipient address as rewrites it - if necessary - to be understood by the delivery agent
+       + if the message is not intended for the current domain, MTQ acts as a "relay server" and forwards the message accordingly
+       + exampls of mta's are postfix, sendmail and exim
+     + mail delivery agent (MDA) and message stores
+       + also called local delivery agent (LDA), it receives mail messages from MTA and delivers them to the local users mailboxes, sometimes LDA is part of MTA
+       + message store is the final component in the mail system, it is where the mail message gets stored
+       + messages may be stored in 'mbox' format, where messages are stored in one single file (e.g. /var/mail/root) and they are separated by a special line of text
+         + % cd /var/mail
+         + % ls -ltr; # users and mails
+         + % cat user1; # file contains all the messages of user1
+       + they can also be stored in 'maildir' format, where each message is stored in a separate file
+     + access agents (AA): POP and IMAP
+       + those are used to access the mail system and download the messages for reading on the client device (workstation, laptop, smartphone ... etc)
+       + IMAP (internet message access protocol) - downloads messages one by one instead of bulk downloads, it also gives the user the option to view the header and type of attachments. the user then can opt to download the attachment
+       + POP (Post Office Protocol) - downloads the whole mailbox to the user's local device. it is not suited for a slow network
+       + most mail clients support both POP and IMAP
+     + the mail message
+       + mail message consists of following components
+         + the envelope - it contains the 'From' and 'To' fields. these are not part of the message itself
+         + the headers - these are a set property/value pairs containing a variety of information about the message like the time of sending and the transport agents that processed it
+           + headers are very important in troubleshotting as they reveal information about any errors or problems encountered during the message delivery journey
+         + the body - either in plain text or in MIME format
+**** lab: configuring a mail server using postfix
+     + lab: configuring a mail server using postfix
+       + 'yum -y install postfix' - install postfix package using package manager
+       + open the main configuration file '/etc/postfix/main.cf' file to configure your mail server
+       + the server by default listens for traffic on the loopback device. we need to change this to enable it to serve our netwokr
+         + 'inet_interfaces = all'
+       + configure the outgoing domain to be 'linuxadmin.dev', otherwise the system will use the hostname instead of the domain
+         + 'mydomain = linuxadmin.dev'
+         + 'myorigin = $mydomain'
+       + specify the domain name for which postfix will handle its mail. by default postfix only handles email directed to the local machine
+         + 'mydestination = $myhostname, localhost.$mydomain, localhost, $mydomain'
+       + set the network subnet(s) on which postfix will act as a relay server. this option prevents spammers from making use of your server to send harmful messages
+         + 'mynetworks_style = subnet
+       + clients from outside your subnet must be authorized to use the server to send emails to your domain and - optionally - to other domains that you choose to be their mail relay
+         + 'relay_domains = $mydestination'
+       + when your clients want to send emails to recipients in other domains, the server can either send the message directory to the MX machine of the destination domain, or ask another server (relay host) to do this host. A relay host may be your ISP
+         + 'relayhost = $mydomain'
+       + you can use user-friendly names instead of usernames by editing the '/etc/aliases' file. you have to run 'newaliases' command after you make any edits
+       + test your work my downloading a text-based mail client called mutt
+         'yum -y install mutt'
+       + send a test email message to one of the system users and use the '/var/log/maillog' message to troubleshoot any problems
+       + % vim /var/named/linuxadmin.dev.fwd.zone; # already created dns in previous sections'
+       + add 'linuxadmin.dev.  IN  MX  10  mail.linuxadmin.dev.'
+       + add 'mail  IN  A  <ip>'
+       + % vim /var/named/linuxadmin.dev.rev.zone
+       + add '252  IN  PTR  mail.linuxadmin.dev.'
+       + % vim /etc/postfix/main.cf
+       + add 'inet_interfaces = all'
+       + add 'mydomain = linuxadmin.dev'
+       + add 'myorigin = $mydomain'
+       + add 'mydestination = $myhostname, localhost.$mydomain, localhost, $mydomain'
+       + add 'mynetworks = subnet'
+       + add 'relay_domain = $mydestination'
+       + add 'relayhost = $mydomain'
+       + % service postfix reload
+       + % tail /var/log/maillog; # check for any errors
+       + % mutt; # text based mail client, useful for cronjobs
+       + 'M' To:root@linuxadmin.dev
+         Subject: Linux Admin Course
+         This is the email section of course
+         :wq
+         'Y'; # message sent
+       + % tail /var/log/maillog; # check for any error during mail sending
+       + % mutt; # check for message
+       + % vim /etc/aliases; # alias for each user
+       + add 'root:  user1'
+       + % newaliases; # reloads aliases file
+       + % su - user1
+       + % mutt
+       + send new message
+       + mail is delivered to user1 as we specified for the mail to be delivered to user1
 *** network management and debugging
 *** security
 *** ssh tips and tricks
