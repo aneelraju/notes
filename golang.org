@@ -1,0 +1,190 @@
+* golang
+** Learn How To Code: Google's Go (Golang) Programming Langauge - Todd McLeod
+*** Introduction
+**** Valuable Resources
+  + Books
+    + The Go Programming Language - Donovan and Kernighan
+    + Go In Action - William Kennedy, Brian Ketelson, Erik St. Martin
+    + https://www.golang-book.com - Caleb Doxsey
+    + Bill Kennedy's book
+    + https://gobyexample.com - Bill Kennedy
+    + https://golang.org/ref/spec - golang language spec
+    + https://golang.org/doc/effective_go.html - effective go
+    + blog.golang.org - golang blog
+  + Links
+    + Go here first - https://goo.gl/PHKg07
+    + https://golang.org - official golang site
+    + Presentations - https://goo.gl/Tbz6Xf
+    + Github code - https://goo.gl/KbUroF
+      + % git clone https://github.com/GoesToEleven/GolangTraining.git
+    + Youtube - https://www.youtube.com/user/toddmcleod
+    + Twitter - https://twitter.com/Todd_McLeod
+**** Why choose the Go programming language?
+  + Who made - Ken Thompson, Rob Pike and Robert Griesemer
+  + purpose: performant; multiple-cores; concurrency; compiled; network; clean syntax; powerful standard library; garbage collected; portable; backed by google; open source
+  + golang can be used for - webapps; network servers; mobile applications; machine learning; image processing; load balancers; system admin; hardware; scripts; crypto
+  + https://golang.org/doc/faq - golang FAQ's
+  + go at google - https://talks.golang.org/2012/splash.article
+  + Farewell Node.js - https://medium.com/@tjholowaychuk/farewell-node-js-4ba9e7f3e52b
+  + golang jobs - https://www.golangprojects.com
+  + companies using golang 
+    + https://github.com/golang/go/wiki/GoUsers
+    + https://www.quora.com/Other-than-Google-what-companies-are-using-Go-in-production
+  + talk 90% perfect, 100% of the time - https://talks.golang.org/2014/gocon-tokyo.slide#1
+  + still work to do - https://www.infoworld.com/article/2896575/google-go/googles-go-language-pros-and-cons.html
+  + go blog - https://blog.golang.org/qihoo
+**** Hello World!
+  + go playground - https://play.golang.org
+  + https://golang.org - official website; only standard library
+    + standard library - https://golang.org/pkg/#stdlib
+    + fmt package info - https://golang.org/pkg/fmt/
+    + fmt source code - https://golang.org/src/fmt/
+  + https://godoc.org - will have standard library and 3rd party library
+*** Installing Go
+**** The Terminal
+  + terminal emulator for windows - download and install git desktop and change settings to 'shell'
+    + open 'git shell' - you can start using linux commands
+**** Installation Insights
+  + https://golang.org/dl - golang downloads
+**** Go Workspace
+  + one folder - any name, any location
+    + bin
+    + pkg
+    + src
+      + github.com
+        + <github username>
+          + folder with code for project / repo
+          + folder with code for project / repo
+  + 'go get github.com/<username>/<projectname>' - install go package
+**** Environment Variables
+  + % env; # lists environment variables
+  + % go env; # go related environment variable
+    + two that need to be set are GOROOT and GOPATH
+**** Linux - Machine Setup
+  + www.aerospike.com - high performance nosql database
+  + https://github.com/Oralordos/Digitalocean-Golang-and-Aerospike - github resource
+    + tutorial to setupt Go and Aerospike in digitalocean
+    + try setup instructions given in README.md
+    + digital ocean login is as root, always create and run as user and give sudo permissions 
+      + setup digitalocean linux server
+        + % ssh root@<ip_address>
+        + % adduers <username>; # enter details and passwd
+        + % gpasswd -a <username> sudo; # adding <username> to group sudo
+        + % cd /home/<username>
+        + % mkdir .ssh
+        + % chmod 700 .ssh
+        + % vi .ssh/authorized_keys
+        + paste key (cat ~/.ssh/id_rsa.pub) and save the file
+        + % chmod 600 .ssh/authorized_keys
+        + % exit
+        + % ssh <username>@<ip_address>
+        + % vi /etc/ssh/sshd_config
+        + set the line 'PermitRootLogin' to 'no'; to restrict root access
+        + set 'PasswordAuthentication' to 'no'; to disable logging in with a passwd
+        + % service ssh restart; # restart ssh
+        + % sudo ufw allow ssh; # allow ssh through firewall ufw (uncompleted firewall)
+          + or % sudo ufw allow 22/tcp
+        + % sudo ufw show added
+        + % sudo ufw enable
+        + % sudo ufw status
+        + % sudo ufw status numbered; # can be used to delete via number (sudo ufw delete <number>)
+        + % date
+        + % sudo dpkg-reconfigure tzdata; # set timezone
+        + set timezone in gui settings
+        + % date
+        + % sudo apt-get update
+        + % sudo apt-get install ntp; # ntp will automatically place enable run on boot, ntp will sync time
+        + % sudo apt-get upgrade
+        + % sudo fallocate -l <size> /swapfile; # reserve the space; <size> recommended is equal to ram or double your ram
+        + % sudo chmod 600 /swapfile; # restrict access to root only
+        + % sudo mkswap /swapfile; # configure into a swapfile
+        + % sudo swapon /swapfile; # start using swapfile
+        + % sudo sh -c 'echo "/swafile none swap sw 0 0" >> /etc/fstab'; # setup automatically using he swapfile on boot; sh -c -> shell command
+        + fstab is run on boot
+        + % sudo poweroff
+        + in digital ocean console (after m/c is shutdown) under snapshot take a snapshot
+      + setup go server
+        + go is cross compile, GOOS=linux GOARCH=amd64 go build -> it will build 64-bit linux executable on mac; unless there is no c other code
+        + 'go help environment'; get help on environment variables
+        + % ssh root@<ip_address>; # start digital ocean m/c 
+        + % wget https://storage.googleapis.com/golang/go1.5.1.linux-amd64.tar.gz; # download go
+        + % tar -xzf <filename>; # extract go from the archive file
+        + % sudo mv go /usr/local/go; # move go to default install location
+        + % sudo chown root:root /usr/local/go; change owner to root and alter permissions
+        + % sudo chmod 755 /usr/local/go
+        + % mkdir gocode{,/bin,/pkg,/src}; # create workspace folder
+        + Add 'export PATH=$PATH:/usr/local/go/bin' to /etc/profile
+        + Add 'export GOPATH=$HOME/gocode' to ~/.profile
+        + Add 'export PATH=$PATH:$HOME/gocode/bin' to ~/.profile
+        + % rm <filename>; # remove archive file
+        + % sudo apt-get install git; # install git
+        + reconnect filewall to allow http connections
+        + % exit
+        + % ssh <username><@ip_address>
+        + % go version; # check go version
+        + % go env; # check go env variables
+        + % sudo ufw allow http; # or 'sudo ufw allow 80/tcp'
+        + % sudo ufw status; # check status
+        + % sudo ufw allow https; # or 'sudo ufw allow 443/tcp'
+        + % sudo apt-get install haproxy; # setup haproxy, haproxy is a load balancer
+        + edit '/etc/haproxy/haproxy.cfg'; configure haproxy
+        + Add 'retries 3' to the default section
+        + Add 'option redispatch' to the default section
+        + Add following block to the end of the file
+          '''
+          listen serv 0.0.0.0:80
+            mode http
+            option http-server-close
+            timeout http-keep-alive 3000
+            server serv 127.0.0.1:9000 check
+          '''
+        + for more info on haproxy setting - https://www.digitalocean.com/community/tutorials/how-to-use-haproxy-to-set-up-http-load-balancing-on-an-ubuntu-vps
+        + % sudo service haproxy reload; # reload haproxy
+        + % git clone https://github.com/Oralordos/Digitalocean-Golang-and-Aerospike.git; # get go code
+        + % cd Digitalocean-Golang-and-Aerospike
+        + % cd 01_helloWorld
+        + % go run testServer.go
+        + in browser <ip>; # you can see 'Hello World!'
+        + save the snapshot and shutdown the server in digital ocean
+*** Your Development Environment
+**** section overview
+  + some go commands - go, go env, go version, go get, go run, go build, go install
+  + editors - webstorm, atom.io
+**** go editors
+  + https://www.jetbrains.com/webstorm - webstorm link
+    + it's not free
+  + https://atom.io - atom link, made by github
+    + https://atom.io/packages/go-plus - go packages
+**** creating your first project
+  + % go fmt <file>; # formats go code
+  + https://medium.com/@arshamshirvani/super-charge-your-sublime-text-for-golang-development-3239d9c376bb - sublime go ide settings
+**** the go command & documentation
+  + % go help [command]; # go command help
+  + % go help [topic]; # go topic help
+  + % https://golang.org/doc/; # golang documentation
+  + % go build main.go; # build executables in current folder
+  + % go clean; # remove binary
+  + % go install; # build and puts in the <workspace>/bin
+**** understanding github
+  + github - code storage; code sharing; code collaboration; code versions; code searching; programmer assessing
+  + youtube -> How Linux is Built - go through video
+**** using github
+**** section review
+*** Computer Fundamentals
+*** Language Fundamentals
+*** Control Flow
+*** Functions
+*** Data Structures - Array
+*** Data Structures - Slice
+*** Data Structures - Map
+*** Data Structures - Struct
+*** Interfaces
+*** Concurrency
+*** Channels
+*** Applied Concurrency
+*** Concurrency Challenges
+*** Concurrency Resources
+*** Error Handling
+*** Farewell
+
+

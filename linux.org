@@ -1248,41 +1248,63 @@
        + 'umask octet' - syntax
        + it can be put in '.bash_profile' to make it the default value for each session
          + % umaks; # shows default permissions
-    + access control lists (acl)
-      + traditional permissions model for linux has some shortcomings, e.g. if i want a user that is not in my group to read a file that i created, yet i don't want the file to be word readable just to let that user have the required access? that's why acl was introduced
-      + they are supported by the filesystem so they must be turned on while mounting by using '-o acl' as a mount option
-        + % df -h; # list mounts
-        + % umount /mnt/; # unmount
-        + % mount -o acl /dev/sdb /mnt/; # mount with acl enabled
-        + % useradd user2
-        + % su - user1
-        + % touch /opt/securefile
-        + % ls -l /opt/securefile; # owner is user1
-        + % chmod 660 /opt/securefile
-        + % setfacl -m u:user2:r /opt/securefile
-        + % logout
-        + % su - user2
-        + % cd /opt/
-        + % ls -l
-        + % cat securefile; # can read file
-        + % su - user1
-        + % chmod 600 /opt/securefile; # removed read permissions
-        + % getfacl /opt/securefile; # get acl info
-        + % su - user2
-        + % cat /opt/securefile; # can't read file now as chmod overtakes acl
-        
-      + acl deals only with the nine permission bits of files setuid, setgid and the sticky bit are not implemented here
-      + 'setfacl user:username:permissions' - syntax of setting acl
-      + 'setfacl -m u:johndoe:r /path/to/file'
-      + 'setfacl -m g:admin:rx /path/to/file'
-      + '-R' - to make recursive permission changes
-      + 'getfacl /path/to/file' - to view the acl of a file or directory
+     + access control lists (acl)
+       + traditional permissions model for linux has some shortcomings, e.g. if i want a user that is not in my group to read a file that i created, yet i don't want the file to be word readable just to let that user have the required access? that's why acl was introduced
+       + they are supported by the filesystem so they must be turned on while mounting by using '-o acl' as a mount option
+         + % df -h; # list mounts
+         + % umount /mnt/; # unmount
+         + % mount -o acl /dev/sdb /mnt/; # mount with acl enabled
+         + % useradd user2
+         + % su - user1
+         + % touch /opt/securefile
+         + % ls -l /opt/securefile; # owner is user1
+         + % chmod 660 /opt/securefile
+         + % setfacl -m u:user2:r /opt/securefile
+         + % logout
+         + % su - user2
+         + % cd /opt/
+         + % ls -l
+         + % cat securefile; # can read file
+         + % su - user1
+         + % chmod 600 /opt/securefile; # removed read permissions
+         + % getfacl /opt/securefile; # get acl info
+         + % su - user2
+         + % cat /opt/securefile; # can't read file now as chmod overtakes acl
+     + acl deals only with the nine permission bits of files setuid, setgid and the sticky bit are not implemented here
+     + 'setfacl user:username:permissions' - syntax of setting acl
+     + 'setfacl -m u:johndoe:r /path/to/file'
+     + 'setfacl -m g:admin:rx /path/to/file'
+     + '-R' - to make recursive permission changes
+     + 'getfacl /path/to/file' - to view the acl of a file or directory
 *** adding new users
 *** storage
 *** periodic processes
 *** backups
 *** syslog and log files
 *** tcp/ip networking
+**** TCP/IP overview
+     + tcp/ip: the internet language
+       + protocol used for all major networking services like www and email systems
+       + it is used to interconnect machines across small, medium and huge networks. it's also the protocol that powers high level internet services like HTTP, FTP, POP, SMTP etc
+       + tcp/ip is adaptive architecture and not being owned by any company or person (non-proprietary)
+     + How do packets find their way around the network ?
+       + every network adapter has a Media Access Control number (MAC address). it's unique value supplied at manufacturing time. using MAC addresses to identify network devices is called Physical Addressing
+       + on very small networks, adapter listen for all the traffic passing through to determine whether or not data is intended for their own MAC address. Devices are joined by a device called hub (rarely used now)
+       + as networks get larger, a device is installed to ensure that packets get addressed only to their intended recipeints. it's called a switch
+       + as networks get larger, physical addressing becomes less effective. networks are segmented using Logical Addressing
+       + In logical addressing, each device is assigned a number called IP address. This number is unique across the subnet. Different subnets are connected through a device called a router
+       + TCP/IP supports both types of addressing
+     + what is a protocol ?
+       + a set of common rules that controls communication between two or more devices on a specific medium (wire or radio)
+       + a protocol uses the networking components and daemons on the operating system, the network hardware, and transmission medium to send or receive a message from a remote device
+       + a network aware application uses the TCP/IP stack to communicate with other applications
+       + the protocol defines the contents of each packet in a standard way that can be interpreted by the receiving device
+     + TCP/IP skeleton
+       + transmission control protocol/internet protocol (TCP/IP), a set of network protocols stacked over each other and designed to work with each other
+         + application layer: 
+**** the Link layer
+**** classless inter domain routing (CIDR)
+**** routing
 *** netfilter and ip tables
 *** dns: the domain name system
 *** the network file system
