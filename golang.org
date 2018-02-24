@@ -1,5 +1,5 @@
 * golang
-** Learn How To Code: Google's Go (Golang) Programming Langauge - Todd McLeod
+** udemy - Learn How To Code: Google's Go (Golang) Programming Langauge - Todd McLeod
 *** Introduction
 **** Valuable Resources
   + Books
@@ -68,8 +68,9 @@
     + digital ocean login is as root, always create and run as user and give sudo permissions 
       + setup digitalocean linux server
         + % ssh root@<ip_address>
-        + % adduers <username>; # enter details and passwd
+        + % adduser <username>; # enter details and passwd
         + % gpasswd -a <username> sudo; # adding <username> to group sudo
+        + % su <username>
         + % cd /home/<username>
         + % mkdir .ssh
         + % chmod 700 .ssh

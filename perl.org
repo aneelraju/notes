@@ -1,0 +1,89 @@
+* perl programming
+** udemy - enhance your skill set with perl - darryl pace
+*** introduction
+**** introduction
+    + three foundation pillar of information technology
+      + 1. networking
+      + 2. computer architecture
+      + 3. programming
+*** getting started: finding or installing perl on your computer
+**** finding perl on a unix or linux computer
+    + % which perl; # shows perl path
+    + % find /bin /sbin /usr -name perl; # find perl
+    + % perl -v; which version
+**** downloading perl onto a unix or linux computer
+    + www.cpan.org - perl download site, cpan - comprehensive perl archive network
+    + % wget http://www.cpan.org/src/5.0/perl-5.26.1.tar.gz
+    + % tar -xzf perl-5.26.1.tar.gz
+    + % cd perl-5.26.1
+    + % ./Configure -des -Dprefix=$HOME/localperl
+    + % make
+    + % make test
+    + % make install
+*** creating your first perl program
+**** hello, world, broken down
+    + 07_hello.pl
+**** running hello, world
+    + % cd work
+    + % chmod u+x 01_hello.pl
+    + % ./07_hello.pl
+*** introduction to storing data in your perl programs
+**** typing data into your perl program -- "literals"
+    + % view hello.pl; opens file in read only mode
+    + string - a sequence of zero or more characters
+    + literal - data typed into a program
+      + number literals
+        + floating point
+        + decimal
+      + string literals
+**** a literal program for you
+    + % cd work
+    + % chmod u+x 09_literals.pl
+    + % ./09_literals.pl
+**** a single value in perl is a...scalar!
+    + scalar - one piece of data in perl
+      + can be acted on with operators
+      + can be stored
+      + can be read from a file or written to a file
+    + numeric scalar examples
+      + integers
+      + floating points
+      + non-decimal (0144, 0x64, 0b1100100)
+    + numeric scalar operators (+, -, *, /, %)
+**** doing simple math in your perl program with the calorie calculation exercise
+    + 
+**** calorie calculation exercise key
+**** a look at scalar strings
+**** scalar string exercise and solution
+
+*** arithmetic and alphabetic (string) operations
+
+*** a little more math and making comparisons
+
+*** introducing the while loop
+
+*** working with arrays in perl
+
+*** perl subroutines
+
+*** perl input and output
+
+*** the "hash"
+
+*** regular expressions
+
+*** more control structures
+
+*** ready-made perl code for you -- i.e. modules
+
+*** a most powerful perl capability -- references
+
+*** file tests -- getting information about files
+
+*** working with directories
+
+*** advanced sorting
+
+*** conclusion
+
+
