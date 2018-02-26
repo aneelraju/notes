@@ -51,7 +51,8 @@
       + non-decimal (0144, 0x64, 0b1100100)
     + numeric scalar operators (+, -, *, /, %)
 **** doing simple math in your perl program with the calorie calculation exercise
-    + 
+    + % cd work && chmod u+x 12_quickAndEasy.pl
+    + % ./12_quickAndEasy.pl
 **** calorie calculation exercise key
 **** a look at scalar strings
 **** scalar string exercise and solution
