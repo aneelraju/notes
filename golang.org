@@ -169,9 +169,49 @@
 **** understanding github
   + github - code storage; code sharing; code collaboration; code versions; code searching; programmer assessing
   + youtube -> How Linux is Built - go through video
-**** using github
-**** section review
 *** Computer Fundamentals
+**** how computers work - part I
+  + youtube tood mcleod channel playlist
+**** github update command
+  + % cd $GOPATH
+  + % go get -u github.com/goestoeleven/golangtraining
+  + % go help get; # go get help
+**** text encoding
+  + ASCII - American Standard Code for Information Interchange
+  + UTF-8 - based on unicode, stores 1~8 bytes, popular coding schemes
+    + first letters are ASCII
+    + youtube video - "Characters, Symbols and the Unicode Miracle - Computerphile"
+**** coding scheme programs
+  + decimal
+    + % cd work/01_getting-started/02_numeral-systems/01_decimal
+    + % go fmt
+    + % go run main.go
+  + binary
+    + % cd work/01_getting-started/02_numeral-systems/02_binary
+    + % go fmt
+    + % go run main.go
+  + for print formats: https://godoc.org/fmt
+  + hexadecimal
+    + % cd work/01_getting-started/02_numeral-systems/03_hexadecimal
+    + % go fmt
+    + % go run main.go
+  + loop
+    + % cd work/01_getting-started/02_numeral-systems/04_loop
+    + % go fmt
+    + % go run main.go
+  + https://golang.org/ref/spec - go language spec
+  + https://golang.org/doc/effective_go.html - effective go
+**** format printing
+  + UTF-8
+    + % cd work/01_getting-started/03_UTF-8
+    + % go fmt
+    + % go run main.go
+**** section review 
+  + % git status
+  + % git add --all
+  + % git status
+  + % git commit -m "adds changes to 01 getting started folder"
+  + % git push
 *** Language Fundamentals
 *** Control Flow
 *** Functions
