@@ -213,6 +213,63 @@
   + % git commit -m "adds changes to 01 getting started folder"
   + % git push
 *** Language Fundamentals
+**** section overview
+  + https://www.ardanlabs.com/ultimate-go - good go training
+    + by william kennedy (author of go in action)
+  + https://github.com/ardanlabs/gotraining
+  + goinggo.net - william kennedy blog
+**** packages
+  + one folder, many files
+    + package declaration in every file
+    + package scope
+      + something in one file is accessible to another file
+    + imports have file scope
+  + exported/unexported
+    + we don't say (generally speaking): public/private
+    + capitalization
+      + capitalize: exported, visible outside the package
+      + lowercase: unexported, not visible outside the package
+    + % cd work/02_package/main
+    + % go run main.go
+**** go commands
+  + % cd main/02_package/main
+  + % go run main.go
+  + % go build; # puts executable in the main package
+  + % go clean; # removes executable
+  + % go install; # puts executable in $GOPATH/bin
+**** variables
+  + shorthand variables, can only be used inside func
+    + % cd work/03_variables/01_shorthand/01
+    + % go fmt
+    + % go run main.go
+  + var - zero value
+    + % cd work/03_variables/02_var_zero-value
+    + % go fmt
+    + % go run main.go  
+  + type format verb: %T
+    + % cd work/03_variables/01_shorthand/02
+    + % go fmt
+    + % go run main.go
+  + declare, assign, initialize
+  + look at all examples in 03_less-emphasis folder - these are less recommended ways to declare, assign and initialize variables
+**** scope
+  + levels of scope: universe, package, file, block (curly braces)
+  + {} - braces; [] - brackets; () - parentheses
+  + package level scope: for variables, not for imports
+  + file level scope: imports
+  + keep your scope tight, don't want to expose outside where you don't want to use
+**** scope II
+**** closure
+**** langage spec
+**** blank identifier
+**** constants
+**** constants II
+**** words of encouragement
+**** memory addresses
+**** pointers
+**** using pointers
+**** remainder
+**** section review
 *** Control Flow
 *** Functions
 *** Data Structures - Array
