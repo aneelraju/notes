@@ -258,9 +258,20 @@
   + package level scope: for variables, not for imports
   + file level scope: imports
   + keep your scope tight, don't want to expose outside where you don't want to use
-**** scope II
+  + https://golang.org/ref/spec#Declarations_and_scope - scope info to golang spec
+  + https://www.golang-book.com/books/web/01-02#scope - scope info in golang book
+  + % cd work/04_scope/01_package-scope/01; % go fmt; % go run main.go
+  + % cd work/04_scope/01_package-scope/02_visibility/main; % go fmt; % go run main.go
+  + % cd work/04_scope/02_block-scope/01-this-does-not-compile; % go fmt; % go run main.go
+  + % cd work/04_scope/03_order-matters; % go fmt; % go run main.go
+  + % cd work/04_scope/04_variable-shadowing; % go fmt; % go run main.go
 **** closure
+  + % cd work/04_scope/02_block-scope/02_clousre/01; % go fmt; % go run main.go
+  + % cd work/04_scope/02_block-scope/02_clousre/02; % go fmt; % go run main.go
+  + % cd work/04_scope/02_block-scope/02_clousre/03; % go fmt; % go run main.go
+  + % cd work/04_scope/02_block-scope/02_clousre/04; % go fmt; % go run main.go
 **** langage spec
+  + 
 **** blank identifier
 **** constants
 **** constants II
