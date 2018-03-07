@@ -5,12 +5,22 @@
   + Books
     + The Go Programming Language - Donovan and Kernighan
     + Go In Action - William Kennedy, Brian Ketelson, Erik St. Martin
-    + https://www.golang-book.com - Caleb Doxsey
-    + Bill Kennedy's book
+      + Bill Kennedy's book
     + https://gobyexample.com - Bill Kennedy
+    + https://www.golang-book.com - Caleb Doxsey
+    + https://www.programming-books.io/essential/go/
+      + guiding principles behind essential books
+        + driven by examples
+        + not limited in size like a traditional book
+        + articles are cross-linked
+        + search friendly
+      + https://github.com/essentialbooks/books/blob/master/how-to-contribute.md - to contribute
     + https://golang.org/ref/spec - golang language spec
     + https://golang.org/doc/effective_go.html - effective go
     + blog.golang.org - golang blog
+    + http://exercism.io - download and solve practice problems in over 30 different languages
+      + http://exercism.io/languages/go/about - Golang exerices
+        + https://github.com/exercism/cli
   + Links
     + Go here first - https://goo.gl/PHKg07
     + https://golang.org - official golang site
@@ -19,6 +29,49 @@
       + % git clone https://github.com/GoesToEleven/GolangTraining.git
     + Youtube - https://www.youtube.com/user/toddmcleod
     + Twitter - https://twitter.com/Todd_McLeod
+  + Opensource projects of golang
+    + Docker - Software containerization Technology
+      + https://github.com/docker/docker
+    + Kubernetes - Orchestration for Docker
+      + https://github.com/GoogleCloudPlatform/kubernetes
+    + Etcd and Fleet - Fleet: Single init system; Etcd: Distributed key-value store
+      + https://github.com/coreos/etcd
+    + Deis - Heroku-esque PaaS
+      + https://github.com/deis/deis
+    + Flynn - Opensource Platform as a Service
+      + https://github.com/flynn/Flynn
+    + Lime 
+      + https://github.com/limetext/lime
+    + Revel - High-Productivity, full-stack web framework
+      + https://github.com/revel/revel
+    + InfluxDB - Distributed time series database with no external dependencies
+      + https://github.com/influxdb/influxdb
+    + Syncthing - Protocol for synchronzing folders between multiple devices
+      + https://github.com/syncthing/syncthing
+    + Gogs (Go Git Service) - Host Git like service on your own hardware
+      + https://github.com/gogits/gogs
+    + Cockroach - Cloud-native SQL database for building global, scalable cloud services
+      + https://github.com/cockroachdb/cockroach
+    + go-github - go client library for accessing GitHub API v3
+      + https://github.com/google/go-github
+    + golang/net - supplementary Go networking libraries
+      + https://github.com/golang/net
+    + packer - tool to build identical machine images for mulitple platforms from a single source configuration
+      + https://github.com/hashicorp/packer
+    + drone - continuous delivery system built on container technology
+      + https://github.com/drone/drone
+    + golearn - machine library for go
+      + https://github.com/sjwhitworth/golearn
+    + nsq - realtime distributed messaging platform
+      + https://github.com/nsqio/nsq
+    + goconvey - go testing tool
+      + https://github.com/smartystreets/goconvey
+    + go tools - packages and tools that support golang
+      + https://github.com/golang/tools
+    + consul - tool for service discovery and configuration
+      + https://github.com/hashicorp/consul
+    + terraform - tool for building, changing and versioning infrastructure
+      + https://github.com/hashicorp/terraform
 **** Why choose the Go programming language?
   + Who made - Ken Thompson, Rob Pike and Robert Griesemer
   + purpose: performant; multiple-cores; concurrency; compiled; network; clean syntax; powerful standard library; garbage collected; portable; backed by google; open source
@@ -271,17 +324,50 @@
   + % cd work/04_scope/02_block-scope/02_clousre/03; % go fmt; % go run main.go
   + % cd work/04_scope/02_block-scope/02_clousre/04; % go fmt; % go run main.go
 **** langage spec
-  + 
+  + https://golang.org/ref/spec#Declarations_and_scope
+  + https://golang-book.com/books/web/01-02#scope
 **** blank identifier
+  + allows you to tell the compiler you aren't using something
+  + % cd work/05_blank-identifier/02_http-get_example/02_no-error-checking; % go fmt; % go run main.go
 **** constants
-**** constants II
-**** words of encouragement
+  + % cd work/06_cosntants/01_constant; % go fmt; % go run main.go
+  + % cd work/06_constants/02_multiple-initialization; % go fmt; % go run main.go
+  + https://godoc.org/math - Unlike other languages, const don't have to be all caps in Go
+  + % cd work/06_constants/03_iota; % go fmt; % go run
+  + % cd work/06_constants/04_iota; % go fmt; % go run
+  + % cd work/06_constants/05_iota; % go fmt; % go run
+  + % cd work/06_constants/06_iota; % go fmt; % go run
+  + https://blog.golang.org/constants - blog on constants (written by Rob Pike) 
 **** memory addresses
+  + https://www.youtube.com/user/toddmcleod -> playlist -> week 03 - computer concepts -> In class lecture - CIT - 15 Week 03
+    + talks about memory addresses
+  + % cd work/07_memory-address/01_showing-address; % go fmt; % go run main.go
+  + % cd work/07_memory-address/02_using-address; % go fmt; % go run main.go
 **** pointers
-**** using pointers
+  + % cd work/08_pointers/01_referencing; % go fmt; % go run main.go
+  + % cd work/08_pointers/02_dereferencing; % go fmt; % go run main.go
+  + % cd work/08_pointers/03_using-pointers; % go fmt; % go run main.go
+  + % cd work/08_pointers/04_using-pointers/01_no-pointer/01; % go fmt; % go run main.go
+  + % cd work/08_pointers/04_using-pointers/01_no-pointer/02_see-the-addresses; % go fmt; % go run main.go
+  + % cd work/08_pointers/04_using-pointers/02_pointer/01; % go fmt; % go run main.go
+  + % cd work/08_pointers/04_using-pointers/02_pointer/02_see-the-addresses; % go fmt; % go run main.go
 **** remainder
+  + % cd work/09_remainder; % go fmt; % go run main.go
 **** section review
+  + malcom gladwell's "Outliers: The Story of Success" book
+    + time on task with right coaches/teachers    
 *** Control Flow
+**** section overview
+**** for loop
+**** nested loops
+**** conditions, break & continue
+**** documentation & terminology
+**** rune
+**** string type
+**** switch statements
+**** if statements
+**** exercise solutions
+**** section review
 *** Functions
 *** Data Structures - Array
 *** Data Structures - Slice
