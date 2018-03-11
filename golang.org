@@ -2,7 +2,7 @@
 ** udemy - Learn How To Code: Google's Go (Golang) Programming Langauge - Todd McLeod
 *** Introduction
 **** Valuable Resources
-  + Books
+  + Books/Resources
     + The Go Programming Language - Donovan and Kernighan
     + Go In Action - William Kennedy, Brian Ketelson, Erik St. Martin
       + Bill Kennedy's book
@@ -21,6 +21,9 @@
     + http://exercism.io - download and solve practice problems in over 30 different languages
       + http://exercism.io/languages/go/about - Golang exerices
         + https://github.com/exercism/cli
+    + https://forum.golangbridge.org/
+      + q&a forum on go programming
+    + https://dave.cheney.net - Dave Cheney's blog
   + Links
     + Go here first - https://goo.gl/PHKg07
     + https://golang.org - official golang site
@@ -358,12 +361,32 @@
     + time on task with right coaches/teachers    
 *** Control Flow
 **** section overview
+  + computer read programs
+    + in sequence
+    + loop/iterative: for, bool, do-while, continue, nested
+    + conditionals: switch/case, if
 **** for loop
+  + https://golang.org/ref/spec#For_statements - language spec
+  + https://golang.org/doc/effective_go.html#for - effective go (easy to understand)
+  + Generally, I'm a doer. I do it and then read the theory
+  + % cd work/10_for-loop/01_init-condition-post; % go fmt; % go run main.go
 **** nested loops
+  + % cd work/10_for-loop/02_nested; % go fmt; % go run main.go
 **** conditions, break & continue
+  + % cd work/10_for-loop/03_for-condition-while-ish; % go fmt; % go run main.go
+  + % cd work/10_for-loop/04_for_no-condition; % go fmt; % go run main.go
+  + % cd work/10_for-loop/05_for_break; % go fmt; % go run main.go
+  + % cd work/10_for-loop/06_for_continue; % go fmt; % go run main.go
 **** documentation & terminology
+  + UTF - world most popular coding scheme; UTF-8 is a 4 byte coding scheme  
+  + rune is character, an integer value identifying a unicode code of point
+    + also an alias for int32 (like byte alias of int8)
 **** rune
+  + % cd work/10_for-loop/07_rune-loop_UTF8/01; % go fmt; % go run main.go
+  + % cd work/10_for-loop/07_rune-loop_UTF8/02; % go fmt; % go run main.go
 **** string type
+  + 'i' represents code point (in single quotes)
+  + 
 **** switch statements
 **** if statements
 **** exercise solutions
