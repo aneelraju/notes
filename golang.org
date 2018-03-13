@@ -386,9 +386,25 @@
   + % cd work/10_for-loop/07_rune-loop_UTF8/02; % go fmt; % go run main.go
 **** string type
   + 'i' represents code point (in single quotes)
-  + 
+  + 'text' - raw string (un-interpreted) type; "text" - interpreted string type
+  + single quotes for runes and double-quotes and backslash for strings
+  + string is a collection of runes
+  + % cd work/99_svcc/01_string-to-html; % go fmt; % go run main.go
 **** switch statements
+  + % cd work/11_switch-statements/01_switch; % go fmt; % go run main.go
+  + % cd work/11_switch-statements/02_fallthrough; % go fmt; % go run main.go
+  + % cd work/11_switch-statements/03_multiple-evals; % go fmt; % go run main.go
+  + % cd work/11_switch-statements/04_no-expression; % go fmt; % go run main.go
+  + % cd work/11_switch-statements/05_on-type; % go fmt; % go run main.go
 **** if statements
+  + % cd work/12_if_else-if_else/01_eval-true; % go fmt; % go run main.go
+  + % cd work/12_if_else-if_else/02_not-exclamation; % go fmt; % go run main.go
+  + % cd work/12_if_else-if_else/03_init-statement; % go fmt; % go run main.go
+  + % cd work/12_if_else-if_else/04_init-statement-error-invalid-code; % go fmt; % go run main.go
+  + % cd work/12_if_else-if_else/05_if-else; % go fmt; % go run main.go
+  + % cd work/12_if_else-if_else/06_if-elseif-else; % go fmt; % go run main.go
+  + % cd work/12_if_else-if_else/07_if-elseif-elseif-else; % go fmt; % go run main.go
+  + % cd work/12_if_else-if_else/08_divisibleByThree; % go fmt; % go run main.go
 **** exercise solutions
 **** section review
 *** Functions
