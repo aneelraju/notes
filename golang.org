@@ -406,8 +406,36 @@
   + % cd work/12_if_else-if_else/07_if-elseif-elseif-else; % go fmt; % go run main.go
   + % cd work/12_if_else-if_else/08_divisibleByThree; % go fmt; % go run main.go
 **** exercise solutions
+  + % go fmt ./... ; # formats go file under each directory
+  + % cd work/13_exercise-solutions/01_hello-world; % go fmt; % go run main.go
+  + % cd work/13_exercise-solutions/02_hello-NAME; % go fmt; % go run main.go
+  + % cd work/13_exercise-solutions/03_hello-user-inpute; % go fmt; % go run main.go
+  + % cd work/13_exercise-solutions/04_hello-user-enters-numbers; % go fmt; % go run main.go
+  + % cd work/13_exercise-solutions/05_even-numbers; % go fmt; % go run main.go
+  + % cd work/13_exercise-solutions/06_fizzBuzz; % go fmt; % go run main.go
+  + % cd work/13_exercise-solutions/07_threeFive; % go fmt; % go run main.go
 **** section review
+  + if learning something new. Small consistent effort paysoff more than large inconsistent effort
 *** Functions
+**** Section overview
+**** Intro To Functions
+**** Func Returns
+**** Variadic Functions
+**** Variadic Arguments
+**** Func Expressions
+**** Closure
+**** Callbacks
+**** Callback Example
+**** Recursion
+**** Defer
+**** Pass By Value
+**** Reference Types
+**** Anonymouse Self-Executing Functions
+**** Bool Expressions
+**** Exercises - Part I
+**** Exercises - Part II
+**** Exercises - Part III
+**** Section Review
 *** Data Structures - Array
 *** Data Structures - Slice
 *** Data Structures - Map
