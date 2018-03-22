@@ -449,4 +449,205 @@
 *** Error Handling
 *** Farewell
 
-
+** udemy - Web Development w/ Google's Go (golang) Programming Langauge - Todd McLeod
+*** Getting started
+**** Why choose Go (golang) for web development?
+  + Server-side: #1 Go; #2 Node.js; #3 Python; #4 Ruby; #5 PHP
+  + Go takes advantage of multiple cores
+  + Fast build, Fast execution and Ease of programming
+  + Easy concurrency based upon Tony Hoare's CSP
+  + Compiled, static type, GC
+  + Developed at Google by Rob Pike, Ken Thompson, Robert Griesemer
+**** Course prerequisites
+  + CLI; github; HTML/CSS; Go Programming
+  + Courses (by Todd McLeod)
+    + HTML/CSS - How to Create A Website: An HTML Tutorial and CSS Tutorial (udemy)
+    + Learn How To Code: Google's Go (golang) Programming Language (udemy)
+**** Course resources
+  + resources
+    + https://docs.google.com/document/d/1jfU8-3qxrWWP9KVxrNPA77KDzRStE6bakqKUzFDJArQ/edit - resources doc
+    + forums
+      + https://forum.golangbridge.org
+      + subscribe to Go on http://stackoverflow.com/
+    + github code
+      + Go langauge fundamentals
+        + https://github.com/GoesToEleven/GolangTraining
+      + Go web programming
+        + https://github.com/GoesToEleven/golang-web-dev
+    + course outline
+      + https://docs.google.com/document/d/1QKWp1VYd26uiQZWIR05pahSa0HnbD1qqj9dtIQiVVjU/edit
+    + follow me
+      + https://twitter.com/Todd_McLeod - twitter
+      + https://goo.gl/kWyztP - google+
+      + https://www.youtube.com/user/toddmcleod - youtube
+    + books
+      + go web programming - sau sheong chang
+      + introducing go - caleb doxsey
+      + an introduction to programming in go - caleb doxsey
+        + www.golang-book.com
+      + the way to go - ivo balbaert
+      + go in action (Intermediate) - william kennedy
+      + the go programming language (Advanced) - brian w. kernighan
+    + free trainings
+      + my lectures
+        + youtube playlist
+          + https://www.youtube.com/playlist?list=PLSak_q1UXfPpXj-q1BeucvBAlNdotQWVD
+        + code base
+          + https://github.com/GoesToEleven/golang-web-dev
+      +  caleb doxsey's lectures
+        + youtube playlist
+          + https://www.youtube.com/playlist?list=PLSak_q1UXfPrI6D67NF8ajfeJ6f7MH83S
+        + code base
+          + https://github.com/golang-book/bootcamp-examples
+      + ardan training 
+        + Bill kennedy's Ardan lab "ultimate Go" training
+          + https://www.ardanlabs.com/ultimate-go
+**** Language review
+  + README.md
+    + https://github.com/GoesToEleven/golang-web-dev/tree/master/001_prereq
+  + variables
+    + short variables declaration operator
+    + using the var keyword to declare a variable
+    + scope
+  + data structures
+    + slice
+    + map
+    + struct
+      + composite literal
+  + functions
+    + func (receiver) identifier (parameters) (returns) {<code>}
+    + methods
+  + composition
+    + embedded types
+    + interfaces
+    + polymorphism
+    + good article on composite
+      + https://www.ardanlabs.com/blog/2015/09/composition-with-go.html
+  + % cd work/001_prereq/01; % go fmt; % go run fmt
+  + Hands-on exercises
+    + https://docs.google.com/document/d/12sT08F4UCQaXdankN9B8pV9GubL04306Ddt-0lQ3nsU/edit
+    + https://docs.google.com/document/d/1AqD-5yfAw8P1aUwH6-07UTHc0FSSAnW9b44sXJEVoag/edit
+    + use https://play.golang.org/
+**** How to succeed
+  + focus and commitment - one important characteristic for success (Warren Buffet, Bill Gates)
+  + Priorities, Commitment and Focus
+    + What is important to you in your life ? Priortize
+    + Can you give time everyday to that which is important ? Commitment
+    + Give time to the important everyday. Focus
+  + drop by drop bucket fills. small continuous efforts pays off 
+  + 7 principles of highly effective people - stephen covey
+*** Templates
+**** Understanding templates
+  + README.md
+    + https://github.com/GoesToEleven/golang-web-dev/tree/master/002_template
+  + A template allows us to create one document and then merge data with it
+  + Web templates allow us to server personalized results to users
+  + We are learning about templates so that we can create one document, a web
+  page and then merge customized data to that page
+  + packages: "text/template"; "html/template"
+    + https://godoc.org/text/template
+    + https://godoc.org/html/template
+**** Templating with concatenation
+  + README.md
+    + https://github.com/GoesToEleven/golang-web-dev/tree/master/003_string-to-html
+  + % cd work/003_string-to-html/01_stdout; % go fmt; % go run main.go > index.html
+    + open index.html in browser
+  + % cd work/003_string-to-html/02_file; % go fmt; % go run main.go
+    + open index.html in browser
+  + % cd work/003_string-to-html/03_os-Args; % go fmt; % go run main.go Todd
+    + open index.html in browser
+**** Understanding package text/template: parsing & executing templates
+  + README.md
+    + https://github.com/GoesToEleven/golang-web-dev/tree/master/004_parse_execute
+  + % cd work/004_parse_excute/01_stdout; % go fmt; % go rum main.go > index.html
+  + % cd work/004_parse_excute/02_file; % go fmt; % go rum main.go
+  + % cd work/004_parse_excute/03_ParseFiles; % go fmt; % go rum main.go
+  + % cd work/004_parse_excute/04_ParseGlob; % go fmt; % go rum main.go
+  + % cd work/004_parse_excute/05_performant-parsing_func-init; % go fmt; % go rum main.go
+**** Passing data into templates
+  + README.md
+    + https://github.com/GoesToEleven/golang-web-dev/tree/master/005_data
+  + % cd work/005_data/01; % go fmt; % go run main.go
+**** Variables in templates
+  + README.md
+    + https://github.com/GoesToEleven/golang-web-dev/tree/master/006_variable
+  + % cd work/006_variable/01; % go fmt; % go run main.go
+**** Passing composite data structures into templates
+  + README.md
+    + https://github.com/GoesToEleven/golang-web-dev/tree/master/007_data-structures
+  + 'go fmt ./...' - format all code inside directories
+  + % cd work/007_data-structures/01_slice/01; % go fmt; % go run main.go
+  + % cd work/007_data-structures/01_slice/02_variable; % go fmt; % go run main.go
+  + % cd work/007_data-structures/02_map/01; % go fmt; % go run main.go
+  + % cd work/007_data-structures/02_map/02_variable; % go fmt; % go run main.go
+  + % cd work/007_data-structures/03_struct/01; % go fmt; % go run main.go
+  + % cd work/007_data-structures/03_struct/02_variable; % go fmt; % go run main.go
+  + % cd work/007_data-structures/04_slice-struct; % go fmt; % go run main.go
+  + % cd work/007_data-structures/05_struct-slice-struct/01; % go fmt; % go run main.go
+  + % cd work/007_data-structures/05_struct-slice-struct/02_refactored; % go fmt; % go run main.go 
+**** Functions in templates
+  + README.md
+    + https://github.com/GoesToEleven/golang-web-dev/tree/master/008_func\
+  + % cd work/008_func/01; % go fmt; % go run main.go
+**** Pipelines in templates
+  + % cd work/008_func/02_date-formatting; % go fmt; % go run main.go
+    + README.md
+      + https://github.com/GoesToEleven/golang-web-dev/tree/master/008_func/02_date-formatting
+    + godoc.org/time
+  + % cd work/008_func/03_pipeline; % go fmt; % go run main.go
+  + % cd work/008_func/04_pipeline; % go fmt; % go run main.go
+**** Predefined global functions in templates
+  + README.md
+    + https://github.com/GoesToEleven/golang-web-dev/tree/master/009_predefined-global-functions
+  + https://godoc.org/text/template#hdr-Functions
+  + % cd work/009_predefined-global-functions/01_index/01; % go fmt; % go run main.go
+  + % cd work/009_predefined-global-functions/01_index/02; % go fmt; % go run
+  + % cd work/009_predefined-global-functions/02_and; % go fmt; % go run
+  + % cd work/009_predefined-global-functions/03_comparison; % go fmt; % go run
+**** Nesting templates - modularizing your code
+  + README.md
+    + https://github.com/GoesToEleven/golang-web-dev/tree/master/010_nested-templates
+  + {{/* a comment *./}} - comment in template
+  + % cd work/010_nested-templates/01_nested-templates; % go fmt; % go run main.go
+  + % cd work/010_nested-templates/02_data-to-template; % go fmt; % go run main.go
+  + % cd work/010_nested-templates/03_define-template; % go fmt; % go run main.go > default.html
+    + open default.html in browser
+    + svg - take "How to Create A Website: And HTML Tutorial and CSS Tutorial"
+  + % cd work/010_nested-templates/04_preview; % go fmt; % go run main.go
+    + run server
+    + open 'localhost:8080' in browser
+    + this is preview to what we are going to learn
+**** Passing data into templates & composition
+  + composition vs inheritance
+    + https://en.wikipedia.org/wiki/Composition_over_inheritance
+  + README.md
+    + https://github.com/GoesToEleven/golang-web-dev/tree/master/011_composition-and-methods
+  + Composition with Go
+    + https://www.ardanlabs.com/blog/2015/09/composition-with-go.html
+  + % cd work/011_composition-and-methods/01; % go fmt; % go run main.go
+  + % cd work/011_composition-and-methods/02; % go fmt; % go run main.go
+  + % cd work/011_composition-and-methods/03; % go fmt; % go run main.go
+**** using methods in templates
+  + % cd work/011_composition-and-methods/04_method; % go fmt; % go run main.go
+**** hands-on exercies
+  + README.md
+    + https://github.com/GoesToEleven/golang-web-dev/tree/master/012_hands-on
+  + 
+**** using package html/template, character escaping, & cross-site scripting
+  + "html/template" is built on top of "text/template"
+*** Creating your own server
+*** Understanding net/http package
+*** Understanding routing
+*** Serving files
+*** Deploying your site
+*** Creating state
+*** Creating sessions
+*** Amazon Web Services
+*** Relational Databases
+*** Scaling On AWS
+*** Photo Blog
+*** Web Dev Toolkit
+*** Go & Mongodb
+*** Docker
+*** PostgreSQL
+*** MongoDB
