@@ -632,9 +632,19 @@
 **** hands-on exercies
   + README.md
     + https://github.com/GoesToEleven/golang-web-dev/tree/master/012_hands-on
-  + 
+  + % cd work/012_hands-on/01_hands-on_solution; % go fmt; % go run main.go > index.html
+  + % cd work/012_hands-on/03_hands-on_solution/01; % go fmt; % go run main.go > index.html
+  + % cd work/012_hands-on/03_hands-on_solution/02; % go fmt; % go run main.go > index.html
+  + % cd work/012_hands-on/03_hands-on_solution/03; % go fmt; % go run main.go > index.html
+  + % cd work/012_hands-on/05_hands-on_solution/01; % go fmt; % go run main.go > index.html
+  + % cd work/012_hands-on/05_hands-on_solution/02; % go fmt; % go run main.go > index.html
+  + % cd work/012_hands-on/07_hands-on_solution; % go fmt; % go run main.go > index.html
+  + % cd work/012_hands-on/09_hands-on_solution; % go fmt; % go run main.go
+    + localhost:8080; open in browser
 **** using package html/template, character escaping, & cross-site scripting
   + "html/template" is built on top of "text/template"
+  + % cd work/013_xss/01_text-template_no-escaping; % go fmt; % go run main.go > index.html
+  + % cd work/013_xss/01_text-template_escaping; % go fmt; % go run main.go > index.html
 *** Creating your own server
 *** Understanding net/http package
 *** Understanding routing
