@@ -658,6 +658,75 @@
 *** Photo Blog
 *** Web Dev Toolkit
 *** Go & Mongodb
+**** organizing code into packages
+  + Articles by Steven White
+    + https://stevenwhite.com/building-a-rest-service-with-golang-1/
+    + https://stevenwhite.com/building-a-rest-service-with-golang-2/
+    + https://stevenwhite.com/building-a-rest-service-with-golang-3/
+  + HttpRouter is a lightweight high performance HTTP request router for Go
+    + https://github.com/julienschmidt/httprouter - github
+    + https://godoc.org/github.com/julienschmidt/httprouter - godoc
+  + % cd work/042_mongodb/01_julienschmidt-router; % go run main.go; # start server
+    + % curl http://localhost:8080
+  + % cd work/042_mongodb/02_json; % go run main.go; # start server
+    + % curl http://localhost:8080/user/1
+**** create user & delete user
+  + % cd work/042_mongodb/03_post-delete; % go run main.go; # start server
+    + % curl http://localhost:8080/user/1; # GET
+    + % curl -X POST -H "Content-Type: application/json" -d '{"Name":"James Bond","Gender":"male","Age":32,"Id":"777"}' http://localhost:8080/user; # POST
+      // -X is short for --request Specifies a custom request method to use when communicating with the HTTP server.
+      // -H is short for --header
+      // -d is short for --data
+    + % curl -X DELETE -H "Content-Type: application/json" http://localhost:8080/user/777
+**** MVC design pattern - model view controller
+  + % cd work/042_mongodb/04_controllers; % go run main.go; # start server
+    + % curl http://localhost:8080/user/1; # GET
+    + % curl -X POST -H "Content-Type: application/json" -d '{"Name":"James Bond","Gender":"male","Age":32,"Id":"777"}' http://localhost:8080/user; # POST
+    + % curl -X DELETE -H "Content-Type: application/json" http://localhost:8080/user/777
+**** install mongodb
+  + https://www.mongodb.com/download-center?jmp=nav#community - download mongodb
+  + https://docs.mongodb.com/manual/tutorial/install-mongodb-on-os-x/?_ga=2.31841150.1178288608.1522942008-838338378.1522942008 - macOS install with brew
+    + % brew update
+    + % brew install mongodb
+      + % brew search mongodb; # search for packages
+      + % brew upgrade mongodb; # to upgrade
+  + run mongodb
+    + % mkdir -p mongodb/data/db_v3.6.3
+    + % mongod --dbpath mongodb/data/db_v3.6.3
+      + verify that mongodb has started successfully by checking the process output
+        + [initandlisten] waiting for connections on port 27017
+    + % mongo --host 127.0.0.1:27017; # begin using mongodb
+      + 'ctrl + c' to stop mongodb
+  + % brew switch go 1.10
+  + % go get gopkg.in/mgo.v2; # get mgo packages; mgo is popular mongo driver for go
+  + % go get gopkg.in/mgo.v2/bson
+**** connect to mongodb
+  + % mongod --dbpath mongodb/data/db_v3.6.3
+  + % cd work/042_mongodb/05_mongodb/01_update-user-controller; % go run main.go; # start server
+    + % curl http://localhost:8080/user/1; # GET
+**** crud with go & mongodb
+  + % mongod --dbpath mongodb/data/db_v3.6.3; # start mongodb server
+  + % cd work/042_mongodb/05_mongodb/05_update-user-controllers-delete; % go fmt main.go
+  + % go run main.go; # start server
+  + % curl -X POST -H "Content-Type: application/json" -d '{"name":"Miss Moneypenny","gender":"female","age":27}' http://localhost:8080/user; #POST
+  + % curl http://localhost:8080/user/<enter-user-id-here>
+  + % curl -X DELETE http://localhost:8080/user/<enter-user-id-here>
+**** hands on exercise & solution
+  + % cd work/042_mongodb/06_hands-on_solution; % go fmt main.go
+  + % go run main.go; # start server
+  + % curl -X POST -H "Content-Type: application/json" -d '{"name":"Miss Moneypenny","gender":"female","age":27}' http://localhost:8080/user; #POST
+  + % curl http://localhost:8080/user/<enter-user-id-here>
+  + % curl -X DELETE http://localhost:8080/user/<enter-user-id-here>
+**** hands on exercise & solution
+  + % cd work/042_mongodb/08_hands-on_solution; % go fmt main.go
+  + % go run main.go; # start server
+  + % curl -X POST -H "Content-Type: application/json" -d '{"name":"Miss Moneypenny","gender":"female","age":27}' http://localhost:8080/user; #POST
+  + % curl http://localhost:8080/user/<enter-user-id-here>
+  + % curl -X DELETE http://localhost:8080/user/<enter-user-id-here>
+**** hands on exercise & solution
+  + % cd work/042_mongodb/10_hands-on_solution; % go fmt main.go
+  + % go run main.go; # start server
+    + http://localhost:8080; # open in browser
 *** Docker
 *** PostgreSQL
 *** MongoDB
