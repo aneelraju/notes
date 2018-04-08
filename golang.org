@@ -417,25 +417,69 @@
 **** section review
   + if learning something new. Small consistent effort paysoff more than large inconsistent effort
 *** Functions
-**** Section overview
 **** Intro To Functions
+  + % cd work/14_functions/01_main; % go fmt main.go; % go run main.go
+  + % cd work/14_functions/02_param-arg; % go fmt main.go; % go run main.go
+  + % cd work/14_functions/03_two-params/01; % go fmt main.go; % go run main.go
+  + % cd work/14_functions/03_two-params/02; % go fmt main.go; % go run main.go
 **** Func Returns
+  + % cd work/14_functions/04_return; % go fmt main.go; % go run main.go
+  + % cd work/14_functions/05_return-naming; % go fmt main.go; % go run main.go
+  + % cd work/14_functions/06_return-multiple; % go fmt main.go; % go run main.go
 **** Variadic Functions
+  + % cd work/14_functions/07_variadic-params; % go fmt main.go; % go run main.go
 **** Variadic Arguments
+  + % cd work/14_functions/08_variadic-args; % go fmt main.go; % go run main.go
+  + % cd work/14_functions/09_slice-param-args; % go fmt main.go; % go run main.go
 **** Func Expressions
+  + % cd work/14_functions/10_func-expression/01_before-func-expression; % go fmt main.go; % go run main.go
+  + % cd work/14_functions/10_func-expression/02_func-expression; % go fmt main.go; % go run main.go
+  + % cd work/14_functions/10_func-expression/03_func-expression_shows-type; % go fmt main.go; % go run main.go
+  + % cd work/14_functions/10_func-expression/04_another-way_func-expression; % go fmt main.go; % go run main.go
+  + % cd work/14_functions/10_func-expression/05_another-way_func-expression_shows-type; % go fmt main.go; % go run main.go
 **** Closure
+  + % cd work/14_functions/11_closure/01; % go fmt main.go; % go run main.go
+  + % cd work/14_functions/11_closure/02; % go fmt main.go; % go run main.go
+  + % cd work/14_functions/11_closure/03; % go fmt main.go; % go run main.go
+  + % cd work/14_functions/11_closure/04; % go fmt main.go; % go run main.go
 **** Callbacks
+  + % cd work/14_functions/12_callback/01_print-nums; % go fmt main.go; % go run main.go
 **** Callback Example
+  + % cd work/14_functions/12_callback/02_filter-nums; % go fmt main.go; % go run main.go
 **** Recursion
+  + % cd work/14_functions/13_recursion; % go fmt main.go; % go run main.go
 **** Defer
+  + % cd work/14_functions/14_defer/01_no-defer; % go fmt main.go; % go run main.go
+  + % cd work/14_functions/14_defer/02_defer; % go fmt main.go; % go run main.go
 **** Pass By Value
+  + % cd work/14_functions/15_passing-by-value/01_int; % go fmt main.go; % go run main.go
+  + % cd work/14_functions/15_passing-by-value/02_int-pointer; % go fmt main.go; % go run main.go
+  + % cd work/14_functions/15_passing-by-value/03_string; % go fmt main.go; % go run main.go
+  + % cd work/14_functions/15_passing-by-value/04_string-pointer; % go fmt main.go; % go run main.go
 **** Reference Types
+  + % cd work/14_functions/15_passing-by-value/05_REFERENCE-TYPE; % go fmt main.go; % go run main.go
+  + % cd work/14_functions/15_passing-by-value/06_REFERENCE-TYPE; % go fmt main.go; % go run main.go
+  + % cd work/14_functions/15_passing-by-value/07_struct-pointer; % go fmt main.go; % go run main.go
 **** Anonymouse Self-Executing Functions
+  + % cd work/14_functions/15_passing-by-value/05_REFERENCE-TYPE; % go fmt main.go; % go run main.go
 **** Bool Expressions
+  + Dr Axel Rauschmayer - free online books of JavaScript
+    + search for "Expressions versus statements in JavaScript"
+  + % cd work/15_bool-expressions/01_true-false; % go fmt main.go; % go run main.go
+  + % cd work/15_bool-expressions/02_not; % go fmt main.go; % go run main.go
+  + % cd work/15_bool-expressions/03_or; % go fmt main.go; % go run main.go
+  + % cd work/15_bool-expressions/04_and; % go fmt main.go; % go run main.go
 **** Exercises - Part I
+  + project euler - https://projecteuler.net/
+    + series of challenging mathematical/computer programming problems
+  + % cd work/16_exercise-solutions/01_half/01; % go fmt main.go; % go run main.go
+  + % cd work/16_exercise-solutions/01_half/02; % go fmt main.go; % go run main.go
 **** Exercises - Part II
+  + % cd work/16_exercise-solutions/02_func-expression; % go fmt main.go; % go run main.go
+  + % cd work/16_exercise-solutions/03_variadic-greatest; % go fmt main.go; % go run main.go
 **** Exercises - Part III
-**** Section Review
+  + % cd work/16_exercise-solutions/04_bool-expression; % go fmt main.go; % go run main.go
+  + % cd work/16_exercise-solutions/05_params-and-args; % go fmt main.go; % go run main.go
 *** Data Structures - Array
 *** Data Structures - Slice
 *** Data Structures - Map
@@ -447,7 +491,27 @@
 *** Concurrency Challenges
 *** Concurrency Resources
 *** Error Handling
+**** An introduction to error handling in Go
+  + https://golang.org/doc/faq - golang faqs
+    + go through "why does Go not have exceptions?"
+  + https://en.wikipedia.org/wiki/Exception_handling#Criticism
+  + https://en.wikipedia.org/wiki/Communicating_sequential_processes (CSP)
+**** Improving your code with Golint
+**** Handling Errors & Logging Errors to a File
+**** Four Common Ways to Handle Errors
+**** Custom Errors - Creating Values of Type error
+**** Idiomatic Error Handling
+**** Providing Context with Errors
+**** Providing Even More Context with Errors
+**** Error Handling Review & Resources
 *** Farewell
+**** Nice Articles
+  + http://devs.cloudimmunity.com/gotchas-and-common-mistakes-in-go-golang/  
+**** Next Steps
+  + https://goo.gl/k5VKHd - great free training
+  + https://www.youtube.com/user/toddmcleod/playlists
+    + "Build Web Apps with Go Language" - Caleb Doxsey 
+    + "Learn HTML-CSS"
 
 ** udemy - Web Development w/ Google's Go (golang) Programming Langauge - Todd McLeod
 *** Getting started
