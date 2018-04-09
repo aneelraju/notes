@@ -1,0 +1,38 @@
+* learn machine learning in 3 months - siraj
+** overview
+  + video link: https://www.youtube.com/watch?v=Cr6VqTRO1v0
+  + curriculum link: https://github.com/llSourcell/Learn_Machine_Learning_in_3_Months
+** Week 1 Linear Algebra
+*** mit linear algebra
+  + link: https://ocw.mit.edu/courses/mathematics/18-06-linear-algebra-spring-2010/
+** Week 2 Calculus
+*** Essence of calculus
+  + link: https://www.youtube.com/playlist?list=PLZHQObOWTQDMsr9K-rj53DwVRMYO3t5Yr
+** Week 3 Probability
+*** edx introduction probability science
+  + link: https://www.edx.org/course/introduction-probability-science-mitx-6-041x-2
+** Week 4 Algorithms
+*** edx algorithm design analysis
+  + link: https://www.edx.org/course/algorithm-design-analysis-pennx-sd3x
+** Week 5 
+*** Learn python for data science
+  + link: https://www.youtube.com/watch?v=T5pRlIbr6gg&list=PL2-dafEMk2A6QKz1mrk1uIGfHkC1zZ6UU
+*** Math of Intelligence
+  + link: https://www.youtube.com/watch?v=xRJCOz3AfYY&list=PL2-dafEMk2A7mu0bSksCGMJEmeddU_H4D
+*** Intro to Tensorflow
+  + link: https://www.youtube.com/watch?v=2FmcHiLCwTU&list=PL2-dafEMk2A7EEME489DsI468AB0wQsMV
+** Week 6
+*** Intro to ML (udacity)
+  + link: https://eu.udacity.com/course/intro-to-machine-learning--ud120
+** Week 7-8
+*** ML Project Ideas
+  + link: https://github.com/NirantK/awesome-project-ideas
+** Week 9 Deep Learning
+*** Intro to Deep Learning
+  + link: https://www.youtube.com/watch?v=vOppzHpvTiQ&list=PL2-dafEMk2A7YdKv4XfKpfbTH5z6rEEj3
+** Week 10
+*** Deep learning by fast.ai
+  + link: http://course.fast.ai/
+** Week 11-12
+*** Re-implement DL projects from my github
+  + link: https://github.com/llSourcell?tab=repositories

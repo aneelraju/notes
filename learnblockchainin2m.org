@@ -1,0 +1,38 @@
+* learn block chain in 2 months - siraj
+** overview
+  + video link: https://www.youtube.com/watch?v=wVVGv2bmxow
+  + curriculum link: https://github.com/llSourcell/Learn_Blockchain_in_2_months
+** Week 1 Cryptography
+*** learn crypto
+  + link: https://www.coursera.org/learn/crypto
+** Week 2 (Mastering Bitcoin + Annotated BTC Whitepaper + BTC wallet)
+*** bitcoin book
+  + link: https://github.com/bitcoinbook/bitcoinbook
+*** fermats library bitcoin
+  + link: http://fermatslibrary.com/s/bitcoin
+*** bitcoin choose your wallet
+  + link: https://bitcoin.org/en/choose-your-wallet
+** Week 3 (Bitcoin and Cryptocurrencies + build a blockchain)
+*** coursera learn cryptocurrency
+  + link: https://www.coursera.org/learn/cryptocurrency
+*** learn blockchains by building one
+  + link: https://hackernoon.com/learn-blockchains-by-building-one-117428612f46
+** Week 4 (Ethereum + Annotated Eth Whitepaper)
+*** udemy blockchain application
+  + link: https://www.udemy.com/blockchain-application/
+*** ethereum whitepaper
+  + link: http://fermatslibrary.com/s/ethereum-a-next-generation-smart-contract-and-decentralized-application-platform#email-newsletter
+** Week 5 (Solidity Programming + Ethereum articles)
+*** crypto zombies
+  + link: https://cryptozombies.io/
+*** block geeks ethereum
+  + link: https://blockgeeks.com/?s=ethereum
+** Week 6 (Other Cryptocurrencies)
+*** other cryptocurrencies
+  + link: https://www.youtube.com/watch?v=cjbHqvr4ffo&list=PL2-dafEMk2A7jW7CYUJsBu58JH27bqaNL
+** Week 7 (Decentralized Applications)
+*** decentralized applications book
+  + link: http://shop.oreilly.com/product/0636920039334.do
+** Week 8 (Build a Decentralized Application)
+*** build a decentralized application
+  + link: https://github.com/moshest/p2p-index

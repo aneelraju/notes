@@ -1,0 +1,46 @@
+* learn computer science in 5 months - siraj
+** overview
+  + video link: https://www.youtube.com/watch?v=-OvRVlqKebI
+  + curriculum link: https://github.com/llSourcell/Learn_Computer_Science_in_5_Months
+** Week 1-2 (Learn Python)
+*** Automate the boring boring stuff
+  + link: https://automatetheboringstuff.com
+*** code academy learn python
+  + link: https://www.codecademy.com/learn/learn-python
+** Week 3-4 (Data Structures)
+*** edx data structures fundamentals
+  + link: https://www.edx.org/course/data-structures-fundamentals-uc-san-diegox-algs201x
+** Week 5.6 (Algorithms)
+*** mit course 6.006: introduction to algorithms
+  + link: https://courses.csail.mit.edu/6.006/fall11/notes.shtml
+** Week 7 (Databases)
+*** coursera python databases
+  + link: https://www.coursera.org/learn/python-databases
+** Week 8 (Networking)
+*** coursera computer networking
+  + link: https://www.coursera.org/learn/computer-networking
+** Week 9-10 (Web Development)
+*** cs50 web programming with python and javascript
+  + link: https://www.youtube.com/watch?v=1u2qu-EmIRc&list=PLhQjrBD2T382hIW-IsOVuXP1uMzEvmcE5
+*** melanie richards just build websites
+  + link: https://github.com/melanierichards/just-build-websites
+** Week 11-12 (Mobile Development)
+*** ios app getting started
+  + link: https://developer.apple.com/library/content/referencelibrary/GettingStarted/DevelopiOSAppsSwift/
+*** andriod first app
+  + link: https://developer.android.com/training/basics/firstapp/index.html
+** Week 13-14 (Data Science)
+*** edx python for data science
+  + link: https://www.edx.org/course/python-for-data-science
+** Week 15-16 (Computer Vision)
+*** udacity computer vision
+  + link: https://www.udacity.com/course/introduction-to-computer-vision--ud810
+** Week 17-18 (Natural Language Processing)
+*** coursera python text mining
+  + link: https://www.coursera.org/learn/python-text-mining
+** Week 19 (Software Engineering Practices)
+*** coursera software processes
+  + link: https://www.coursera.org/learn/software-processes
+** Week 20 (Blockchain)
+*** how does monero work?
+  + link: https://www.youtube.com/watch?v=cjbHqvr4ffo&list=PL2-dafEMk2A7jW7CYUJsBu58JH27bqaNL
