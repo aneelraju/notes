@@ -485,9 +485,47 @@
   + % cd work/16_exercise-solutions/04_bool-expression; % go fmt main.go; % go run main.go
   + % cd work/16_exercise-solutions/05_params-and-args; % go fmt main.go; % go run main.go
 *** Data Structures - Array
+**** Data Structures Overview
+  + https://golang.org/ref/spec#Array_types
+**** Array
+  + % cd work/17_array/01; % go fmt main.go; % go run main.go
+  + % cd work/17_array/02; % go fmt main.go; % go run main.go
+**** Array Examples
+  + % cd work/17_array/03; % go fmt main.go; % go run main.go
+  + % cd work/17_array/04; % go fmt main.go; % go run main.go
+  + % cd work/17_array/05; % go fmt main.go; % go run main.go
 *** Data Structures - Slice
+**** Slices
+  + https://golang.org/ref/spec#Slice_types
+**** Slice Examples
+**** More Slice Examples
+**** Creating A Slice
+**** Incrementing A Slice Item
+**** Section Review
 *** Data Structures - Map
+**** Maps Introduction
+  + https://golang.org/ref/spec#Map_types
+**** Map Examples - Part I
+**** Map Examples - Part II
+**** Map Examples - Part III
+**** Map Documentation
+**** Map Range Loop
+**** GitHub Pull
+**** Hash Tables
+**** Hashing Words
+**** Hashing Words II
+**** Build A Hash Table
+**** Finished Hash Algorithm
 *** Data Structures - Struct
+**** Structs Introduction
+  + https://golang.org/ref/spec#Struct_types
+**** OOP in Go
+**** User-Defined Types
+**** Composition
+**** JSON Marshal
+**** JSON Unmarshal
+**** JSON Encode
+**** JSON Decode
 *** Interfaces
 *** Concurrency
 *** Channels
