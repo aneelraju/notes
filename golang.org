@@ -24,6 +24,10 @@
     + https://forum.golangbridge.org/
       + q&a forum on go programming
     + https://dave.cheney.net - Dave Cheney's blog
+    + go data structure code
+      + https://github.com/emirpasic/gods
+    + curated list of awesome Go frameworks, libraries and software
+      + https://awesome-go.com/
   + Links
     + Go here first - https://goo.gl/PHKg07
     + https://golang.org - official golang site
