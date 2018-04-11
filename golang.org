@@ -497,7 +497,27 @@
 *** Data Structures - Slice
 **** Slices
   + https://golang.org/ref/spec#Slice_types
+  + https://gobyexample.com -> Slices
+  + slice vs slicing vs index access
+    + mySlice := []int{1, 2, 3, 4, 5}; 
+    + mySlice -> slice
+    + mySlice[2:4] -> slicing a slice
+    + mySlice[2] -> index access
+  + https://golang.org/ref/spec -> Slice types
+  + % cd work/18_slice/01-int-slice; % go fmt main.go; % go run main.go
+  + % cd work/18_slice/02-int-slice; % go fmt main.go; % go run main.go
 **** Slice Examples
+  + % cd work/18_slice/03_int-slice; % go fmt main.go; % go run main.go
+  + % cd work/18_slice/04_string-slice; % go fmt main.go; % go run main.go
+  + % cd work/18_slice/05_slicing-a-slice/01; % go fmt main.go; % go run main.go
+  + % cd work/18_slice/05_slicing-a-slice/02; % go fmt main.go; % go run main.go
+  + % cd work/18_slice/06_make; % go fmt main.go; % go run main.go
+  + % cd work/18_slice/07_append-invalid; % go fmt main.go; % go run main.go
+  + % cd work/18_slice/08_append; % go fmt main.go; % go run main.go
+  + % cd work/18_slice/09_append-beyond-capacity; % go fmt main.go; % go run main.go
+  + % cd work/18_slice/10_append_slice-to-slice/01_slice-of-ints; % go fmt main.go; % go run main.go
+  + % cd work/18_slice/10_append-slice-to-slice/01_slice-of-ints; % go fmt main.go; % go run main.go
+  + % cd work/18_slice/11_delete; % go fmt main.go; % go run main.go
 **** More Slice Examples
 **** Creating A Slice
 **** Incrementing A Slice Item
