@@ -538,16 +538,71 @@
 **** Maps Introduction
   + https://golang.org/ref/spec#Map_types
 **** Map Examples - Part I
+  + https://gobyexample.com -> maps
 **** Map Examples - Part II
+  + % cd work/19_map/01_var_nil-map; % go fmt main.go; % go run main.go
+  + % cd work/19_map/02_var_make; % go fmt main.go; % go run main.go
+  + % cd work/19_map/03_shorthand_make; % go fmt main.go; % go run main.go
+  + % cd work/19_map/04_shorthand_composite-literal; % go fmt main.go; % go run main.go
+  + % cd work/19_map/05_shorthand_composite-literal; % go fmt main.go; % go run main.go
+  + % cd work/19_map/06_adding-entry; % go fmt main.go; % go run main.go
+  + % cd work/19_map/07_len; % go fmt main.go; % go run main.go
+  + % cd work/19_map/08_updating-entry; % go fmt main.go; % go run main.go
+  + % cd work/19_map/09_deleting-entry; % go fmt main.go; % go run main.go
 **** Map Examples - Part III
+  + % cd work/19_map/10_comman-ok-idiom_val-exists; % go fmt main.go; % go run main.go
+  + % cd work/19_map/11_deleting-entry_no-error; % go fmt main.go; % go run main.go
+  + % cd work/19_map/12_comman-ok-idiom_val-not-exists; % go fmt main.go; % go run main.go
 **** Map Documentation
+  + https://www.golang-book.com/books/intro/6 - maps
+  + https:/github.com/golang/go -> search for make(map
+  + https://golang.org/ref/spec#Map_types
+  + https://golang.org/doc/effective_go.html#maps
 **** Map Range Loop
+  + % cd work/19_map/13_loop-range; % go fmt main.go; % go run main.go
 **** GitHub Pull
+  + before submitting local chages
+    + % git status
+    + % git pull
+    + % git add --all
+    + % git commit -m "changes"
+    + % git status
+    + % git pull
+    + % git push; # now in sync with git 
 **** Hash Tables
+  + book reference
+    + rank 1 - The Go Programming Language - Brian W Kernighan
+    + rank 2 - Go in Action - William Kennedy
+    + rank 3 - the way to go - Ivo Balbaert
+      + see section 4.4.2 Value types and reference types - good description
+        + reference types are slices, maps and channels
+  + https://blog.golang.org/go-maps-in-action
+  + www.goinggo.net/2013/12/macro-view-of-map-internals-in-go.html
+  + https://en.wikipedia.org/wiki/Hash_table
+    + in many situations, hash tables turn out to be more efficient for search than search trees or any other table lookup structure
+    + they are widely used for associative arrays, database indexing, caches and sets
+    + a hash table uses a hash function to compute an index into an array of buckets from which the desired value can be found
 **** Hashing Words
+  + https://godoc.org/bufio
+  + % cd work/19_map/14_hash-table/04_english-alphabet/01; % go fmt main.go; % go run main.go
+  + % cd work/19_map/14_hash-table/04_english-alphabet/01; % go fmt main.go; % go run main.go
 **** Hashing Words II
+  + % cd work/19_map/14_hash-table/01_letter-buckets/10_hash-letter-buckets; % go fmt main.go; % go run main.go
+  + % cd work/19_map/14_hash-table/01_letter-buckets/11_hash-remainder-buckets; % go fmt main.go; % go run main.go
 **** Build A Hash Table
+  + % cd work/19_map/14_hash-table/01_letter-buckets/01_runes-are-numbers; % go fmt main.go; % go run main.go
+  + % cd work/19_map/14_hash-table/01_letter-buckets/02_strings-to-rune-conversion; % go fmt main.go; % go run main.go
+  + % cd work/19_map/14_hash-table/01_letter-buckets/03_string-index-access; % go fmt main.go; % go run main.go
+  + % cd work/19_map/14_hash-table/01_letter-buckets/04_remainder-bucket-selection; % go fmt main.go; % go run main.go
+  + % cd work/19_map/14_hash-table/01_letter-buckets/05-hash-function; % go fmt main.go; % go run main.go
+  + % cd work/19_map/14_hash-table/01_letter-buckets/06_get; % go fmt main.go; % go run main.go
 **** Finished Hash Algorithm
+  + % cd work/19_map/14_hash-table/01_letter-buckets/07_scanner; % go fmt main.go; % go run main.go
+  + % cd work/19_map/14_hash-table/01_letter-buckets/08_moby-dicks-words; % go fmt main.go; % go run main.go
+  + % cd work/19_map/14_hash-table/01_letter-buckets/09_int-slice-plus-plus; % go fmt main.go; % go run main.go
+  + % cd work/19_map/14_hash-table/02_even-dstribution-hash; % go fmt main.go; % go run main.go
+  + % cd work/19_map/14_hash-table/03_words-in-buckets/01_slice-bucket; % go fmt main.go; % go run main.go
+  + % cd work/19_map/14_hash-table/03_words-in-buckets/02_map-bucket; % go fmt main.go; % go run main.go
 *** Data Structures - Struct
 **** Structs Introduction
   + https://golang.org/ref/spec#Struct_types
