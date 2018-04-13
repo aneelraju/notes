@@ -519,9 +519,21 @@
   + % cd work/18_slice/10_append-slice-to-slice/01_slice-of-ints; % go fmt main.go; % go run main.go
   + % cd work/18_slice/11_delete; % go fmt main.go; % go run main.go
 **** More Slice Examples
+  + % cd work/18_slice/12_multi-dimensional/05_slice-of-slice-of-string; % go fmt main.go; % go run main.go
+  + % cd work/18_slice/12_multi-dimensional/06_slice-of-slice-of-int; % go fmt main.go; % go run main.go
 **** Creating A Slice
+  + 'godoc.org/fmt -> files' for source documentation
+  + 'https://golang.org/pkg/fmt' - documentation
+  + 'https://golang.org/src/fmt' - source code
+  + % cd work/18_slice/12_multi-dimensional/01_shorthand-slice; % go fmt main.go; % go run main.go
+  + % cd work/18_slice/12_multi-dimensional/02_var-slice; % go fmt main.go; % go run main.go
+  + % cd work/18_slice/12_multi-dimensional/03_make-slice; % go fmt main.go; % go run main.go
+  + % cd work/18_slice/12_multi-dimensional/04_comparing_shorthand_var_make/01_shorthand-slice; % go fmt main.go; % go run main.go
+  + % cd work/18_slice/12_multi-dimensional/04_comparing_shorthand_var_make/02_var-slice; % go fmt main.go; % go run main.go
+  + % cd work/18_slice/12_multi-dimensional/04_comparing_shorthand_var_make/03_make-slice; % go fmt main.go; % go run main.go
 **** Incrementing A Slice Item
-**** Section Review
+  + % cd work/18_slice/13_int-slice-plus-plus; % go fmt main.go; % go run main.go
+  **** Section Review
 *** Data Structures - Map
 **** Maps Introduction
   + https://golang.org/ref/spec#Map_types
