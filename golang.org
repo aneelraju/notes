@@ -607,8 +607,23 @@
 **** Structs Introduction
   + https://golang.org/ref/spec#Struct_types
 **** OOP in Go
+  + www.goinggo.net/2015/09/composition-with-go.html
+  + https://golang.org/doc/effective_go.html -> search for Embedding
+  + work/19_map/20_struct/00_object-oriented/notes.txt - go through the notes
 **** User-Defined Types
+  + % cd work/20_struct/01_user-defined-types/01_alias-type_not-idiomatic; % go fmt main.go; % go run main.go
+  + % cd work/20_struct/01_user-defined-types/02_static-typing; % go fmt main.go; % go run main.go
+    + go through work/20_struct/01_user-defined-types/notes.txt
+  + % cd work/20_struct/02_struct_fields_values_initialization; % go fmt main.go; % go run main.go
+    + go through notes.txt
+  + https://golang.org/ref/spec#Struct_types
+  + https://godoc.org/encoding/json -> json package document
 **** Composition
+  + % cd work/20_struct/03_methods; % go fmt main.go; % go run main.go
+  + % cd work/20_struct/04_embedded-types/; % go fmt main.go; % go run main.go
+  + % cd work/20_struct/05_promotion/01_overriding-fields; % go fmt main.go; % go run main.go
+  + % cd work/20_struct/05_promotion/02_overriding-methods; % go fmt main.go; % go run main.go
+  + % cd work/20_struct/06_struct-pointer; % go fmt main.go; % go run main.go
 **** JSON Marshal
 **** JSON Unmarshal
 **** JSON Encode
