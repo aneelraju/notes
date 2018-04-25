@@ -669,42 +669,64 @@
   + % cd work/21_interfaces/02_package-sort/02_sort-names_type-StringSclie; % go fmt main.go; % go run main.go
   + % cd work/21_interfaces/02_package-sort/03_sort-Strings; % go fmt main.go; % go run main.go
 **** Sort Reverse
-  + % cd work/21_interfaces/02_package-sort/04_sort-names_type-StringSlice_reverse; % go fmt main.go; 
+  + % cd work/21_interfaces/02_package-sort/04_sort-names_type-StringSlice_reverse; % go fmt main.go; % go run main.go
 **** Sort Slice int
-  + % cd work/21_interfaces/02_package-sort/05_sort-int_type-IntSlice; % go fmt main.go; 
-  + % cd work/21_interfaces/02_package-sort/06_sort-int_type-IntSlice_reverse; % go fmt main.go; 
-  + % cd work/21_interfaces/02_package-sort/07_sort-Ints; % go fmt main.go; 
-  + % cd work/21_interfaces/02_package-sort/08_standard-library-example; % go fmt main.go;
+  + % cd work/21_interfaces/02_package-sort/05_sort-int_type-IntSlice; % go fmt main.go; % go run main.go
+  + % cd work/21_interfaces/02_package-sort/06_sort-int_type-IntSlice_reverse; % go fmt main.go; % go run main.go 
+  + % cd work/21_interfaces/02_package-sort/07_sort-Ints; % go fmt main.go; % go run main.go 
+  + % cd work/21_interfaces/02_package-sort/08_standard-library-example; % go fmt main.go; % go run main.go
 **** Empty Interface
-  + % cd work/21_interfaces/03_empty-interface/01_no-interface; % go fmt main.go;
-  + % cd work/21_interfaces/03_empty-interface/02_empty-interface; % go fmt main.go;
-  + % cd work/21_interfaces/03_empty-interface/03_param-accepts-any-type; % go fmt main.go;
-  + % cd work/21_interfaces/03_empty-interface/04_slice-of-any-type; % go fmt main.go;
+  + % cd work/21_interfaces/03_empty-interface/01_no-interface; % go fmt main.go; % go run main.go
+  + % cd work/21_interfaces/03_empty-interface/02_empty-interface; % go fmt main.go; % go run main.go
+  + % cd work/21_interfaces/03_empty-interface/03_param-accepts-any-type; % go fmt main.go; % go run main.go
+  + % cd work/21_interfaces/03_empty-interface/04_slice-of-any-type; % go fmt main.go; % go run main.go
 **** Method Sets
   + https://golang.org/ref/spec#Method_sets - method sets
-  + % cd work/21_interfaces/04_method-sets/01_value-receiver_value-type; % go fmt main.go;
-  + % cd work/21_interfaces/04_method-sets/02_value-receiver_pointer-type; % go fmt main.go;
-  + % cd work/21_interfaces/04_method-sets/03_pointer-receiver_pointer-type; % go fmt main.go;
-  + % cd work/21_interfaces/04_method-sets/04_pointer-receiver_value-type; % go fmt main.go;
+  + % cd work/21_interfaces/04_method-sets/01_value-receiver_value-type; % go fmt main.go; % go run main.go
+  + % cd work/21_interfaces/04_method-sets/02_value-receiver_pointer-type; % go fmt main.go; % go run main.go
+  + % cd work/21_interfaces/04_method-sets/03_pointer-receiver_pointer-type; % go fmt main.go; % go run main.go
+  + % cd work/21_interfaces/04_method-sets/04_pointer-receiver_value-type; % go fmt main.go; % go run main.go
 **** Conversion vs Assertion
   + https://godoc.org/strconv - strconv package
-  + % cd work/21_interfaces/05_conversion-vs-assertion/01_conversion/01_int-to-float; % go fmt main.go;
-  + % cd work/21_interfaces/05_conversion-vs-assertion/01_conversion/02_float-to-int; % go fmt main.go;
-  + % cd work/21_interfaces/05_conversion-vs-assertion/01_conversion/03_rune-to-string; % go fmt main.go;
-  + % cd work/21_interfaces/05_conversion-vs-assertion/01_conversion/04_rune-to-slice-of-bytes-to-string; % go fmt main.go;
-  + % cd work/21_interfaces/05_conversion-vs-assertion/01_conversion/05_string-to-slice-of-bytes; % go fmt main.go;
-  + % cd work/21_interfaces/05_conversion-vs-assertion/01_conversion/06_strconv/01_Atoi; % go fmt main.go;
-  + % cd work/21_interfaces/05_conversion-vs-assertion/01_conversion/06_strconv/02_Itoa; % go fmt main.go;
-  + % cd work/21_interfaces/05_conversion-vs-assertion/01_conversion/06_strconv/03_ParseInt; % go fmt main.go;
- + % cd work/21_interfaces/05_conversion-vs-assertion/02_assertion/01_non-interface-error_invalid-code; % go fmt main.go;
- + % cd work/21_interfaces/05_conversion-vs-assertion/02_assertion/02_interface-string; % go fmt main.go;
- + % cd work/21_interfaces/05_conversion-vs-assertion/02_assertion/03_interface-string_not-ok; % go fmt main.go;
- + % cd work/21_interfaces/05_conversion-vs-assertion/02_assertion/04_interface-int_print-type; % go fmt main.go;
- + % cd work/21_interfaces/05_conversion-vs-assertion/02_assertion/05_interface-int_mistmatched-types-error; % go fmt main.go;
- + % cd work/21_interfaces/05_conversion-vs-assertion/02_assertion/06_interface-int-sum; % go fmt main.go;
- + % cd work/21_interfaces/05_conversion-vs-assertion/02_assertion/07_casting-reminder; % go fmt main.go;
- + % cd work/21_interfaces/05_conversion-vs-assertion/02_assertion/08_interface-cast-error_need-type-assertion; % go fmt main.go;
+  + % cd work/21_interfaces/05_conversion-vs-assertion/01_conversion/01_int-to-float; % go fmt main.go; % go run main.go
+  + % cd work/21_interfaces/05_conversion-vs-assertion/01_conversion/02_float-to-int; % go fmt main.go; % go run main.go
+  + % cd work/21_interfaces/05_conversion-vs-assertion/01_conversion/03_rune-to-string; % go fmt main.go; % go run main.go
+  + % cd work/21_interfaces/05_conversion-vs-assertion/01_conversion/04_rune-to-slice-of-bytes-to-string; % go fmt main.go; % go run main.go
+  + % cd work/21_interfaces/05_conversion-vs-assertion/01_conversion/05_string-to-slice-of-bytes; % go fmt main.go; % go run main.go
+  + % cd work/21_interfaces/05_conversion-vs-assertion/01_conversion/06_strconv/01_Atoi; % go fmt main.go; % go run main.go
+  + % cd work/21_interfaces/05_conversion-vs-assertion/01_conversion/06_strconv/02_Itoa; % go fmt main.go; % go run main.go
+  + % cd work/21_interfaces/05_conversion-vs-assertion/01_conversion/06_strconv/03_ParseInt; % go fmt main.go; % go run main.go
+ + % cd work/21_interfaces/05_conversion-vs-assertion/02_assertion/01_non-interface-error_invalid-code; % go fmt main.go; % go run main.go
+ + % cd work/21_interfaces/05_conversion-vs-assertion/02_assertion/02_interface-string; % go fmt main.go; % go run main.go
+ + % cd work/21_interfaces/05_conversion-vs-assertion/02_assertion/03_interface-string_not-ok; % go fmt main.go; % go run main.go
+ + % cd work/21_interfaces/05_conversion-vs-assertion/02_assertion/04_interface-int_print-type; % go fmt main.go; % go run main.go
+ + % cd work/21_interfaces/05_conversion-vs-assertion/02_assertion/05_interface-int_mistmatched-types-error; % go fmt main.go; % go run main.go
+ + % cd work/21_interfaces/05_conversion-vs-assertion/02_assertion/06_interface-int-sum; % go fmt main.go; % go run main.go
+ + % cd work/21_interfaces/05_conversion-vs-assertion/02_assertion/07_casting-reminder; % go fmt main.go; % go run main.go
+ + % cd work/21_interfaces/05_conversion-vs-assertion/02_assertion/08_interface-cast-error_need-type-assertion; % go fmt main.go; % go run main.go
 *** Concurrency
+**** Concurrency & WaitGroup
+ + % cd work/22_go-routines/01_no-go; % go fmt main.go; % go run main.go
+ + % cd work/22_go-routines/02_go_concurrency; % go fmt main.go; % go run main.go
+ + % cd work/22_go-routines/03_wait-group; % go fmt main.go; % go run main.go
+ + % cd work/22_go-routines/04_time-sleep; % go fmt main.go; % go run main.go
+**** Parallelism
+ + "concurrency" is the composition of independently executing processes 
+  + Concurrency is about dealing with lots of things at once
+ + "parallelism" is the simultaneous execution of (possibly related) computation
+  + Parallelism is about doing lots of things at once
+ + % cd work/22_go-routines/05_gomaxprocs_parallelism; % go fmt main.go; % go run main.go
+**** Race Conditions
+ + https://github.com/ardanlabs/gotraining -> search for race
+ + % cd work/22_go-routines/06_race-condition; % go fmt main.go; % go run main.go
+**** Mutex
+ + mutex - mutually exclusive
+ + % cd work/22_go-routines/07_mutex; % go fmt main.go; % go run main.go / % go run -race main.go 
+**** Atomicity
+ + https://godoc.org/sync/atomic
+ + % cd work/22_go-routines/08_atomicity; % go fmt main.go; % go run main.go / % go run -race main.go 
+**** Review & Channels Preview
+  + Book - The Way To Go - Ivo Balbert -> chapter 14 - go routines and channels
 *** Channels
 *** Applied Concurrency
 *** Concurrency Challenges
