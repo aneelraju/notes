@@ -726,8 +726,22 @@
  + https://godoc.org/sync/atomic
  + % cd work/22_go-routines/08_atomicity; % go fmt main.go; % go run main.go / % go run -race main.go 
 **** Review & Channels Preview
-  + Book - The Way To Go - Ivo Balbert -> chapter 14 - go routines and channels
+ + Book - The Way To Go - Ivo Balbert -> chapter 14 - go routines and channels
 *** Channels
+**** Channels - Introduction
+ + https://golang.org/ref/spec -> Channel types
+ + https://golang.org/doc/effective_go.html#concurrency
+ + http://go-proverbs.github.io - go proverbs
+ + youtube - Go Proverbs - Rob Pike - Gopherfest - Nov 18, 2015
+ + % cd work/22_go-routines/09_channels/00_unbuffered-channels-block; % go fmt main.go; % go run -race main.go
+**** Range Clause
+ + % cd work/22_go-routines/09_channels/01_race-condition; % go fmt main.go; % go run -race main.go
+**** N-to-1
+**** Semaphores - Part 1
+**** Semaphores - Part 2
+**** 1-to-N
+**** Channels as Arguments & Returns
+**** Channel Direction
 *** Applied Concurrency
 *** Concurrency Challenges
 *** Concurrency Resources
