@@ -625,9 +625,21 @@
   + % cd work/20_struct/05_promotion/02_overriding-methods; % go fmt main.go; % go run main.go
   + % cd work/20_struct/06_struct-pointer; % go fmt main.go; % go run main.go
 **** JSON Marshal
+  + www.jsoneditoronline.org
+  + marshal/unmarshal into string
+  + encode/decode into stream
+  + https://en.wikipedia.org/wiki/JSON -> info about JSON
+  + https://godoc.org/encoding/json -> json package document
+  + % cd work/20_struct/07_marshal_unmarshal/01_marshal/01_exported; % go fmt main.go; % go run main.go
+  + % cd work/20_struct/07_marshal_unmarshal/01_marshal/02_unexported; % go fmt main.go; % go run main.go
+  + % cd work/20_struct/07_marshal_unmarshal/01_marshal/03_tags; % go fmt main.go; % go run main.go
 **** JSON Unmarshal
+  + % cd work/20_struct/07_marshal_unmarshal/02_unmarshal/01; % go fmt main.go; % go run main.go
+  + % cd work/20_struct/07_marshal_unmarshal/02_unmarshal/02_tags; % go fmt main.go; % go run main.go
 **** JSON Encode
+  + % cd work/20_struct/08_encode_decode/01_encode; % go fmt main.go; % go run main.go
 **** JSON Decode
+  + % cd work/20_struct/08_encode_decode/02_decode; % go fmt main.go; % go run main.go
 *** Interfaces
 *** Concurrency
 *** Channels
