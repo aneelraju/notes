@@ -641,11 +641,90 @@
 **** JSON Decode
   + % cd work/20_struct/08_encode_decode/02_decode; % go fmt main.go; % go run main.go
 *** Interfaces
+**** Interfaces Introduction
+  + The Go Programming Language Book - Donovan and Kernighan - Highly Recommended
+  + Interfaces does Substitutability
+  + interfaces are types
+**** Interface Examples
+  + go through work/21_interfaces/00_notes.txt
+  + % cd work/21_interfaces/01_interface/01_no-interface; % go fmt main.go; % go run main.go
+  + % cd work/21_interfaces/01_interface/02_interface; % go fmt main.go; % go run main.go
+**** Code Substitutability
+  + % cd work/21_interfaces/01_interface/03_interface; % go fmt main.go; % go run main.go
+  + % cd work/21_interfaces/01_interface/04_interface; % go fmt main.go; % go run main.go
+  + % cd work/21_interfaces/01_interface/05_io-copy/01_no-error-checking; % go fmt main.go; % go run main.go
+  + % cd work/21_interfaces/01_interface/05_io-copy/02_error-checking; % go fmt main.go; % go run main.go
+**** Bill Kennedy
+  + go through work/21_interfaces/00_notes.txt -> Bill Kennedy section
+**** Donovan & Kernighan
+  + go through work/21_interfaces/00_notes.txt -> Donovan & Kernighan section
+**** Sort Package
+  + https://godoc.org/io#Reader - go through Reader interface
+  + https://godoc.org/io#Writer - go through Writer interface
+  + https://godoc.org/net/http#Handler - go through Handler interface
+  + https://godoc.org/sort#Interface - go through sort package interface
+  + go through work/21_interfaces/02_package-sort/00_notes.txt 
+**** Sort Solution
+  + % cd work/21_interfaces/02_package-sort/01_sort-names; % go fmt main.go; % go run main.go
+  + % cd work/21_interfaces/02_package-sort/02_sort-names_type-StringSclie; % go fmt main.go; % go run main.go
+  + % cd work/21_interfaces/02_package-sort/03_sort-Strings; % go fmt main.go; % go run main.go
+**** Sort Reverse
+  + % cd work/21_interfaces/02_package-sort/04_sort-names_type-StringSlice_reverse; % go fmt main.go; 
+**** Sort Slice int
+  + % cd work/21_interfaces/02_package-sort/05_sort-int_type-IntSlice; % go fmt main.go; 
+  + % cd work/21_interfaces/02_package-sort/06_sort-int_type-IntSlice_reverse; % go fmt main.go; 
+  + % cd work/21_interfaces/02_package-sort/07_sort-Ints; % go fmt main.go; 
+  + % cd work/21_interfaces/02_package-sort/08_standard-library-example; % go fmt main.go;
+**** Empty Interface
+  + % cd work/21_interfaces/03_empty-interface/01_no-interface; % go fmt main.go;
+  + % cd work/21_interfaces/03_empty-interface/02_empty-interface; % go fmt main.go;
+  + % cd work/21_interfaces/03_empty-interface/03_param-accepts-any-type; % go fmt main.go;
+  + % cd work/21_interfaces/03_empty-interface/04_slice-of-any-type; % go fmt main.go;
+**** Method Sets
+  + https://golang.org/ref/spec#Method_sets - method sets
+  + % cd work/21_interfaces/04_method-sets/01_value-receiver_value-type; % go fmt main.go;
+  + % cd work/21_interfaces/04_method-sets/02_value-receiver_pointer-type; % go fmt main.go;
+  + % cd work/21_interfaces/04_method-sets/03_pointer-receiver_pointer-type; % go fmt main.go;
+  + % cd work/21_interfaces/04_method-sets/04_pointer-receiver_value-type; % go fmt main.go;
+**** Conversion vs Assertion
+  + https://godoc.org/strconv - strconv package
+  + % cd work/21_interfaces/05_conversion-vs-assertion/01_conversion/01_int-to-float; % go fmt main.go;
+  + % cd work/21_interfaces/05_conversion-vs-assertion/01_conversion/02_float-to-int; % go fmt main.go;
+  + % cd work/21_interfaces/05_conversion-vs-assertion/01_conversion/03_rune-to-string; % go fmt main.go;
+  + % cd work/21_interfaces/05_conversion-vs-assertion/01_conversion/04_rune-to-slice-of-bytes-to-string; % go fmt main.go;
+  + % cd work/21_interfaces/05_conversion-vs-assertion/01_conversion/05_string-to-slice-of-bytes; % go fmt main.go;
+  + % cd work/21_interfaces/05_conversion-vs-assertion/01_conversion/06_strconv/01_Atoi; % go fmt main.go;
+  + % cd work/21_interfaces/05_conversion-vs-assertion/01_conversion/06_strconv/02_Itoa; % go fmt main.go;
+  + % cd work/21_interfaces/05_conversion-vs-assertion/01_conversion/06_strconv/03_ParseInt; % go fmt main.go;
+ + % cd work/21_interfaces/05_conversion-vs-assertion/02_assertion/01_non-interface-error_invalid-code; % go fmt main.go;
+ + % cd work/21_interfaces/05_conversion-vs-assertion/02_assertion/02_interface-string; % go fmt main.go;
+ + % cd work/21_interfaces/05_conversion-vs-assertion/02_assertion/03_interface-string_not-ok; % go fmt main.go;
+ + % cd work/21_interfaces/05_conversion-vs-assertion/02_assertion/04_interface-int_print-type; % go fmt main.go;
+ + % cd work/21_interfaces/05_conversion-vs-assertion/02_assertion/05_interface-int_mistmatched-types-error; % go fmt main.go;
+ + % cd work/21_interfaces/05_conversion-vs-assertion/02_assertion/06_interface-int-sum; % go fmt main.go;
+ + % cd work/21_interfaces/05_conversion-vs-assertion/02_assertion/07_casting-reminder; % go fmt main.go;
+ + % cd work/21_interfaces/05_conversion-vs-assertion/02_assertion/08_interface-cast-error_need-type-assertion; % go fmt main.go;
 *** Concurrency
 *** Channels
 *** Applied Concurrency
 *** Concurrency Challenges
 *** Concurrency Resources
+**** Additional Resources
+  + https://github.com/ardanlabs/gotraining -> search for go routine, chan, atomic and look at examples
+    + go through channels examples
+  + golang blog - blog.golang.org
+  + effective go - https://golang.org/doc/effective_go.html#concurrency
+  + golang spec - https://golang.org/ref/spec#Channel_types
+  + go by example - https://gobyexample.com/
+  + caleb doxsey book - https://www.golang-book.com - go through concurrency
+**** Links
+  + concurrency
+      + visualizing concurrency in go
+        + http://divan.github.io/posts/go_concurrency_visualize/
+      + dancing with go's mutexes
+        + https://medium.com/@deckarep/dancing-with-go-s-mutexes-92407ae927bf#.wjr1u2xjm
+  + memory allocation
+      + http://stackoverflow.com/questions/34197248/how-can-i-store-reference-to-the-result-of-an-operation-in-go
 *** Error Handling
 **** An introduction to error handling in Go
   + https://golang.org/doc/faq - golang faqs
