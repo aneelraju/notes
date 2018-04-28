@@ -828,13 +828,53 @@
   + https://en.wikipedia.org/wiki/Exception_handling#Criticism
   + https://en.wikipedia.org/wiki/Communicating_sequential_processes (CSP)
 **** Improving your code with Golint
+  + https://en.wikipedia.org/wiki/Lint_(software)
+  + super simple highlighter - chrome plugin to highlight pages
+  + https://github.com/golang/lint - golang linter
+    + % go get -u github.com/golang/lint/golint
+  + % cd work/23_error-handling/01_golint/01_before; % golint ./...
+  + % cd work/23_error-handling/01_golint/02_after; % golint ./...
 **** Handling Errors & Logging Errors to a File
+  + https://golang.org/ref/spec#Program_initialization_and_execution - Program initialization and execution
+  + https://godoc.org/log - log package
+  + https://godoc.org/os - os package
+  + % cd work/23_error-handling/02_err-not-nil/01_fmt-println; % go fmt main.go; % go run main.go
+  + % cd work/23_error-handling/02_err-not-nil/02_log-println; % go fmt main.go; % go run main.go
+  + % cd work/23_error-handling/02_err-not-nil/03_log-set-output; % go fmt main.go; % go run main.go
 **** Four Common Ways to Handle Errors
+  + https://godoc.org/os#Exit - exit
+  + https://godoc.org/builtin - builtin package
+  + https://golang.org/pkg/ - list of golang packages
+  + % cd work/23_error-handling/02_err-not-nil/04_log-fatalln; % go fmt main.go; % go run main.go
+  + % cd work/23_error-handling/02_err-not-nil/05_panic; % go fmt main.go; % go run main.go
 **** Custom Errors - Creating Values of Type error
+  + "Error values in Go aren't special, they are just values like any other, and so you have the entire language at your disposal" - Rob Pike
+  + https://godoc.org/errors
+  + https://golang.org/src/errors/errors.go - errors source code
+  + % cd work/23_error-handling/03_custom-errors/01_errors-new; % go fmt main.go; % go run main.go
 **** Idiomatic Error Handling
+  + https://golang.org/src/bufio/bufio.go - bufio source code, check custom errors
+  + % cd work/23_error-handling/03_custom-errors/02_errors-new_var; % go fmt main.go; % go run main.go
 **** Providing Context with Errors
+  + https://godoc.org/fmt#Errorf - fmt package Errorf function
+  + % cd work/23_error-handling/03_custom-errors/03_fmt-errorf; % go fmt main.go; % go run main.go
+  + % cd work/23_error-handling/03_custom-errors/04_fmt-errorf_var; % go fmt main.go; % go run main.go
 **** Providing Even More Context with Errors
+  + https://golang.org/doc/effective_go.html#errors
+  + % cd work/23_error-handling/03_custom-errors/05_custom-type; % go fmt main.go; % go run main.go
+  + see use of structs with error type in standard library:
+    + http://www.goinggo.net/2014/11/error-handling-in-go-part-ii.html
+    + http://golang.org/pkg/net/#OpError
+    + http://golang.org/src/pkg/net/dial.go
+    + http://golang.org/src/pkg/net/net.go
+    + http://golang.org/src/pkg/encoding/json/decode.go
 **** Error Handling Review & Resources
+  + resources
+    + http://blog.golang.org/error-handling-and-go
+    + http://www.goinggo.net/2014/10/error-handling-in-go-part-i.html
+    + https://www.goingo.net/2014/11/error-handling-in-go-part-ii.html
+    + https://golang.org/ref/spec#Errors
+    + https://golang.org/doc/effective_go.html#errors
 *** Farewell
 **** Nice Articles
   + http://devs.cloudimmunity.com/gotchas-and-common-mistakes-in-go-golang/  
