@@ -784,6 +784,26 @@
  + % cd work/22_go-routines/13_channels_fan-out_fan-in/02_sq-output; % go fmt main.go; % go run -race main.go
  + % cd work/22_go-routines/13_channels_fan-out_fan-in/03_sq-output_variation; % go fmt main.go; % go run -race main.go
 *** Concurrency Challenges
+**** Fan Out/Fan In - Challenge
+ + https://github.com/golang/link - linter for go source code
+  + go get -u github.com/golang/lint/golint
+  + % golint; # lint one file
+  + % golint ./...; # lint multiple file
+ + % cd work/22_go-routines/13_channels_fan-out_fan-in/04_challenge-description; % go fmt main.go; % go run -race main.go
+**** Fan Out/Fan In - Solution
+ + % cd work/22_go-routines/13_channels_fan-out_fan-in/05_challenge-solution; % go fmt main.go; % go run -race main.go
+**** Fan Out/Fan In - Challenge: Factorial
+ + % cd work/22_go-routines/13_channels_fan-out_fan-in/06_challenge-description; % go fmt main.go; % go run -race main.go
+**** Fan Out/Fan In - Solution: Factorial
+ + % cd work/22_go-routines/13_channels_fan-out_fan-in/07_challenge-solution; % go fmt main.go; % go run -race main.go
+**** Deadlock Challenge
+ + % cd work/22_go-routines/13_channels_fan-out_fan-in/08_challenge-description; % go fmt main.go; % go run -race main.go
+**** Deadlock Solution
+ + % cd work/22_go-routines/13_channels_fan-out_fan-in/09_challenge-solution; % go fmt main.go; % go run -race main.go
+**** Incrementor Challenge Revisited
+ + % cd work/22_go-routines/14_incrementor-challenge/01_description; % go fmt main.go; % go run -race main.go
+**** Incrementor Solution
+ + % cd work/22_go-routines/14_incrementor-challenge/02_solution; % go fmt main.go; % go run -race main.go
 *** Concurrency Resources
 **** Additional Resources
   + https://github.com/ardanlabs/gotraining -> search for go routine, chan, atomic and look at examples
