@@ -752,6 +752,37 @@
  + % cd work/22_go-routines/09_channels/05_channel-direction; % go fmt main.go; % go run -race main.go
  + % cd work/22_go-routines/09_channels/06_refactor; % go fmt main.go; % go run -race main.go
 *** Applied Concurrency
+**** Incrementor With Channels
+ + % cd work/22_go-routines/09_channels/07_incrementor; % go fmt main.go; % go run -race main.go
+**** Deadlock Challenge
+ + % cd work/22_go-routines/10_deadlock-challenges/01_deadlock-challenge; % go fmt main.go; % go run -race main.go
+ + % cd work/22_go-routines/10_deadlock-challenges/02_deadlock-solution; % go fmt main.go; % go run -race main.go
+ + % cd work/22_go-routines/10_dealock-challenges/03_deadlock-challenge; % go fmt main.go; % go run -race main.go
+ + % cd work/22_go-routines/10_deadlock-challenges/04_deadlock-challenge; % go fmt main.go; % go run -race main.go
+ + % cd work/22_go-routines/10_deadlock-challenges/05_deadlock-solution; % go fmt main.go; % go run -race main.go
+**** Factorial Challenge
+ + % cd work/22_go-routines/11_factorial-challenge/01_challenge-description; % go fmt main.go; % go run -race main.go
+ + % cd work/22_go-routines/11_factorial-challenge/02_challenge-solution; % go fmt main.go; % go run -race main.go
+**** Pipeline Pattern
+ + https://blog.golang.org/pipelines - go concurrency patterns
+ + % cd work/22_go-routines/12_channels_pipeline/01_sq-output; % go fmt main.go; % go run -race main.go
+**** Factorial Challenge Redux
+ + % cd work/22_go-routines/12_channels_pipeline/02_sq-output; % go fmt main.go; % go run -race main.go
+ + % cd work/22_go-routines/12_channels_pipeline/03_challenge-description; % go fmt main.go; % go run -race main.go
+**** Factorial Challenge Redux Solution
+ + https://github.com/GoesToEleven/GolangTraining/blob/master/22_go-routines/12_channels_pipeline/04_challenge-solution/README.md
+ + % cd work/22_go-routines/12_channels_pipeline/04_challenge-solution/01_original-solution; % go fmt main.go; % go run -race main.go
+ + % cd work/22_go-routines/12_channels_pipeline/04_challenge-solution/02_another-solution; % go fmt main.go; % go run -race main.go
+**** Fan Out/ Fan In Pattern - Overview
+ + https://blog.golang.org/pipelines - check for fanout and fanin
+ + fanout - some channel -> multiple funcs reading from that channel until it's closed
+ + fanin - multiple channels writing to the same channel -> some channel
+**** Fan In Pattern
+ + https://talks.golang.org/2012/concurrency.slide#25 - rob pike google talk slide
+ + % cd work/22_go-routines/13_channels_fan-out_fan-in/01_boring; % go fmt main.go; % go run -race main.go
+**** Fan Out/ Fan In - Example
+ + % cd work/22_go-routines/13_channels_fan-out_fan-in/02_sq-output; % go fmt main.go; % go run -race main.go
+ + % cd work/22_go-routines/13_channels_fan-out_fan-in/03_sq-output_variation; % go fmt main.go; % go run -race main.go
 *** Concurrency Challenges
 *** Concurrency Resources
 **** Additional Resources
