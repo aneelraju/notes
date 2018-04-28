@@ -735,13 +735,22 @@
  + youtube - Go Proverbs - Rob Pike - Gopherfest - Nov 18, 2015
  + % cd work/22_go-routines/09_channels/00_unbuffered-channels-block; % go fmt main.go; % go run -race main.go
 **** Range Clause
- + % cd work/22_go-routines/09_channels/01_race-condition; % go fmt main.go; % go run -race main.go
+ + % cd work/22_go-routines/09_channels/02_n-to-1/01_race-condition; % go fmt main.go; % go run -race main.go
 **** N-to-1
+ + % cd work/22_go-routines/09_channels/02_n-to-1/02_wait-group; % go fmt main.go; % go run -race main.go
 **** Semaphores - Part 1
+ + % cd work/22_go-routines/09_channels/02_n-to-1/03_semaphore; % go fmt main.go; % go run -race main.go
+ + % cd work/22_go-routines/09_channels/02_n-to-1/04_semaphore_wrong-way; % go fmt main.go; % go run -race main.go
 **** Semaphores - Part 2
+ + % cd work/22_go-routines/09_channels/02_n-to-1/05_n-times_to_1; % go fmt main.go; % go run -race main.go
 **** 1-to-N
+ + % cd work/22_go-routines/09_channels/03_1-to-n/01_1_to_2-times; % go fmt main.go; % go run -race main.go
+ + % cd work/22_go-routines/09_channels/03_1-to-n/02_1_to_n-times; % go fmt main.go; % go run -race main.go
 **** Channels as Arguments & Returns
+ + % cd work/22_go-routines/09_channels/04_pass-return-channels; % go fmt main.go; % go run -race main.go
 **** Channel Direction
+ + % cd work/22_go-routines/09_channels/05_channel-direction; % go fmt main.go; % go run -race main.go
+ + % cd work/22_go-routines/09_channels/06_refactor; % go fmt main.go; % go run -race main.go
 *** Applied Concurrency
 *** Concurrency Challenges
 *** Concurrency Resources
