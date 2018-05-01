@@ -1277,6 +1277,104 @@
      + '-R' - to make recursive permission changes
      + 'getfacl /path/to/file' - to view the acl of a file or directory
 *** adding new users
+**** User Management Part A
+  + /etc/passwd file
+    + It's the primary repository of users on a standalone system, it may be replaced by a centralized LDAP server in large environment
+    + The file contains seven fields separated by colons:
+      + login name
+      + password placeholder
+      + UID
+      + GID
+      + Human friendly information (real name, phone ... etc)
+      + Home Directory
+      + Login shell
+    + % vi /etc/passwd
+    + login name
+      + if an NIS is used, login name is limited to 8 characters long
+      + don't use ':', new line character
+      + requires first character to be lower case or underscore
+      + best practice
+        + should be no more than 8 characters for backward compatibility
+        + should be all in lower case for consistency
+        + it's wise to use a naming convention like "first.last"
+    + password placeholder
+      + password field in the /etc/passwd, real encrypted passwd is stored in /etc/shadow file
+      + you can opt ot use /etc/passwd for storing passwds (not recommended) using pwuconv command. If you want to revert to /etc/shadow use pwconv
+**** User Management Part B
+   + password placeholder
+      + linux supports a no. of encryption algorithms, they can be set in /etc/login.defs file, together with the password length
+        + look for "UID_MIN/UID_MAX/GID_MIN/GID_MAX" and description
+        + look for "ENCRYPT_METHOD SHA512"
+        + look for "PASS_MAX_DAYS/PASS_MIN_DAYS/PASS_MIN_LEN/PASS_WARN_AGE" and description
+      + If you are manually editing the /etc/passwd and /etc/shadow files to manage users (not recommended), you must put a star in the passwd placeholder to prevent the user from logging in unless a password is provided. Leaving the password filed empty allows the user to login without entering a password
+        + % vipw; # to edit /etc/passwd file
+        + % vipw -s; # to edit /etc/shadow file
+        + If password filed is empty then need to configure /etc/ssh/sshd_config to enable password
+          + % vim /etc/ssh/sshd_config
+          + enable "PermitEmptyPasswords yes"
+            + if enable "PermitEmptyPasswords no"
+            + % sshd restart; # restart sshd
+            + % ssh <user>@<ip>; # now you can login without password
+            + % id -a; # info about <user>
+      + The encrypted string that starts with $ means that it was not encrypted using DES. For e.g, $1$ means and MD5-based algorithm was used, while $6$ indicates a SHA512 algorithms
+      + If an exclamation mark is placed before the password string this means that the account is locked
+      + If two users choose the same password, that does not mean that you will find the same encrypted string because Linux adds a "salt" string to the password before encryption
+        + % useradd user1; # add user user1
+        + % echo abc123 | passwd user1 --stdin; # add passwd to user1
+        + % useradd user2; # add another user user2
+        + % echo abc123 | passwd user1 --stdin; # add same passwd to user2
+        + % vi /etc/shadow; # user1 and user2 hash passwd are not same
+**** UID - User Identification
+   + UID - User Identification
+     + users are defined by their names only for the benefit of users, all applications and filesystems use the UID to identify users on Linux
+       + % id
+       + % id chmod
+     + the root has UID of 0
+     + Linux may create fake accounts to be owners of daemons and services like daemon, bin, main...etc
+       + % vi /etc/passwd; look for user accounts
+     + Although the system permits having multiple users with the same UID, it is highly not recommended, especially for the root account
+       + % useradd -o -u 0 systemadmin; # created systemadmin
+       + % su - systemadmin
+       + % id; # user didn't change from root
+       + % userdel systemadmin; # can't delete this account
+       + you have to delete in /etc/passwd
+     + It is advised to have the unique UID's across the entire network. This ensures that every person has the same UID on any system. Such a control will mitigate potential security vulnerabilities when sharing files, like through NFS for example
+     + As the number of connected systems gets higher, it will be hard to keep this unique UID control; so it's advisable to use a centralized login system like LDAP
+   + GID - group identification
+    + Used to identify groups by number
+    + Only the primary group is listed
+    + The root group GID is 0
+    + System users are also assigned to groups
+    + They are mainly used to share files among users
+    + If setgid is used, any file created in the directory will bear the group id of this directory instead of it's own
+   + GECOS "General Electric Comprehensive Operating Supervisor"
+    + brand of mainframe computers
+    + field contains human readable, personal information about the user
+    + you can view info about a user by using the 'finger' command
+      + % finger <user>; # display useful info
+      + % vi /etc/passwd
+        + add "username,address" in GESCOS field
+    + you can use the 'chfn' to update this info (will not work on LDAP)
+      + % chfm; # change user info
+      + enter name, office, phone
+      + % finger root
+      + % vi /etc/passwd; # info is updated
+    + if you want to add it manual, make sure you separate the fields by commas(,). Of course you'd do this as root
+  + Home directory
+    + default directory to which the user is put upon logging in
+    + defautls to /home followed by a directory that has the same name as the user's. /home can be changed in /etc/default/useradd
+      + % vi /etc/default/useradd
+      + you can change /home and shell
+    + it contains environment files like .bash_profile and .bash_rc
+    + sometimes administrators create users home directories as network shares on a central server to provide roaming profiles for the users. That is, the user will have the same environment regardless of the machine used for logging
+      + through automount
+      + as soon as user login's, the home is mapped from remote server to local server
+      + whenever network is not availabe the home environment will not be available
+    + if there is no home directory specified for the user, an error message will be displayed and the user will be placed on the root directory /
+**** The login shell
+  + The login shell
+    + 
+**** The useradd command
 *** storage
 *** periodic processes
 *** backups
