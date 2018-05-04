@@ -1415,8 +1415,61 @@
         + .profile for the korn shell
         + .vimrc for customizing the vim environment
       + those startup files are placed in '/etc/skel' directory. they get copied to the user's home directory upon account creation
+        + % cd /etc/skel
+        + % ls -la; # contains startup files
       + the '/etc/profile' file get's executed before any startup files are. it is a good place to store system-wide environment variables. however, this file can be easily overriden by the users
 **** The useradd command
+  + The 'useradd' command
+    + it uses the files '/etc/login.defs' and '/etc/default/useradd'
+    + in ubuntu, the adduser command is a perl script that provides more features than useradd. it uses the /etc/adduser.conf as a configuration file
+    + switch -D prints the defaults that 'useradd' uses when creating new users
+    + it adds an x in the '/etc/passwd' password field, and a !! in the '/etc/shadow' file, indicating that the user account is locked until the superuser assigns a default password
+    + appropriate entries are added in the '/etc/group' file
+  + 'useradd' options
+    + common command line switches
+      + '-c' - specify the friendly name for the user (often the full name)
+      + '-d' - a different home directory than the default
+      + '-g' - a different primary group than the default
+      + '-G' - add the user to a supplementary group
+      + '-s' - specify a login shell
+      + '-m' - move files from home directory to a new one
+    + % useradd -c "System Operator" -d /opt/systemoperator -g admins -G operators -s /bin/ksh operuser; # example command
+    + % vi /etc/passwd; # check for user operuser
+    + % su - operuser; # invokes ksh
+    + % finger operuser; # check info
+    + those same options can be used with the 'usermod' command
+  + Adding multiple users in one go
+    + bulk user accounts can be created using the 'newusers' command
+    + the command takes a file that contains the user accounts as it's argument
+    + the file is formatted the same way as the '/etc/passwd' file, except that the x placeholder in the password fields is replaced with the actual password, in clear text
+      + % echo '
+        usera:abc123:510:510:First User:/home/usera:/bin/bash
+        userb:abc123:511:511:Second User:/home/userb:/bin/bash
+        userc:abc123:512:512:Third User:/home/userc:/bin/bash
+        ' > users.txt
+      + chmod 400 users.txt; # only read permission to you for security
+      + % newusers users.txt
+      + % vi /etc/passwd; # users are added
+      + % vi /etc/shadow; # passwords are added
+    + the newusers command does not copy the startup files from /etc/skel directory. those files have to be manually created
+    + the user's file can be created using a script that will guarantee creating strong passwords. this file should be highly secured, and removed once the creation process is complete
+  + Deleting user accounts
+    + users can be deleted using the 'userdel' command
+    + in ubuntu there is the 'deluser' script, which is a wrapper to 'userdel'
+      + it uses the configuration file /etc/deluser.conf to provide the following features (they can be turned on or off)
+        + remove the user's home directory
+        + backup the user's files
+        + remove all the files owned by the user
+        + delete the user's group if empty
+        + % vi /etc/deluser.conf
+      + you must make sure that a deleted user has been removed from the crontab jobs, and that any processes that is still running under his account is taken care of
+  + users locking and unlocking
+    + you can prevent a user from logging in (locking) using 'usermod -L login', you can unlock the account using usermod -U login
+    + locking the account means putting an asterisk (*) or an exclamation mark before the encrypted password field in the '/etc/shadow' file as this destroys the hash. Unlocking the password removes those characters
+      + % usermod -L usera; # locks usera account
+      + % vi /etc/shadow; # check '!' mark
+      + % usermod -U usera; # unlocks userb account
+
 *** storage
 *** periodic processes
 *** backups
