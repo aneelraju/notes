@@ -1494,10 +1494,89 @@
        + the protocol defines the contents of each packet in a standard way that can be interpreted by the receiving device
      + TCP/IP skeleton
        + transmission control protocol/internet protocol (TCP/IP), a set of network protocols stacked over each other and designed to work with each other
-         + application layer: 
+         + application layer: it is where the network-aware application resides. For e.g ssh, ftp
+         + transport layer: where TCP and UDP exist. TCP provides a two-way, reliable data transfer with error correction mechanisms. UDP provides a faster data transfer but one way and with no verification mechanisms
+         + network layer: contains the internet protocol (IP) and internet control message protocol (ICMP). Both of which provide low level support for routing and error correction
+         + link layer: where network drivers operate. it also contains the ARP (Address Resolution Protocol), which is responsible for translating logical address (IP) to hardware addresses (MAC)
+         + physical layer: the newtork medium where data travels (copper wires, radio waves ... etc)
+       + as data travels from the top layer to the bottom before it enters the transfer medium, each layer adds a header information. This is called encapsulation. When received, this data is interpreted from the bottom layer upward
 **** the Link layer
+  + The Link Layer
+    + To enable TCP/IP to support different kinds of networks (Ethernet, token ring ..etc) there had to be an abstraction b/w different layers. The link layer for e.g is responsible for managing the low level harware details of the specific network. It is where the drivers decide the way data will be sent and received. Other layers do not and should not care about the network medium as it is abstracted by the link layer
+    + the link layer determines the max length of the packet, which is the unit of data transferred over the network. This is governed by the hardware limits and the protocol specification
+    + For e.g. an Ethernet packet is about 1500 bytes, a PPP modem link packet is b/w 512 and 576 and a point-to-point WAN link could be b/w 1500 and 4500 bytes
+  + How do packets know their destinations ?
+    + several methods are used in conjuction: MAC addressing, IP (v4 or v6) addressing, and hostnames
+    + MAC address
+      + it is a 6B address to the network adapter at time of manufacture. It is unique amoung all network adapters
+      + It represented in hex format in pairs separated by colons. Eor e.g: 00:0a:95:9d:68:16. The first 3B identify the vendor. For eg. 00:0a:95 for Apple Computers Inc. A comprehensive list can be found at http://iana.org/assignments/ethernet-numbers
+      + Although MAC address were intended to be unique, many adapters offer a way to change them, especially if you are a vitual machine
+    + IP addressing
+      + An IP address consists of 32 bits that can be represented as 4 numbers separated by dots. For eg. 192.168.1.100. The ARP protocol on the link layer translates IP address to the physical MAC address to enable communication
+    + Hostnames
+      + Human-readable names of machines. Translation from hostnames to IP addresses can be done through several systems from machine hosts files to LDAP databases or DNS systems
+        + % vi /etc/hosts; # host names
+        + % lsof -:80; # apache server running port 80
+        + % vi /etc/services; # list of services and corresponding port numbers, check for port 80
+      + The application running on the host uses a 16-bit number called a part so that the operating system can correctly direct messages to the intended recipient application
+  + IP addressing
+    + An IP address is divided into network (subnet) and the physical host
+    + when an IP address starts with 127 this means it is referring to the loopback network. If the IP address is 127.0.0.1, it is refererring to the current host (the loopback address)
+    + classes were introduced to define which part of the IP address represent the host address and which represent the network id
+    + The number 0 is used as a network id and 255 is used as a broadcast address so they are excluded from any network range
+    + A netmask is used to specify the network and host portion of an IP address. For e.g 192.168.5.10/24 is a class C IP address
+    + Classfull IP addressing can be summarized as follows
+      + Class:A; Range:1-127; Possible hosts:16,777,214; Possible networks: 126; Netmask: 8
+      + Class:B; Range:128-191; Possible hosts:65,534; Possible networks:16,384; Netmask: 16
+      + Class:C; Range:192-223; Possible hosts: 254; Possible networks: 2,097,152; Netmask: 24
 **** classless inter domain routing (CIDR)
+  + Classless inter domain routing (CIDR)
+    + Default subnet classes wasted a lot of addresses. Note that 127 is reserved for loop back addresses
+    + To make better use of the wasted space, subnetting was introduced to divide a single octet between the network and the host instead of being assigned exclusively to one of them
+    + For this reason CIDR was introduced. It allows the octet to be shared between the network id and the host id
+    + You can use the following online tool to calculate CIRD notation address spaces: http://jodies.de/ipcalc
+    + Class:A; Possible Network bits: 8-30; Possible subnets: 1-4,194,304; Possible hosts: 2-16,777,214
+    + Class:B; Possible Network bits: 16-30; Possible subnets: 1-16,384; Possible hosts: 2-65,534
+    + Class:C; Possible Network bits: 24-30; Possible subnets: 1-64; Possible hosts: 2-254
+  + Private address spaces and NAT
+    + Private address spaces were introduced to address the problem of growing number of hosts requiring unique addresses
+    + Those addresses should not directly access the internet. Accordingly, they can be assigned multiple times at the same time
+    + They can be listed as follows:
+      + 10.0.0.0 - 10.255.255.255 (class A)
+      + 172.16.0.0 - 17.31.255.255 (class B host id is talking 20 bits)
+      + 192.168.0.0 - 192.168.255.255 (class C. Host id is taking 16 bits)
+    + To access the internet, a protocol called NAT (Network address translation) is used. It translates the internal IP address to one public address used to access the internet. When the response is returned from the internet, NAT routes this response to the internal IP that initiated the request
+    + NAT uses port forwarding to enable internal addresses to receive requests from the outside
+      + e.g <realip>:80 -> port 80 forwarded to <private ip>
+    + NAT is not and cannot replace a firewall solution
 **** routing
+  + Routing
+    + It is the method by which a packet finds it's way from source IP to destination IP through a set of one or more networks (or subnets)
+    + Paths (routes) are defined in a routing table that is stored in the kernel
+    + If there are no defined routes for a packet, it is directed to a "default route"
+    + If there are no defined routes for the packet and no default route, "network unreachable" message is returned, which is an ICMP error
+    + Routing table can be displayed using the 'netstat -r' command. -n can be added to avoid DNS lookups:
+      + the destination address may be a network or a host
+      + the IP 0.0.0.0 indicates the default route
+      + the default gateway must be a device that exists on the same network
+      + % netstat -nr; # kernel routing table
+      + % tracepath www.google.com
+      + % ping www.google.com
+    + a route can be added statically for e.g
+      + % route add -net 8.8.8.8 netmask 255.255.255.254 gw 192.168.0.1
+      + % netstat -nr
+    + dynamic routing is done through routing daemons that manages the routing tables
+  + ARP: Address Resolution Protocol
+    + It is used for translating the IP address of a machine to the physical MAC address of the adapter so that data can flow b/w source and destination devices
+    + If the target m/c is not on the same network, the routing table is consulted to determine the next hop and ARP is used to find the router's MAC address
+    + When the source machine wants to send data to the target machine, it broadcasts a message on Ethernet asking other machines on the network, the target machine replies with it's MAC address. The request includes the IP address and MAC address of the source machine so that the target one does not have to do the same broadcast message to reply
+    + Accordingly, one request makes two machines learn the MAC addresses of each other. Other machine on the network receives this request and may save it in their ARP cache. This helps reduce the overall network traffic
+      + % arp -a; # arp cache on the m/c
+  + DHCP: Dynamic Host Configuration Protocol
+    + It is a service/protocol that ensures that every device on the network gets at least an IP and a default gateway. DHCP can also be used to provide default DNS servers, NTP servers and other parameters
+    + When a device receives its address information, it keeps it for the duration of a lease period (which is configurable on the server side). Within this lease, the machine must periodically contact DHCP server to renew it (when lease is half over). If the lease is not renewed it expires and the address can be reassigned to a new device
+    + When a new device gets attached to the network, it sends a broadcast message to the broadcast IP address (like 192.168.1.255). If a DHCP server is present on the same network, it starts communicating information to the client. Otherwise, the message can traverse networks through DHCP relay until it reaches the DHCP server
+    + Clients should keep their DHCP information persistent across reboots
 *** netfilter and ip tables
 *** dns: the domain name system
 *** the network file system
