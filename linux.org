@@ -1373,7 +1373,49 @@
     + if there is no home directory specified for the user, an error message will be displayed and the user will be placed on the root directory /
 **** The login shell
   + The login shell
-    + 
+    + it's command line interpreter defaults to bash (bourne again shell)
+    + users may be allowed to change their login shells with 'chsh' command
+    + The changes shell should be one of the shells in /etc/shells. The administrator can edit this file
+    + The administrator can change the login shell of the user by directly editing /etc/passwd file using 'vipw' command
+    + other shells: sh, csh, tcsh
+  + The /etc/shadow file
+    + used to store the encrypted passwords
+    + both /etc/shadow and /etc/passwd must co-exist for user management. Tools like 'useradd' and 'usermod' are used to manage both of them
+    + the file contains the following nine fields:
+      + username
+      + encrypted password
+      + the date of last password change
+      + minimum number of days allowed before a user can change the password
+      + maximum number of days allowed before a user can change the password
+      + number of warning days before the password expires
+      + number of days before the account gets disabled after a password has expired
+      + account expiration date. it represents the number of days since 1/1/1970. If left blank, the account will never expire
+    + The /etc/group file
+      + contains the current groups on the system and the users listed in each one. each group is represented by a line. Fields are separated by colons, no spces are allowed
+      + the line contains the following fields
+        + group name
+        + encrypted password or a placeholder
+        + gid
+        + member users
+      + the password placeholder is used if the group has a password set (using 'gpasswd' command). however, it's highly unusual
+    + creating new users
+      + the 'useradd' command is used to add new users to the system. it does following tasks
+        + adds a user entry to the /etc/passwd file
+        + adds a new group with the same name as the login name to the 'etc/group' file
+        + creates a new directory with the same name as the login name to /home directory
+        + sets the appropriate ownership and permissions to the home directory
+        + sets the user's mail directory and creates a mail alias
+      + users can be added using, instead, the 'vipw' and 'vipw -s' which would edit /etc/passwd and /etc/shadow files respectively
+      + you must assign a password for the new user before he/she can use the account. Passwords are assigned using the 'passwd loginame' command
+        + default '!' is present in the password field until set password. it means user account is locked
+    + Environment files
+      + every shell has one or more environment files. those are responsible for setting important session-wide variables
+      + the following are examples of startup files:
+        + .bash_profile and .bashrc for the bash shell
+        + .profile for the korn shell
+        + .vimrc for customizing the vim environment
+      + those startup files are placed in '/etc/skel' directory. they get copied to the user's home directory upon account creation
+      + the '/etc/profile' file get's executed before any startup files are. it is a good place to store system-wide environment variables. however, this file can be easily overriden by the users
 **** The useradd command
 *** storage
 *** periodic processes
