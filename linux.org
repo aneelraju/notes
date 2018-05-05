@@ -1578,6 +1578,120 @@
     + When a new device gets attached to the network, it sends a broadcast message to the broadcast IP address (like 192.168.1.255). If a DHCP server is present on the same network, it starts communicating information to the client. Otherwise, the message can traverse networks through DHCP relay until it reaches the DHCP server
     + Clients should keep their DHCP information persistent across reboots
 *** netfilter and ip tables
+**** Netfilter - The Linux firewall
+  + Netfilter or iptables?
+    + Netfilter is the name of the firewall used on Linux. It is kernel based, and it allows the kernel to register callback functions on every packet that traverses the network stack
+    + Iptables is the command that is used to manipulate Netfilter on the Linux box
+    + Not only is it used for filtering incoming and outgoing packets, but can also be used in situations like NAT
+    + It has 3 main tables:
+      + Packet filtering
+      + Network address translation (NAT)
+      + Packet mangling
+    + Each table may have a chain of rules. The following are the available chains:
+      + Prerouting
+      + Input
+      + Forward
+      + Postrouting
+      + Output
+  + The chains
+    + Chains may exist in a table as hook points that match the packet in the desired state
+    + They can be explained as follows:
+      + Forward: when your box is acting as a router, this matches the packet when it's coming on one interface and going out of another
+      + Input: when the packet is incoming to your box, just before it reaches the process
+      + Output: when packet is leaving your box, just after the process generates it
+      + Postrouting: right before the packet leaves the interface
+      + Prerouting: right after the packet enters the network interface
+    + By definition, those chains are available to the table according to the table's role. For e.g. it is meaningless to target the postrouting chain in the input table
+  + The tables
+    + iptables consists of three tables used to organize the hook points (chains) on the kernel to capture packets in the desired point in path
+      + NAT: used to redirect connections to different network interfaces. it contains the following chains: OUTPUT, POSTROUTING and PREROUTING
+      + Filter: used to control packets flowing in or out of the box, it contains the following chains: INPUT, OUTPUT, FORWARD. unless explicitly specified, the filter table is default one used in iptables commands
+      + Mangle: used to alter the packet, it's rarely used. the available chains are: FORWARD, INPUT, OUTPUT, POSTROUTING and PREROUTING
+  + The packet journey in the action
+    + As soon as the packet reached the network card, it traverses the chains of the tables according to their direction and destination
+    + Packets are examined at each point to the chain until a rule is matched, when that happens, the target is applied. this target may be ACCEPT, REJECT, DROP or LOG
+    + if the packet reaches the end of the chain with no rules matched, the default rule is applied
+    + if no default rule is specified, a packet that does not match any of the rules are considered accepted and they pass
+    + whenever a packet is matched, the packet and byte counter is incremented to reflect the change
+    + iptable rules must have least restrictive at top and most restrictive at bottom
+  + The targets
+    + You can specify one of the following targets to a packet
+      + ACCEPT: stop processing at the current chain and let the packet flow to the next one
+      + DROP: stop processing at the current chain as well as the rest of the chains, just dump the packet as if it did not arrive
+      + REJECT: same as DROP but some feedback is returned to the user
+      + LOG: useful for troubleshooting. same as ACCEPT but it writes to the '/var/log/messages'. you can use it to ensure that a packet has passed or failed to pass a specific chain
+**** The LOG action
+  + The LOG action
+    + used for troubleshooting purposes
+    + you can use it to determin whether or not a packet has passed for failed a specific chain. e.g iptables -A INPUT -j LOG
+    + by examining the '/var/log/messages' you will know whether or not the packets have been blocked or not
+    + % iptables -vnL
+    + % iptables -vnL --line-numbers
+    + % iptables -I OUTPUT 2 -j LOG
+    + % ping 192.168.0.103
+    + % tail /var/log/messages
+    + % iptables -vnL --line-numbers
+  + I don't want to be pinged
+    + you can prevent other machines from pinging yours by blocking the ICMP packets as follows
+      + 'iptables -A INPUT -p icmp --icmp-type echo-request -j DROP'
+    + you can also choose the specific network interface on which you want to apply the rule (any rule) by using the -i switch
+      + 'iptables -A INPUT -i eth0 -p icmp --icmp-type echo-request -j DROP'
+    + % iptables -F
+    + % iptables -A INPUT -p icmp --icmp-type echo-request -j REJECT
+      + from other host % ping 192.168.0.106; # ping rejected
+    + % iptables -A INPUT -p icmp --icmp-type echo-request -j DROP
+      + from other host % ping 192.168.0.106; # ping rejected without message
+  + The usual configuration
+    + most of the time you don't want to block specific connections, instead you want to allow only specific connections
+    + this can be done using the ACCEPT action for all the connections that you want to pass, then add one final DROP or REJECT rule to block any packet that does not match any of your rules
+    + for e.g. the below configuration is for a system that allows only SSH and HTTP TCP connections
+      + 'iptables -A INPUT -p tcp --dport 80 -j ACCEPT'
+      + 'iptables -A INPUT -p tcp --dport 22 -j ACCEPT'
+      + 'iptables -A INPUT -j LOG'
+      + 'iptables -A INPUT -j DROP'
+    + this can be also a range of ports like 8000:9000
+    + the LOG rule here is for troubleshooting. if clients complain that they still cannot connect to port 80 or cannot ssh to the machine, check the log file for blocked packets
+    + any of the previous examples can be combined with the above rules to make them even more specific (like source IP)
+    + you can even control the source port of the connection using the --sport option
+    + % iptables -F; # iptables flush
+    + % iptables -A INPUT -p tcp --dport 80 -j ACCEPT
+    + % iptables -A INPUT -p tcp --dport 22 -j ACCEPT
+    + % iptables -A INPUT -j LOG
+    + % iptables -A INPUT -j DROP
+    + % iptables -vnL
+    + % nc -l 8000; # netcat command, opens up arbitrary port
+      + % telnet 192.168.0.106 80; # due to firewall, accepted
+      + % telnet 192.168.0.106 22; # accepted
+      + % telnet 192.168.0.106 8000; # cannot connect, 8000 port is opened by netcat
+    + % iptables -F; # iptables flushed
+    + % nc -l 8000
+      + % telnet 192.168.0.106; # connected, as iptables are flushed
+      + % Hello; # appears on host m/c
+  + Viewing, editing, and saving rules
+    + you can use 'iptables -nvL' to view all the configured rules. The line numbers are important here to be able to make changes
+    + you can insert a rule in a specific location using the -l switch, but you must specify a line number. For e.g. I want to block all trafic from subnet 172.25.22.0/24 and if I have traffic from other sources, I want only ssh connections allowed
+      + 'iptables -A INPUT -s 172.25.22.0/24 -j DROP'
+      + 'iptables -A INPUT -p tcp --dport 22 -j ACCEPT'
+      + 'iptables -A INPUT -j DROP'
+    + Then I installed a webserver, I want the previous configuration to stay the same, but just add web traffic to the allowed list. Consulting iptables -vnL, I want this rule to be added to line 2
+      + 'iptables -I INPUT 2 -p tcp --dport 80 -j ACCEPT'
+    + if you want to delete a rule use the -D switch
+      + 'iptables -D INPUT 2'
+    + you must save the iptables configuration to persis reboots
+      + 'service iptables save'
+    + you can flush the rules (delete them) using 'iptables -F'
+        + % iptables -vnL
+    + % iptables -A INPUT -p tcp --dport 22 -j ACCEPT
+    + % iptables -vnL
+    + % iptables -vnL --line-numbers
+    + % iptable -D INPUT 1; # delete
+    + % iptables -vnL --line-numbers
+    + % service iptables save
+    + % vi /etc/sysconfig/iptables
+**** IP tables configuration
+  + Iptables configuration
+    + 
+**** Lab: Configure a Linux box to act as a 12:17 NAT device
 *** dns: the domain name system
 *** the network file system
 *** sharing files with windows
