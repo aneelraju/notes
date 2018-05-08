@@ -1690,8 +1690,90 @@
     + % vi /etc/sysconfig/iptables
 **** IP tables configuration
   + Iptables configuration
-    + 
+    + Iptables can be started and stopped by using the service command just like other services on the system: 'service iptables start/stop'
+    + You can use 'chkconfig' to ensure that the service gets started on system boot, at the desired runlevels
+    + The rules are stored in '/etc/sysconfig/iptables' file
+    + The iptables command itself has a large number of options and possible combinations. However, you needn't study all the possible syntaxes for your day to day system administration
+    + % vi /etc/sysconfig/iptables; # you can rules here
+    + % service iptables status; # status of iptables
+    + % service iptables stop; # stop iptables
+    + % chkconfig --list iptables
+    + % man iptables; # has lots of options and combinations
+  + I want to block that IP!
+    + most basic usage of iptables is to block traffic from a specific IP address: 'iptables -A INPUT -s 192.168.0.103 - j DROP'
+    + the filter table is assumed by default if not explicitly specified. we could, however mention it like: 'iptables -t filter -A INPUT -s 192.168.0.103 - j DROP'
+    + Then comes the action argument. The -A is for add, this adds the rule to the end of the chain. you can use -I to instert a rule at a specific place (using line numbers). Use 'iptables -vnL' to display the rules and their line numbers. The action is followed by the chain. In our case it's the INPUT one
+    + The -s argument is for the source IP address. This can also be a range of addresses like 192.168.0.0/24 to block the whole subnet
+    + The -j argument specifies the target for the rule. In our case, a packet is matched coming from this IP address, drop it
+    + % ipconfig -a; # two network cards
+    + % iptables -A INPUT -s 192.168.56.101 -j drop
+      + From remote m/c % ping 192.168.56.102; # no response and message
+    + % iptables -F; # flush iptables
+    + % iptables -A INPUT -s 192.168.56.101 -j REJECT
+      + From remote m/c % ping 192.168.56.102; # connection rejected and log message
+    + % iptables -vnL; # gives iptables, same as iptable -t filter -vnL
+    + % iptables -t filter -vnL --line-numbers; # gives line number of the rule
+  + Let's block web traffic
+    + you can block traffic targetting a specific port number. e.g. HTTP web traffice 'iptables -I INPUT -p tcp --dport 80 -j DROP'
+    + we used the -p command argument to specify the TCP protocol. You can replace it udp for the UDP protocol
+    + The --dport specifies that the matching packet is the one that wants to reach port 80 on the box. you can also replace the port number with the name as specified in /etc/services
+    + To block clients from specific ip: 'iptables -I INPUT -p tcp --dport 80 -s 192.168.0.103 -j DROP'
+    + % lsof -i:80; # check http running
+    + % iptables -F
+    + % iptables -A INPUT -p tcp --dport 80 -j REJECT; # block tcp traffic
+    + % iptables -A INPUT -p udp --dport 80 -j REJECT; # block udp traffic
+    + % iptables -t filter -vnL --line-numbers; # 2 rules are added
+      + In another terminal
+        + % telnet 192.168.0.106 80; # connection refused
+    + % iptables -F
+      + In another terminal; % telnet 192.168.0.106 80; # connection accepted
+    + % iptables -A INPUT -p udp --dport 80 -j ACCEPT
+    + % iptables -vnL
+    + % iptables -A INPUT -p tcp --dport 80 -j REJECT
+    + % iptables -vnL
+    + % iptables -I INPUT -p tcp --dport 80 -s 192.168.0.103 -j ACCEPT
+    + % iptables -vnL
+      + From client 192.168.0.103; % telnet 192.168.0.106 80; # connection accepted
+      + From different client; % telnet 192.168.0.106 80; # connection rejected
+  + Controlling connection state
+    + in very tight environment, outgoing connections are also filtered. But this may cause problems when an incoming connection needs to send response
+    + e.g. you may want to limit outgoing ssh connections to a specific host, but allow this host to establish connection with you
+    + you can use the --state predicate as 'iptables -A INPUT -p tcp --dport 22 -s 192.168.0.103 -m state --state NEW,ESTABLISHED -j ACCEPT'
+    + Now even if you block outgoing connections, clients will be able to connect to you via ssh and receive responses from your server
+    + % iptables -F
+    + % iptables -A OUTPUT -j REJECT
+      + % from another m/c, % ssh root@192.168.0.106; # connection rejected
+    + % iptables -I OUTPUT -m state --state ESTABLISHED -j ACCEPT; # accept only connections that are established earlier and reject new connections
+      + % from another m/c, % ssh root@192.168.0.106; # connection accepted
+      + % ping 192.168.0.103; # connection rejected
 **** Lab: Configure a Linux box to act as a 12:17 NAT device
+  + LAB: configure a linux box to act as a a NAT device
+    + our lab consists of two machines
+      + m/c 1: will act as the NAT device. it has 2 network interfaces one connected to the host (the outside world) and the other is connected to a private network
+      + m/c 2: has only one network card that is connected to the private network. this m/c is not reachable by the host
+    + our prequisites: we want to enable ssh access to m/c 2 through m/c 1 port 2222. m/c 1 will use iptables to forward the packets to m/c 2 on port 22 nad masquerade the returning packets to make it appear as if they are originating from m/c 1
+    + procedure (on m/c 1)
+      + enable kernel routing on m/c 1 by editing '/etc/sysctl.conf' and makking net.ipv4.ip_forward = 1. Apply changes using 'sysctl -w'
+      + use iptables to enable port forwarding: 'iptables -t nat PREROUTING -A -p tcp -d 192.168.0.106 --dport 2222 -j DNAT --to 192.168.56.1:22'
+      + use iptables to masquerade returning packets: 'iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE'
+      + test the results by connecting from the host to m/c 1 through ssh specifying port 2222. you should find yourself connecting to m/c 2
+      + m1> % ifconfig -a; # shows network cards
+      + m1> % vi /etc/sysctl.conf
+        + set net.ipv4.ip_forward = 1
+      + m1> % sysctl -m; # write the config
+      + m1> % sysctl -p; # check the config
+      + m1> % iptables -F
+      + m1> % iptables -t nat -A PREROUTING -p tcp --dport 2222 -j DNAT --to 192.168.56.101:22
+      + m1> % iptables -t net -A POSTROUTING -o eth0 -j MASQUERADE
+      + m1> % iptables -t nat -vnL
+      + m1> % iptables -t net -A POSTROUTING -o eth1 -j MASQUERADE
+      + m1> % ipconfig eth0
+      + m2> % ssh -p 2222 192.168.0.106; # login to host directory (using m/c 1 as nat device)
+      + h> % set -o vl
+      + h> % route add default gw 192.168.96.102
+      + h> % ping 8.8.8.8
+      + h> % ping www.google.com
+      + m1> ifconfig eth1
 *** dns: the domain name system
 *** the network file system
 *** sharing files with windows
