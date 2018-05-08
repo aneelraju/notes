@@ -1775,6 +1775,16 @@
       + h> % ping www.google.com
       + m1> ifconfig eth1
 *** dns: the domain name system
+**** DNS - Domain Name System
+  + Basically, DNS is ...
+    + A way/server/service to translate IP addresses to human-friendly names. For e.g. development.mycompany.com is much more readable and intuitive than 223.123.96.35. It also provides some clue about the role of this m/c
+    + A distributed system. That is, DNS data is scattered among a large number of servers. Each one manages the records of its own network. For e.g. of mycompany.com will have records of all the hosts using this doman. A DNS server will answer the requests of clients that need to resolve names of its hosts, and it will also query other DNS servers if it doesn't have this info yet
+    + Called BIND (developed by ISC) in linux systems, which is the most popular one. However, there are other Linux DNS products like NSD and Ubound. Other implementations exist from other vendors like Microsoft DNS server
+**** Caching Part A
+**** Caching Part B
+**** LAB: Install a caching server
+**** LAB: Install a master DNS server
+**** LAB: Configure DNS slave server
 *** the network file system
 *** sharing files with windows
 *** email services
