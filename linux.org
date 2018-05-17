@@ -1780,6 +1780,16 @@
     + A way/server/service to translate IP addresses to human-friendly names. For e.g. development.mycompany.com is much more readable and intuitive than 223.123.96.35. It also provides some clue about the role of this m/c
     + A distributed system. That is, DNS data is scattered among a large number of servers. Each one manages the records of its own network. For e.g. of mycompany.com will have records of all the hosts using this doman. A DNS server will answer the requests of clients that need to resolve names of its hosts, and it will also query other DNS servers if it doesn't have this info yet
     + Called BIND (developed by ISC) in linux systems, which is the most popular one. However, there are other Linux DNS products like NSD and Ubound. Other implementations exist from other vendors like Microsoft DNS server
+  + Resource Records
+    + These are the records making up the database of the DNS
+    + They are stored in forward and reverse files. The first is used to map hostnames to IP addresses while the second is to do the opposite
+    + The forward file is named after the domain name e.g. mycompany.com while the reverse file is named after the after the IP address 213.123.96.35.rev
+    + In the forward file each record contains: hostname, record type, ip address
+    + If the host name in a line is similar to he previous one, it can be omitted
+    + In the reverse file, the hostnames are written to be associated with their IP addresses
+  + DNS hierarchy and delegation
+    + A domain address typically consists of two or more fragments seperated by dots. The left most fragment is called the top level domain (tld) e.g. .com, .net, .edu and .org are all TLD names
+    + 
 **** Caching Part A
 **** Caching Part B
 **** LAB: Install a caching server
