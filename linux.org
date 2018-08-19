@@ -1471,6 +1471,50 @@
       + % usermod -U usera; # unlocks userb account
 
 *** storage
+**** storage
+     + more than just "disks"
+       + long ago, storage used to refer to one or more disks attached to the machine and used
+         to store the operating system and user files
+       + the hard disk (or SSD) is still the dominant part of storage but a lot of layers are built
+         on top of it like:
+         + different filesystems (ext2, ext3, ext4, exFAT, ZFS...etc.)
+         + Partitioning
+         + RAID
+         + logical volume managers
+         + network file systems (NFS, SAMBA...etc.)
+       + storage has evolved from being just a number of disks attached to the machine to a whole
+         compartment of disks, with separate poewr, and processor, connected to the machines through
+         lightning fast fiber channel cables, or several gigabit ethernet cables (iSCSI) called storage
+         area networks (SAN)
+     + what is a disk ?
+       + it is made up of several rotating platters coated with magnetic film
+       + reading and writing is done through sliding heads that move back and forth just above the
+         surface of the platter but never touch it
+       + when a read operation is requested, the head must move the position above the appropriate
+         track. The time consumed by this operation is called seek delay
+       + it then has to wait for the desired sector to pass under the head as the platter rotates,
+         rotationaly latency
+       + a number of tracks that are at the same distance from the spindle are called a cylinder.
+         Because the arm does not need to move to read the data, it is read much faster
+     + Hard Disk Drives
+       + the rotational speed is measured in RPM (revolutions per minute). you can see speeds like 
+         7200rpm, 10000rpm or 15000rpm depending on the type of storage used
+       + hard disk drives suffers frequent failures, that's why technologies like RAID were introduced
+         to help avoid data loss in the event of an HDD failure
+       + a failure may occur as a result of bad blocks on platter surface, or the damage in the
+         mechanical components like the spindle or the heads
+       + disk life expectancy is measured in MTBF (Mean Time Between Failures). However, this should
+         not be used to expect failure rate over a long term, as the manufacture selects the most
+         reliable phase of a drive
+
+**** the basics - adding a disk part A
+**** the basics - adding a disk part B
+**** redundant array of inexpensive disks (RAID)
+**** lab: create a RAID5 array on red hat linux
+**** logical volume management (LVM)
+**** logical volume resizing part A
+**** logical volume resizing part B
+**** scsi over IP (iSCSI)
 *** periodic processes
 *** backups
 *** syslog and log files
@@ -1789,7 +1833,14 @@
     + In the reverse file, the hostnames are written to be associated with their IP addresses
   + DNS hierarchy and delegation
     + A domain address typically consists of two or more fragments seperated by dots. The left most fragment is called the top level domain (tld) e.g. .com, .net, .edu and .org are all TLD names
-    + 
+    + A domain address should always end in a period (.). which represents the root DNS: the first server to query in the tree, but it is conventionally omitted
+    + Assuming that there are no cached results, if I want to query the IP address of mail.google.com for example, the following happens in sequence:
+      + my machine will ask its local DNS server about this address
+      + the local DNS will ask the root domain (.), which will send a referral to .com server
+      + .com responds with the google's DNS server (may be NS1.GOOGLE.COM)
+      + NS1.GOOGLE.COM responds with an answer containing the IP address, may be 209.85.139.9
+      + The local DNS server caches the result and also the data for .com and google.com
+    + You can use 'dig +trace' command to view the process as it happens
 **** Caching Part A
 **** Caching Part B
 **** LAB: Install a caching server
