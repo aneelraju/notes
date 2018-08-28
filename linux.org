@@ -1952,4 +1952,243 @@
 *** ssh tips and tricks
 *** web hosting
 *** performance analysis
+** book - linux fundamentals - paul cobbaut
+*** linux intro
+    + links
+      + https://en.wikipedia.org/wiki/Dennis_Ritchie
+      + https://en.wikipedia.org/wiki/Ken_Thompson
+      + https://en.wikipedia.org/wiki/BSD
+      + https://en.wikipedia.org/wiki/Comparison_of_BSD_operting_systems
+      + https://en.wikipedia.org/wiki/Richard_Stallman
+      + https://en.wikipedia.org/wiki/IBM_AIX
+      + https://en.wikipedia.org/wiki/HP-UX
+      + https://en.wikipedia.org/wiki/Linux_Torvalds
+      + https://en.wikipedia.org/wiki/History_of_Linux
+      + https://en.wikipedia.org/wiki/Linux
+      + https://lwn.net
+      + http://www.levenez.com/unix/ - a huge Unix history poster
+      + http://kernelnewbies.org/DevelopmentStatistics
+      + http://kernel.org
+      + http://www.top500.org
+      + https://distrowatch.com
+      + https://redhat.com
+      + https://centos.org
+      + https://www.debian.org
+      + https://www.linuxmint.com
+      + https://ubuntu.com
+      + https://www.freebsd.org
+      + https://www.virtualbox.org
+    + choosing a linux distro
+      + red hat enterprise - you are manager and you want a good support contract
+      + centos - you want red hat without the support contract from red hat
+      + fedora - you want red hat on your laptop/desktop
+      + linux mint - you want a personal graphical desktop to play movies, movies and games
+      + debian - my personal favorite for servers, laptops and any other device
+      + ubuntu - very popular, based on debian, not my favorite
+      + kali - you want a pointy-clicky hacking interface
+*** man pages
+    + sample commands
+      + % man whois; # man command
+      + % man syslog.conf; # man configfile
+      + % man syslogd; # man daemon
+      + % man -k syslog; # man -k (or apropos) shows lit of man pages containing a string
+      + % whatis route; # description of a man page
+      + % whereis -m whole; # location of man page
+      + % man man; # show sections of man page
+        + 1 - executable programs or shell commands
+        + 2 - system calls (functions provided by the kernel)
+        + 3 - library calls (functions within program libraries)
+        + 4 - special files (usually found in /dev)
+        + 5 - file formats and conventions eg /etc/passwd
+        + 6 - games
+        + 7 - misc (including macro pages and conventions), e.g. man(7)
+        + 8 - system administration commands (usually only for root)
+        + 9 - kernel routines (non standard)
+      + % man passwd; # opens first manual found
+      + % man 5 passwd; # opens a page from section 5
+      + % mandb; # update man pages
+*** working with directories
+    + sample commands
+      + % pwd ; # print working directory
+      + % cd /etc; # change current directory
+      + % cd ~; # change to home directory
+      + % cd ..; # change to parent directory
+      + % cd .; # stay in current directory
+      + % cd -; # go to previous directory
+      + % ls ; # list contents
+      + % ls -a; # show all files
+      + % ls -l; # display file details
+      + % ls -lh; # display file details with size in human readable format
+      + % mkdir mydir; # create directory
+      + % mkdir -p mydir2/mysubdir2/threedirsdeep; # create sub directories
+      + % rmdir mydir; # remove directory
+      + % rmdir -p test42/subdir; # remove sub-directories
+      + % pushd /lib
+      + % pushd /proc
+      + % popd
+      + % popd
+*** working with files
+    + sample commands
+      + % file pic33.png; # file utility determines the file type
+      + % man 5 magic; # look at magic man page
+      + % file -s /dev/sda; # for special files
+        + % file -s /proc/cpuinfo
+      + % touch file42; # create an empty file
+      + % touch -t 200505050000 SinkoDemay; # timestamps file
+      + % rm BigBattle.txt; # remove file
+      + % rm -i file33; # ask before removing file
+      + % rm -rf test; # remove file forcefully and recursive
+      + % cp file1 file2; # copy file1 to file2
+      + % cp file1 dir2; # copy file1 into dir2
+      + % cp -r dir42/ dir33; # copy dir42 to dir33
+      + % cp file42 file43 file44 dir42/; # copy file42,file43 and file44 to dir42
+      + % cp -i file1 file2; # ask before copy
+      + % mv file1 file2; # renames files
+      + % mv dir33 backup; # rename directories
+      + % mv -i file1 file2; # ask before rename
+      + % rename 's/\.txt/\.png' *.txt; # debian: rename files using regex
+      + % rename 's/file/document/' *.png; # debian
+      + % rename .conf .backup *.confg; # centos: rename usage
+      + % reanem one ONE *; # centos: rename usage
+*** working with file contents
+    + sample commands
+      + % head /etc/passwd; # display first 10 lines
+      + % head -4 /etc/passwd; # display first 4 lines
+      + % head -c14 /etc/passwd; # display first 14 bytes
+      + % tail /etc/services; # will display the last ten lines of a file
+      + % tail -3 /etc/services; # display last 3 lines
+      + % cat /etc/resolv.conf; # copy std input to std output
+      + % cat part1 part2 part3; # dispaly part1 part2 part3
+      + % cat all; # display all files
+      + % cat > winter.txt; # create file
+        > It is very cold today! <ctrl+d>
+      + % cat > hot.txt <<stop; # custom end marker 'stop'
+        > It is hot today!
+        > Yes it is summer
+        > stop
+      + % cat winter.txt > cold.txt; # copy files
+      + % tac count; # cat backwards
+      + 'more' command is usefule for displaying files that take up more than one screen
+        + <spc> to see the next page
+        + 'q' to quit
+        + some people prefer the 'less' command to more
+        + % more /etc/services
+      + % strings /bin/ls; # strings command can display readable ascii strings found in (binary) files
+      + % ls -lrS /etc; # finds biggest file in /etc
+      + % cat /etc/passwd >> tailing.txt; # append to file
+      + % mv tailing.txt tmp.txt; % cat /etc/passwd tmp.txt > tailing.txt; # trick for a file to be preceded by another file
+*** the linux file tree
+    + % man hier; # info about file system hierarcy
+    + http://www.pathname.com/fhs - filesystme hierarchy standard
+    + % ls /; # root directory
+    + binary directories
+      + /bin - contains binaries for use by all users
+        + like /bin/cat, /bin/date
+      + other /bin directories
+        + found in subdirectories like 
+          + in home directories - /home/xyz/bin
+          + in some application when installed directly from sources will put themselves in /opt - /opt/samba/bin
+      + /sbin - contains binaries to configure the operating system
+        + many of system binaries require root privilege
+      + /lib - binaries found in /bin and /sbin often use shared libraries
+        + /lib/modules - linux kernel loads kernel modules form /lib/modules/$kernel-version
+        + /lib32 and /lib64 - 32-bit and 64-bit directories
+          + % file /lib32/libc-2.5.so; # 32-bit file type
+          + % file /lib64/libcap.so.1.10; # 64-bit file type
+          + ELF (Executable and Linkable Format) is used in almost every unix-like operating system since System V
+      + /opt - store optional software, like software from outside distribution repository
+        + /bin, /lib, /etc - subdirectories within /opt/$packagename/
+          + e.g /opt/wp/bin, /opt/wp/man
+    + configuration directories
+      + /boot - contains all files needed to boot the computer, these files don't change often
+        + /boot/grub
+          + /boot/grub/grub.cfg - defines boot menu that is displayed before the kernel starts
+      + /etc - machine-specific configuration files (historically called 'etcetera' but today called as 'Editable Text Configuration')
+        + % ls /etc/*.conf - many times the name of a configuration file is same as application, daemon or protocol with .conf extension
+        + /etc/init.d/ - scripts to start and stop daemons
+        + /etc/X11/ - graphical dispaly is driven by software from X.org foundation
+        + /etc/skel/ - skeleton directory /etc/skel is copied to the home directory of a newly created user like .bashrc script
+        + /etc/sysconfig/ - contains lot of red hat linux config files (not mentioned in FHS)
+          + % ls /etc/sysconfig/
+            + % ls /etc/sysconfig/firstboot - tell red hat agent not to run at boot time
+              + if you want to run red hat setup agent in next reboot, then simply remove this file and run 'chkconfig --level 5 firstboot on'
+              + red hat setup agent allows you to install the latest updates, create a user account, join the red hat network and more
+              + /etc/sysconfig/harddisks - contains some parameters to tune the hard disks
+              + /etc/sysconfig/hwconf - hardware detected by kudzu (software from red hat for automatic discovery and configuration of hardware)
+              + /etc/sysconfig/keyboard - keyboard type and keymap table are set here
+                + % cat /etc/sysconfig/keyboard
+                + check the manual pages of keymaps(5), dumpkeys(1), loadkeys(1) and directory /lib/kbd/keymaps
+    + data directories
+      + /home - users can store personal or project data under /home
+        + % ls /home; # list users home directories
+        + % ls -d /home/paul/.*
+      + /root - default location for personal data and profile of the root user
+      + /srv - data that is served by your system
+        + FHS allows locating cvs, rsync, ftp and www data in this locaiton
+        + FHS also approves administrative naming in /srv like /srv/project55/ftp and /srv/sales/www
+        + on Sun Solaris /export is used for this purpose
+      + /media - directory serves as a mount point for removable media devices such as CD-ROM, digital cameras and various usb-attached devices
+        + % ls /media/;
+      + /mnt - should be empty and hsould only be used for temporary mount points
+      + /tmp - applications and users should use /tmp to store temporary data when needed
+        + data stored in /tmp may use either disk space or RAM, both of which are managed by operating system
+        + never use /tmp to store data that is important or which you wish to archive
+    + in memory directories
+      + /dev - device files in /dev appear to be ordinary files, but are not actually located on hard disk
+        + % ls dev/sd*; # common physical devices
+        + % ls /dev/hd*; # common physical devices
+        + /dev/tty - represents a terminal or console attached to the system
+        + /dev/pts - when typing commands in a terminal that is part of a graphical interface like Gnome and KDE
+        + /dev/null - special device, it has unlimited storage, but nothing can be retrieved
+      + /proc - another special directory, appearing as ordinary files, but not taking up disk space
+        + it's actually a view of kernel, what kernel manages
+        + % ls /proc; 
+        + % file /proc/cpuinfo; # shows empty
+        + % cat /proc/cpuinfo; # info about CPU
+        + % cat /proc/interrupts; # displays the interrupts
+        + % ls -lh /proc/kcore; # physical memory, do not try to cat this file, instead use a debugger
+      + /sys - directory contains kernel information about hardware (hot plug devices)
+        + linux uses 'sysfs' to support usb and firewire hot plug devices. see manual pages udev(8)
+        + http://linux-hotplug.sourceforge.net/
+    + /usr unix system resources
+      + /usr/bin - contains lot of commands
+        + % ls /usr/bin | wc -l
+      + /usr/include - contains general use include files for C
+        + % ls /usr/include/
+      + /usr/lib - directory contains libraries that are not directly executed by users or scripts
+        + % ls /usr/lib | head -7
+      + /usr/local - directory can be used by an adminstrator to install software locally
+        + % ls /usr/local/
+        + % du -sh /usr/local/
+      + /usr/share - contains architecture independent data
+        + % ls /usr/share/  wc -l
+        + % du -sh /usr/share
+        + % ls /usr/share/man - directory typically contains /usr/share/man for manual pages
+        + % ls /usr/share/games/ - static game data
+      + /usr/src - directory is the recommended location for kernel source files
+        + % ls -l /usr/src
+    + /var variable data - files that are unpredictable in size, such as log, cache and spool files
+      + /var/log - central point to contain all log files
+        + % ls /var/log
+      + /var/log/messages - typical first file to check when troubleshooting on red hat (and derivaties)
+        + /var/log/syslog for debian and ubuntu
+          + % tail /var/log/messages
+      + /var/cache - directory can contain cache data for several applications
+        + % ls /var/cache
+      + /var/spool - directory typically contains spool directories for main and cron, but also serves as parent directory for other spool files (like print spool files)
+      + /var/lib - contains applications state information
+        + /var/lib/rpm/ - red hat keeps files pertaining to rpm
+      + /var/...
+        + /var also contains process id files in /var/run (or /run) and temporary files taht survive a reboot in /var/tmp and info about file locks in /var/lock
+    + % dd if=/dev/zero of=zeros.txt count=1 bs=100; # dd will copy one times a block of size 100 bytes to zeroes.txt
+      + /dev/zero is a linux special device, can be considered a source of zeroes. you cannot send something to /dev/zero but you can read zeroes from it
+    + % od zeros.txt
+    + % dd if=/dev/random of=random.txt count=1 bs=100; od random.txt
+      + /dev/random acts as a random number generator
+    + /etc/hosts - contains hostnames with their ip address
+    + /etc/resolv.conf - should contain the ip address of a DNS name server
+
+          
+
+
 
